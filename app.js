@@ -3,9 +3,12 @@
 const REFRESH_SECONDS = 60;
 const COLS = 9;
 
+const QUOTE_POLL_SECONDS = 20;
+
 const state = {
   holdings: null,
   monthly: null,
+  changes: null,
   sort: { key: 'weight', dir: 'desc' },
   search: '',
   sector: '',
@@ -13,6 +16,8 @@ const state = {
   auto: true,
   countdown: REFRESH_SECONDS,
   busy: false,
+  liveQuotes: null,
+  livePricesAt: 0,
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -141,14 +146,19 @@ function renderStatus() {
   const badge = $('#sourceBadge');
   const map = {
     invesco: ['LIVE · INVESCO', ''],
+    fmp: ['LIVE · FMP', ''],
     'invesco-cached': ['CACHED', 'cached'],
+    'fmp-cached': ['CACHED', 'cached'],
     seed: ['SAMPLE DATA', 'seed'],
   };
   const [label, cls] = map[d.source] || ['DATA', 'cached'];
   badge.textContent = label;
   badge.className = 'src-badge ' + cls;
+  const live = state.liveQuotes === true
+    ? ` <span class="live-tag">&middot; live prices ${relTime(state.livePricesAt)}</span>`
+    : '';
   $('#asOf').innerHTML = `<span class="dot"></span>as of ${relTime(d.asOf)} ` +
-    `(${new Date(d.asOf).toLocaleString()})`;
+    `(${new Date(d.asOf).toLocaleString()})${live}`;
   $('#fundName').textContent = `${d.name} · ${d.count} holdings`;
   const auto = state.auto ? ` · next in ${state.countdown}s` : ' · paused';
   $('#autoLabel').textContent = 'Auto-refresh' + auto;
@@ -277,9 +287,31 @@ function renderSectors() {
     </div>`).join('');
 }
 
+function renderChanges() {
+  const el = $('#changesBanner');
+  const ev = state.changes && state.changes.events && state.changes.events[0];
+  if (!ev || (!ev.added.length && !ev.removed.length)) {
+    el.hidden = true;
+    return;
+  }
+  const when = new Date(ev.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const parts = [`<strong>Latest index change &middot; ${when}</strong>`];
+  if (ev.added.length) {
+    parts.push(`<span class="chg-add">&#9650; Added: ${
+      ev.added.map((x) => escapeHtml(x.ticker)).join(', ')}</span>`);
+  }
+  if (ev.removed.length) {
+    parts.push(`<span class="chg-rem">&#9660; Removed: ${
+      ev.removed.map((x) => escapeHtml(x.ticker)).join(', ')}</span>`);
+  }
+  el.innerHTML = parts.join('');
+  el.hidden = false;
+}
+
 function render() {
   renderStatus();
   renderCards();
+  renderChanges();
   renderTable();
   renderSectors();
 }
@@ -287,9 +319,10 @@ function render() {
 /* ---------- data loading ---------- */
 async function loadData() {
   const bust = '?t=' + Date.now();
-  const [h, m] = await Promise.all([
+  const [h, m, c] = await Promise.all([
     fetch('data/holdings.json' + bust).then((r) => r.json()),
     fetch('data/monthly-allocations.json' + bust).then((r) => r.json()),
+    fetch('data/changes.json' + bust).then((r) => r.json()).catch(() => ({ events: [] })),
   ]);
   h.holdings.forEach((row, i) => { row.rank = i + 1; });
   // populate sector filter once
@@ -304,7 +337,33 @@ async function loadData() {
   }
   state.holdings = h;
   state.monthly = m;
+  state.changes = c;
   render();
+}
+
+// Near-real-time price polling. Works when self-hosted via `server.js`
+// (POST/GET /api/quotes); on static hosting the first call fails and
+// polling quietly stops, leaving cron-refreshed prices in place.
+let quoteTimer = null;
+async function pollQuotes() {
+  if (!state.holdings) return;
+  try {
+    const res = await fetch('/api/quotes', { cache: 'no-store' });
+    if (!res.ok) throw new Error('no live quotes endpoint');
+    const data = await res.json();
+    let n = 0;
+    for (const row of state.holdings.holdings) {
+      const q = data.quotes[row.ticker];
+      if (q) { row.price = q.price; row.changePct = q.changePct; n++; }
+    }
+    if (!n) throw new Error('empty quote set');
+    state.liveQuotes = true;
+    state.livePricesAt = Date.now();
+    render();
+  } catch {
+    state.liveQuotes = false;
+    if (quoteTimer) { clearInterval(quoteTimer); quoteTimer = null; }
+  }
 }
 
 async function manualRefresh() {
@@ -395,4 +454,6 @@ function startClock() {
     return;
   }
   startClock();
+  pollQuotes();
+  quoteTimer = setInterval(pollQuotes, QUOTE_POLL_SECONDS * 1000);
 })();

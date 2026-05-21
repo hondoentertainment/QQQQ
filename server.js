@@ -4,14 +4,17 @@
 // POST /api/refresh triggers an on-demand data refresh.
 import http from 'node:http';
 import { createReadStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { stat, readFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fetchQuotes } from './lib/quotes.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
 const FETCH_SCRIPT = path.join(ROOT, 'scripts', 'fetch-holdings.js');
+const HOLDINGS_FILE = path.join(ROOT, 'data', 'holdings.json');
+const QUOTE_CACHE_MS = 15000;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -41,8 +44,32 @@ function runRefresh() {
   });
 }
 
+let quoteCache = { at: 0, payload: null };
+async function getLiveQuotes() {
+  if (quoteCache.payload && Date.now() - quoteCache.at < QUOTE_CACHE_MS) {
+    return quoteCache.payload;
+  }
+  const doc = JSON.parse(await readFile(HOLDINGS_FILE, 'utf8'));
+  const tickers = doc.holdings.map((h) => h.ticker);
+  const { source, quotes } = await fetchQuotes(tickers, { fmpKey: process.env.FMP_API_KEY });
+  const payload = { asOf: new Date().toISOString(), source, count: Object.keys(quotes).length, quotes };
+  quoteCache = { at: Date.now(), payload };
+  return payload;
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+
+  if (url.pathname === '/api/quotes') {
+    try {
+      const payload = await getLiveQuotes();
+      res.writeHead(payload.count ? 200 : 503, { 'content-type': 'application/json' });
+      return res.end(JSON.stringify(payload));
+    } catch (err) {
+      res.writeHead(503, { 'content-type': 'application/json' });
+      return res.end(JSON.stringify({ ok: false, reason: String(err) }));
+    }
+  }
 
   if (url.pathname === '/api/refresh') {
     if (req.method !== 'POST') {

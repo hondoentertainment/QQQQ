@@ -1,17 +1,21 @@
 #!/usr/bin/env node
-// Refreshes data/holdings.json and data/monthly-allocations.json.
-// Holdings + weights come from the official Invesco QQQ holdings file;
-// live prices come from the Yahoo Finance chart API. Both are best-effort:
-// if a source is unreachable the script falls back to the existing data so
-// the scheduled job stays green and the site keeps working.
+// Refreshes data/holdings.json, data/monthly-allocations.json and data/changes.json.
+//
+// Holdings + weights: Invesco official QQQ holdings file, falling back to
+// Financial Modeling Prep when FMP_API_KEY is set, then to the last good data.
+// Prices: see lib/quotes.js. All sources are best-effort so the scheduled
+// job stays green and the site keeps working even when a source is down.
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fetchQuotes } from '../lib/quotes.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HOLDINGS_FILE = path.join(ROOT, 'data', 'holdings.json');
 const MONTHLY_FILE = path.join(ROOT, 'data', 'monthly-allocations.json');
+const CHANGES_FILE = path.join(ROOT, 'data', 'changes.json');
 const MAX_MONTHS = 24;
+const MAX_CHANGE_EVENTS = 50;
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
   '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -83,49 +87,45 @@ async function fetchInvescoHoldings() {
   return holdings;
 }
 
-async function mapLimit(items, limit, fn) {
-  const out = new Array(items.length);
-  let next = 0;
-  async function worker() {
-    while (next < items.length) {
-      const i = next++;
-      out[i] = await fn(items[i], i);
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
-  return out;
-}
-
-async function fetchQuote(ticker) {
-  const symbol = ticker.replace(/\./g, '-');
+async function fetchFmpHoldings(apiKey) {
   const url =
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}` +
-    '?interval=1d&range=2d';
-  try {
-    const res = await fetch(url, { headers: { 'User-Agent': UA } });
-    if (!res.ok) return null;
-    const meta = (await res.json())?.chart?.result?.[0]?.meta;
-    const price = meta?.regularMarketPrice;
-    if (!Number.isFinite(price)) return null;
-    const prev = meta.chartPreviousClose ?? meta.previousClose;
-    return {
-      price: +price.toFixed(2),
-      changePct:
-        Number.isFinite(prev) && prev ? +(((price - prev) / prev) * 100).toFixed(2) : null,
-    };
-  } catch {
-    return null;
+    `https://financialmodelingprep.com/api/v3/etf-holder/QQQ?apikey=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(url, { headers: { 'User-Agent': UA } });
+  if (!res.ok) throw new Error('FMP HTTP ' + res.status);
+  const arr = await res.json();
+  if (!Array.isArray(arr)) throw new Error('FMP unexpected response');
+
+  const holdings = [];
+  for (const r of arr) {
+    const ticker = String(r.asset || '').trim().toUpperCase();
+    const weight = Number(r.weightPercentage);
+    if (!ticker || !Number.isFinite(weight) || weight <= 0) continue;
+    holdings.push({
+      ticker,
+      name: String(r.name || ticker).trim(),
+      sector: 'Unclassified',
+      weight: +weight.toFixed(3),
+      price: null,
+      changePct: null,
+    });
   }
+  if (holdings.length < 50) throw new Error(`FMP parsed only ${holdings.length} holdings`);
+  return holdings;
 }
 
 function monthKey(d) {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
+const LIVE_SOURCES = new Set(['invesco', 'fmp', 'invesco-cached', 'fmp-cached']);
+
 async function main() {
   const now = new Date();
-  let holdings;
-  let source;
+  const fmpKey = process.env.FMP_API_KEY || '';
+  const prev = await readJson(HOLDINGS_FILE);
+
+  let holdings = null;
+  let source = null;
 
   try {
     log('fetching Invesco QQQ holdings…');
@@ -134,29 +134,81 @@ async function main() {
     log(`got ${holdings.length} holdings from Invesco`);
   } catch (err) {
     log('Invesco fetch failed:', err.message);
-    const prev = await readJson(HOLDINGS_FILE);
+  }
+
+  if (!holdings && fmpKey) {
+    try {
+      log('trying Financial Modeling Prep…');
+      holdings = await fetchFmpHoldings(fmpKey);
+      source = 'fmp';
+      log(`got ${holdings.length} holdings from FMP`);
+    } catch (err) {
+      log('FMP fetch failed:', err.message);
+    }
+  } else if (!holdings) {
+    log('FMP_API_KEY not set — skipping FMP fallback');
+  }
+
+  if (!holdings) {
     if (!prev?.holdings?.length) {
       console.error('[refresh] no holdings source available — aborting');
       process.exit(1);
     }
     holdings = prev.holdings.map((h) => ({ ...h, price: null, changePct: null }));
-    source = prev.source === 'invesco' ? 'invesco-cached' : prev.source || 'seed';
+    source = LIVE_SOURCES.has(prev.source)
+      ? (prev.source.endsWith('-cached') ? prev.source : prev.source + '-cached')
+      : prev.source || 'seed';
     log(`falling back to existing data (source: ${source}, ${holdings.length} holdings)`);
   }
 
+  // Carry sector labels over from the previous snapshot when a source omits them.
+  if (prev?.holdings?.length) {
+    const prevSector = new Map(prev.holdings.map((h) => [h.ticker, h.sector]));
+    for (const h of holdings) {
+      if ((!h.sector || h.sector === 'Unclassified') && prevSector.get(h.ticker)) {
+        h.sector = prevSector.get(h.ticker);
+      }
+    }
+  }
+
   log('fetching live quotes…');
-  const quotes = await mapLimit(holdings, 6, (h) => fetchQuote(h.ticker));
+  const { source: quoteSource, quotes } = await fetchQuotes(
+    holdings.map((h) => h.ticker),
+    { fmpKey }
+  );
   let priced = 0;
-  holdings.forEach((h, i) => {
-    if (quotes[i]) {
-      h.price = quotes[i].price;
-      h.changePct = quotes[i].changePct;
+  for (const h of holdings) {
+    const q = quotes[h.ticker];
+    if (q) {
+      h.price = q.price;
+      h.changePct = q.changePct;
       priced++;
     }
-  });
-  log(`priced ${priced}/${holdings.length} holdings`);
+  }
+  log(`priced ${priced}/${holdings.length} holdings via ${quoteSource}`);
 
   holdings.sort((a, b) => b.weight - a.weight);
+
+  // Record constituent additions / removals between live snapshots.
+  if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) && (source === 'invesco' || source === 'fmp')) {
+    const prevByTicker = new Map(prev.holdings.map((h) => [h.ticker, h]));
+    const nowByTicker = new Map(holdings.map((h) => [h.ticker, h]));
+    const added = holdings
+      .filter((h) => !prevByTicker.has(h.ticker))
+      .map((h) => ({ ticker: h.ticker, name: h.name }));
+    const removed = prev.holdings
+      .filter((h) => !nowByTicker.has(h.ticker))
+      .map((h) => ({ ticker: h.ticker, name: h.name }));
+    if (added.length || removed.length) {
+      const changes = (await readJson(CHANGES_FILE)) || { events: [] };
+      changes.events = Array.isArray(changes.events) ? changes.events : [];
+      changes.events.unshift({ date: now.toISOString(), added, removed });
+      changes.events = changes.events.slice(0, MAX_CHANGE_EVENTS);
+      await writeFile(CHANGES_FILE, JSON.stringify(changes, null, 2) + '\n');
+      log(`recorded index change: +${added.length} / -${removed.length}`);
+    }
+  }
+
   const holdingsDoc = {
     fund: 'QQQ',
     name: 'Invesco QQQ Trust (Nasdaq-100 Index)',
