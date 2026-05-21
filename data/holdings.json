@@ -2,7 +2,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-05-21T20:08:40.321Z",
+  "asOf": "2026-05-21T21:03:19.029Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -492,8 +492,8 @@
       "name": "AstraZeneca plc ADR",
       "sector": "Health Care",
       "weight": 0.3,
-      "price": 189.78,
-      "changePct": 2.78
+      "price": 189.75,
+      "changePct": 2.77
     },
     {
       "ticker": "ASML",
