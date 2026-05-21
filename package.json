@@ -1,0 +1,15 @@
+{
+  "name": "qqqq-component-tracker",
+  "version": "1.0.0",
+  "description": "Live components and monthly allocations of QQQQ (Invesco QQQ Trust / Nasdaq-100).",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "REFRESH_MINUTES=30 node server.js",
+    "refresh": "node scripts/fetch-holdings.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

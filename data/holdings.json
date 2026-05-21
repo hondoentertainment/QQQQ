@@ -1,0 +1,795 @@
+{
+  "fund": "QQQ",
+  "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
+  "legacyTicker": "QQQQ",
+  "asOf": "2026-05-21T13:30:00.000Z",
+  "source": "seed",
+  "count": 98,
+  "totalWeight": 100,
+  "holdings": [
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA Corp",
+      "sector": "Technology",
+      "weight": 9.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AAPL",
+      "name": "Apple Inc",
+      "sector": "Technology",
+      "weight": 8.1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft Corp",
+      "sector": "Technology",
+      "weight": 7.9,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AMZN",
+      "name": "Amazon.com Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 5.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AVGO",
+      "name": "Broadcom Inc",
+      "sector": "Technology",
+      "weight": 5.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "META",
+      "name": "Meta Platforms Inc Class A",
+      "sector": "Communication Services",
+      "weight": 3.9,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "TSLA",
+      "name": "Tesla Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 2.9,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "NFLX",
+      "name": "Netflix Inc",
+      "sector": "Communication Services",
+      "weight": 2.7,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "GOOGL",
+      "name": "Alphabet Inc Class A",
+      "sector": "Communication Services",
+      "weight": 2.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "COST",
+      "name": "Costco Wholesale Corp",
+      "sector": "Consumer Staples",
+      "weight": 2.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "GOOG",
+      "name": "Alphabet Inc Class C",
+      "sector": "Communication Services",
+      "weight": 2.5,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "PLTR",
+      "name": "Palantir Technologies Inc",
+      "sector": "Technology",
+      "weight": 2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CSCO",
+      "name": "Cisco Systems Inc",
+      "sector": "Technology",
+      "weight": 1.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "TMUS",
+      "name": "T-Mobile US Inc",
+      "sector": "Communication Services",
+      "weight": 1.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AMD",
+      "name": "Advanced Micro Devices Inc",
+      "sector": "Technology",
+      "weight": 1.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "INTU",
+      "name": "Intuit Inc",
+      "sector": "Technology",
+      "weight": 1.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "APP",
+      "name": "AppLovin Corp",
+      "sector": "Technology",
+      "weight": 1.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "PEP",
+      "name": "PepsiCo Inc",
+      "sector": "Consumer Staples",
+      "weight": 1.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "TXN",
+      "name": "Texas Instruments Inc",
+      "sector": "Technology",
+      "weight": 1.1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "QCOM",
+      "name": "Qualcomm Inc",
+      "sector": "Technology",
+      "weight": 1.1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AMGN",
+      "name": "Amgen Inc",
+      "sector": "Health Care",
+      "weight": 1.1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ISRG",
+      "name": "Intuitive Surgical Inc",
+      "sector": "Health Care",
+      "weight": 1.1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "BKNG",
+      "name": "Booking Holdings Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 1.1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ADBE",
+      "name": "Adobe Inc",
+      "sector": "Technology",
+      "weight": 1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "HON",
+      "name": "Honeywell International Inc",
+      "sector": "Industrials",
+      "weight": 0.9,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CMCSA",
+      "name": "Comcast Corp",
+      "sector": "Communication Services",
+      "weight": 0.9,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AMAT",
+      "name": "Applied Materials Inc",
+      "sector": "Technology",
+      "weight": 0.9,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MU",
+      "name": "Micron Technology Inc",
+      "sector": "Technology",
+      "weight": 0.9,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "GILD",
+      "name": "Gilead Sciences Inc",
+      "sector": "Health Care",
+      "weight": 0.8,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "PANW",
+      "name": "Palo Alto Networks Inc",
+      "sector": "Technology",
+      "weight": 0.8,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ARM",
+      "name": "Arm Holdings plc ADR",
+      "sector": "Technology",
+      "weight": 0.8,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ADP",
+      "name": "Automatic Data Processing Inc",
+      "sector": "Industrials",
+      "weight": 0.8,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "LRCX",
+      "name": "Lam Research Corp",
+      "sector": "Technology",
+      "weight": 0.8,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "VRTX",
+      "name": "Vertex Pharmaceuticals Inc",
+      "sector": "Health Care",
+      "weight": 0.7,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "KLAC",
+      "name": "KLA Corp",
+      "sector": "Technology",
+      "weight": 0.7,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CRWD",
+      "name": "CrowdStrike Holdings Inc",
+      "sector": "Technology",
+      "weight": 0.7,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "SBUX",
+      "name": "Starbucks Corp",
+      "sector": "Consumer Discretionary",
+      "weight": 0.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "INTC",
+      "name": "Intel Corp",
+      "sector": "Technology",
+      "weight": 0.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MELI",
+      "name": "MercadoLibre Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 0.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ADI",
+      "name": "Analog Devices Inc",
+      "sector": "Technology",
+      "weight": 0.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MSTR",
+      "name": "MicroStrategy Inc",
+      "sector": "Technology",
+      "weight": 0.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CEG",
+      "name": "Constellation Energy Corp",
+      "sector": "Utilities",
+      "weight": 0.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CDNS",
+      "name": "Cadence Design Systems Inc",
+      "sector": "Technology",
+      "weight": 0.6,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MDLZ",
+      "name": "Mondelez International Inc",
+      "sector": "Consumer Staples",
+      "weight": 0.5,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "REGN",
+      "name": "Regeneron Pharmaceuticals Inc",
+      "sector": "Health Care",
+      "weight": 0.5,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "SNPS",
+      "name": "Synopsys Inc",
+      "sector": "Technology",
+      "weight": 0.5,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "PYPL",
+      "name": "PayPal Holdings Inc",
+      "sector": "Financials",
+      "weight": 0.5,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MRVL",
+      "name": "Marvell Technology Inc",
+      "sector": "Technology",
+      "weight": 0.5,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ORLY",
+      "name": "O'Reilly Automotive Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 0.5,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "PDD",
+      "name": "PDD Holdings Inc ADR",
+      "sector": "Consumer Discretionary",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CSX",
+      "name": "CSX Corp",
+      "sector": "Industrials",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ABNB",
+      "name": "Airbnb Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "WDAY",
+      "name": "Workday Inc",
+      "sector": "Technology",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "FTNT",
+      "name": "Fortinet Inc",
+      "sector": "Technology",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "NXPI",
+      "name": "NXP Semiconductors NV",
+      "sector": "Technology",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ADSK",
+      "name": "Autodesk Inc",
+      "sector": "Technology",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "PCAR",
+      "name": "PACCAR Inc",
+      "sector": "Industrials",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ROP",
+      "name": "Roper Technologies Inc",
+      "sector": "Technology",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MAR",
+      "name": "Marriott International Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "DASH",
+      "name": "DoorDash Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 0.4,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AZN",
+      "name": "AstraZeneca plc ADR",
+      "sector": "Health Care",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ASML",
+      "name": "ASML Holding NV ADR",
+      "sector": "Technology",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "TTD",
+      "name": "The Trade Desk Inc",
+      "sector": "Technology",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MNST",
+      "name": "Monster Beverage Corp",
+      "sector": "Consumer Staples",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AEP",
+      "name": "American Electric Power Co",
+      "sector": "Utilities",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CPRT",
+      "name": "Copart Inc",
+      "sector": "Industrials",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "PAYX",
+      "name": "Paychex Inc",
+      "sector": "Industrials",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ROST",
+      "name": "Ross Stores Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "KDP",
+      "name": "Keurig Dr Pepper Inc",
+      "sector": "Consumer Staples",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CTAS",
+      "name": "Cintas Corp",
+      "sector": "Industrials",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ODFL",
+      "name": "Old Dominion Freight Line Inc",
+      "sector": "Industrials",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "FAST",
+      "name": "Fastenal Co",
+      "sector": "Industrials",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "DDOG",
+      "name": "Datadog Inc",
+      "sector": "Technology",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CHTR",
+      "name": "Charter Communications Inc",
+      "sector": "Communication Services",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "EXC",
+      "name": "Exelon Corp",
+      "sector": "Utilities",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "AXON",
+      "name": "Axon Enterprise Inc",
+      "sector": "Industrials",
+      "weight": 0.3,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "VRSK",
+      "name": "Verisk Analytics Inc",
+      "sector": "Industrials",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "XEL",
+      "name": "Xcel Energy Inc",
+      "sector": "Utilities",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "EA",
+      "name": "Electronic Arts Inc",
+      "sector": "Communication Services",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CTSH",
+      "name": "Cognizant Technology Solutions Corp",
+      "sector": "Technology",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "TTWO",
+      "name": "Take-Two Interactive Software Inc",
+      "sector": "Communication Services",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "IDXX",
+      "name": "IDEXX Laboratories Inc",
+      "sector": "Health Care",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "BKR",
+      "name": "Baker Hughes Co",
+      "sector": "Energy",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "KHC",
+      "name": "Kraft Heinz Co",
+      "sector": "Consumer Staples",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "FANG",
+      "name": "Diamondback Energy Inc",
+      "sector": "Energy",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "GEHC",
+      "name": "GE HealthCare Technologies Inc",
+      "sector": "Health Care",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CDW",
+      "name": "CDW Corp",
+      "sector": "Technology",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "DXCM",
+      "name": "DexCom Inc",
+      "sector": "Health Care",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CCEP",
+      "name": "Coca-Cola Europacific Partners plc",
+      "sector": "Consumer Staples",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "TEAM",
+      "name": "Atlassian Corp",
+      "sector": "Technology",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "MCHP",
+      "name": "Microchip Technology Inc",
+      "sector": "Technology",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ON",
+      "name": "ON Semiconductor Corp",
+      "sector": "Technology",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "CSGP",
+      "name": "CoStar Group Inc",
+      "sector": "Real Estate",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "WBD",
+      "name": "Warner Bros Discovery Inc",
+      "sector": "Communication Services",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "ZS",
+      "name": "Zscaler Inc",
+      "sector": "Technology",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "LULU",
+      "name": "Lululemon Athletica Inc",
+      "sector": "Consumer Discretionary",
+      "weight": 0.2,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "GFS",
+      "name": "GlobalFoundries Inc",
+      "sector": "Technology",
+      "weight": 0.1,
+      "price": null,
+      "changePct": null
+    },
+    {
+      "ticker": "BIIB",
+      "name": "Biogen Inc",
+      "sector": "Health Care",
+      "weight": 0.1,
+      "price": null,
+      "changePct": null
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+name: Refresh QQQQ holdings
+
+# Recurring cron job that refreshes the component & allocation data.
+# GitHub Actions runners have full network access, so this is where the
+# live Invesco / Yahoo Finance fetch actually runs (the dashboard itself
+# is static and just reads the committed JSON).
+on:
+  schedule:
+    # Every 30 min during US market hours (Mon-Fri, ~9:30-16:00 ET = 13:30-20:00 UTC).
+    - cron: '*/30 13-20 * * 1-5'
+    # One post-close snapshot to lock in the day's allocations.
+    - cron: '15 21 * * 1-5'
+  workflow_dispatch: {}
+
+# Avoid overlapping runs.
+concurrency:
+  group: refresh-holdings
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Refresh holdings data
+        run: node scripts/fetch-holdings.js
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/holdings.json data/monthly-allocations.json
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "data: refresh QQQQ holdings ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+            git push
+          fi

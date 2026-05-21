@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QQQQ Component Tracker</title>
+  <meta name="description" content="Live components and monthly allocations of QQQQ (Invesco QQQ Trust / Nasdaq-100)." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2300d1b2'/%3E%3Ctext x='50' y='70' font-size='52' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23071018'%3EQ%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">Q</div>
+        <div>
+          <h1>QQQQ Component Tracker</h1>
+          <p class="brand-sub" id="fundName">Invesco QQQ Trust &mdash; Nasdaq-100 Index</p>
+        </div>
+      </div>
+      <div class="status">
+        <span class="src-badge" id="sourceBadge">loading</span>
+        <span class="as-of" id="asOf">&mdash;</span>
+        <label class="auto-toggle">
+          <input type="checkbox" id="autoRefresh" checked />
+          <span id="autoLabel">Auto-refresh</span>
+        </label>
+        <button id="refreshBtn" class="btn">Refresh now</button>
+      </div>
+    </header>
+
+    <section class="cards" id="cards"></section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Holdings &amp; monthly allocation</h2>
+        <div class="controls">
+          <input type="search" id="search" placeholder="Filter ticker or name&hellip;" autocomplete="off" />
+          <select id="sectorFilter"><option value="">All sectors</option></select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="holdingsTable">
+          <thead>
+            <tr>
+              <th class="num" data-sort="rank">#</th>
+              <th data-sort="ticker">Ticker</th>
+              <th data-sort="name">Company</th>
+              <th data-sort="sector">Sector</th>
+              <th class="num" data-sort="weight">Weight %</th>
+              <th class="num" data-sort="price">Price</th>
+              <th class="num" data-sort="changePct">Day %</th>
+              <th class="num" data-sort="mom">MoM &Delta;</th>
+              <th>6-month allocation</th>
+            </tr>
+          </thead>
+          <tbody id="holdingsBody"></tbody>
+        </table>
+      </div>
+      <p class="table-foot" id="tableFoot">&mdash;</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Sector allocation</h2></div>
+      <div id="sectors" class="sectors"></div>
+    </section>
+
+    <footer class="footer">
+      <p>
+        &ldquo;QQQQ&rdquo; is the legacy ticker for the Invesco QQQ Trust (now <strong>QQQ</strong>),
+        which tracks the Nasdaq-100. Holdings sourced from Invesco; prices from Yahoo Finance.
+        Data refreshes via a scheduled job &mdash; <span id="footerStatus">&mdash;</span>
+      </p>
+      <p class="disclaimer">For informational purposes only. Not investment advice.</p>
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
