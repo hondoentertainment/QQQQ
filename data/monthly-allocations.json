@@ -1,5 +1,4 @@
 {
-  "schemaVersion": 1,
   "fund": "QQQ",
   "months": [
     "2025-12",
@@ -795,5 +794,6 @@
       "2026-05": 0.1
     }
   },
-  "updatedAt": "2026-05-22T17:32:31.463Z"
+  "schemaVersion": 1,
+  "updatedAt": "2026-05-22T18:32:44.200Z"
 }
