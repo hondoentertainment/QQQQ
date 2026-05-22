@@ -94,7 +94,8 @@ add it to the repo:
 — name `FMP_API_KEY`, value = your key.
 
 `refresh.yml` already passes it through; locally, run
-`FMP_API_KEY=yourkey npm run refresh`.
+`FMP_API_KEY=yourkey npm run refresh` or put `FMP_API_KEY=yourkey` in a
+`.env` file (gitignored — the npm scripts load it automatically).
 
 ## Near real-time prices
 
