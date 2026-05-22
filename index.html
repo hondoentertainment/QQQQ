@@ -30,6 +30,7 @@
       </div>
       <div class="status">
         <span class="src-badge" id="sourceBadge">loading</span>
+        <span class="stale-badge" id="staleBadge" hidden>&#9888; Data may be stale</span>
         <span class="as-of" id="asOf">&mdash;</span>
         <label class="auto-toggle">
           <input type="checkbox" id="autoRefresh" checked />
@@ -93,11 +94,31 @@
     </section>
 
     <section class="panel">
+      <div class="panel-head">
+        <h2>Compare holdings</h2>
+        <select id="compareAdd" class="panel-select"
+          aria-label="Add a holding to the comparison">
+          <option value="">+ Add holding&hellip;</option>
+        </select>
+      </div>
+      <div class="compare">
+        <div class="cmp-chips" id="compareChips"></div>
+        <div id="compareChart"></div>
+      </div>
+    </section>
+
+    <section class="panel">
       <div class="panel-head"><h2>Sector allocation</h2></div>
       <div id="sectors" class="sectors"></div>
     </section>
 
+    <section class="panel">
+      <div class="panel-head"><h2>Index change history</h2></div>
+      <div id="changeHistory" class="change-history"></div>
+    </section>
+
     <footer class="footer">
+      <p class="data-health" id="dataHealth">&mdash;</p>
       <p>
         &ldquo;QQQQ&rdquo; is the legacy ticker for the Invesco QQQ Trust (now <strong>QQQ</strong>),
         which tracks the Nasdaq-100. Holdings sourced from Invesco; prices from Yahoo Finance.

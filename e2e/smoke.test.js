@@ -54,4 +54,11 @@ test('dashboard renders and is interactive', async (t) => {
     await page.locator('table tbody tr').first().click();
     await page.waitForSelector('[aria-expanded="true"]', { timeout: 5000 });
   });
+
+  await t.test('adds a holding to the comparison chart', async () => {
+    await page.locator('#compareAdd').selectOption({ index: 1 });
+    await page.waitForSelector('.cmp-chip', { timeout: 5000 });
+    assert.equal(await page.locator('.cmp-chip').count(), 1);
+    assert.equal(await page.locator('#compareChart svg').count(), 1);
+  });
 });
