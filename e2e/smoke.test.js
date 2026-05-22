@@ -37,7 +37,7 @@ test('dashboard renders and is interactive', async (t) => {
   await page.waitForSelector('table tbody tr', { timeout: 15000 });
 
   await t.test('shows the header and the full holdings table', async () => {
-    assert.equal(await page.title(), 'QQQQ Component Tracker');
+    assert.match(await page.title(), /QQQQ Component Tracker/);
     assert.equal((await page.locator('h1').textContent())?.trim(), 'QQQQ Component Tracker');
     const rows = await page.locator('table tbody tr').count();
     assert.ok(rows > 50, `expected the full holdings table, got ${rows} rows`);

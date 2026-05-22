@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QQQQ Top 10 — Embed</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { margin: 0; padding: 12px; background: var(--bg); }
+    .embed-wrap { max-width: 720px; margin: 0 auto; }
+    .embed-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .embed-head h1 { font-size: 1rem; margin: 0; }
+    .embed-head a { font-size: 12px; color: var(--accent); }
+    .embed-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .embed-table th, .embed-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+    .embed-table th.num, .embed-table td.num { text-align: right; }
+    .embed-foot { margin-top: 10px; font-size: 11px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="embed-wrap">
+    <div class="embed-head">
+      <h1>QQQQ Top 10 Holdings</h1>
+      <a href="/" target="_blank" rel="noopener">Full dashboard &rarr;</a>
+    </div>
+    <table class="embed-table" id="embedTable">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>Ticker</th>
+          <th>Company</th>
+          <th class="num">Weight</th>
+          <th class="num">Day %</th>
+        </tr>
+      </thead>
+      <tbody id="embedBody"><tr><td colspan="5">Loading…</td></tr></tbody>
+    </table>
+    <p class="embed-foot" id="embedFoot">&mdash;</p>
+  </div>
+  <script type="module">
+    const fmt = (n, d = 2) => Number.isFinite(n) ? (n >= 0 ? '+' : '') + n.toFixed(d) + '%' : '—';
+    try {
+      const res = await fetch('data/holdings.json?t=' + Date.now());
+      const doc = await res.json();
+      const top = doc.holdings.slice(0, 10);
+      document.getElementById('embedBody').innerHTML = top.map((h, i) => `
+        <tr>
+          <td class="num">${i + 1}</td>
+          <td><strong>${h.ticker}</strong></td>
+          <td>${h.name}</td>
+          <td class="num">${h.weight.toFixed(2)}%</td>
+          <td class="num">${fmt(h.changePct)}</td>
+        </tr>`).join('');
+      document.getElementById('embedFoot').textContent =
+        `As of ${new Date(doc.asOf).toLocaleString()} · source: ${doc.source} · delayed quotes`;
+    } catch {
+      document.getElementById('embedBody').innerHTML =
+        '<tr><td colspan="5">Could not load holdings.</td></tr>';
+    }
+  </script>
+</body>
+</html>

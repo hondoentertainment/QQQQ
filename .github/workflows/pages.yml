@@ -29,8 +29,9 @@ jobs:
 
       - name: Assemble static site
         run: |
-          mkdir -p _site/data
-          cp index.html styles.css app.js manifest.json sw.js icon.svg _site/
+          mkdir -p _site/data _site/lib
+          cp index.html embed.html styles.css app.js manifest.json sw.js icon.svg robots.txt sitemap.xml _site/
+          cp lib/analytics.js _site/lib/
           cp data/*.json _site/data/
 
       - name: Configure Pages

@@ -32,6 +32,7 @@ const MONTHLY_FILE = path.join(ROOT, 'data', 'monthly-allocations.json');
 const CHANGES_FILE = path.join(ROOT, 'data', 'changes.json');
 const PRICE_HISTORY_FILE = path.join(ROOT, 'data', 'price-history.json');
 const REFRESH_STATUS_FILE = path.join(ROOT, 'data', 'refresh-status.json');
+const NAME_OVERRIDES_FILE = path.join(ROOT, 'data', 'name-overrides.json');
 const MAX_MONTHS = 24;
 const MAX_CHANGE_EVENTS = 50;
 const MAX_PRICE_DAYS = 180;
@@ -113,8 +114,15 @@ async function fetchSecHoldings(nameToTicker) {
   const xmlRes = await fetch(xmlUrl, { headers: { 'User-Agent': SEC_UA } });
   if (!xmlRes.ok) throw new Error('SEC N-PORT HTTP ' + xmlRes.status);
   const xml = await xmlRes.text();
-  const holdings = parseSecNportHoldings(xml, nameToTicker);
-  return validateHoldings(holdings, 'SEC N-PORT');
+  const nameOverrides = (await readJson(NAME_OVERRIDES_FILE)) || {};
+  const nameMap = buildNameTickerMap([], nameOverrides);
+  for (const [k, v] of nameToTicker) nameMap.set(k, v);
+  const { holdings, unmapped } = parseSecNportHoldings(xml, nameMap);
+  if (unmapped.length) {
+    log(`SEC N-PORT: ${unmapped.length} names could not be mapped`);
+    unmapped.slice(0, 5).forEach((u) => log(`  unmapped: ${u.name} (${u.weight}%)`));
+  }
+  return { holdings: validateHoldings(holdings, 'SEC N-PORT'), unmapped };
 }
 
 const LIVE_SOURCES = new Set(['invesco', 'fmp', 'sec-nport', 'invesco-cached', 'fmp-cached']);
@@ -127,6 +135,7 @@ async function main() {
 
   let holdings = null;
   let source = null;
+  let unmapped = [];
 
   try {
     log('fetching Invesco QQQ holdings…');
@@ -158,8 +167,10 @@ async function main() {
   if (!holdings && prev?.holdings?.length) {
     try {
       log('trying SEC N-PORT filing…');
-      const nameMap = buildNameTickerMap(prev.holdings);
-      holdings = await fetchSecHoldings(nameMap);
+      const nameMap = buildNameTickerMap(prev.holdings, (await readJson(NAME_OVERRIDES_FILE)) || {});
+      const sec = await fetchSecHoldings(nameMap);
+      holdings = sec.holdings;
+      unmapped = sec.unmapped;
       source = 'sec-nport';
       attempts.push({ source: 'sec-nport', ok: true, count: holdings.length });
       log(`got ${holdings.length} holdings from SEC N-PORT`);
@@ -277,6 +288,9 @@ async function main() {
     quoteSource,
     holdingsCount: holdings.length,
     pricedCount: priced,
+    totalWeight: holdings.reduce((s, h) => s + h.weight, 0),
+    unmappedCount: unmapped.length,
+    unmappedSample: unmapped.map((u) => u.name),
     attempts,
     fallback: fellBack,
   });

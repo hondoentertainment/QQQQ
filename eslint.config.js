@@ -23,7 +23,15 @@ export default [
   {
     files: ['app.js'],
     languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
       globals: globals.browser,
+    },
+  },
+  {
+    files: ['e2e/*.test.js'],
+    languageOptions: {
+      globals: { ...globals.node, axe: 'readonly', document: 'readonly' },
     },
   },
   {

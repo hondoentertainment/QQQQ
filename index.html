@@ -3,12 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QQQQ Component Tracker</title>
+  <title>QQQQ Component Tracker — Nasdaq-100 Holdings &amp; Weights</title>
   <meta name="description" content="Live components and monthly allocations of QQQQ (Invesco QQQ Trust / Nasdaq-100)." />
+  <link rel="canonical" href="https://qqqq-plum.vercel.app/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="QQQQ Component Tracker" />
+  <meta property="og:description" content="Every Nasdaq-100 holding with weights, delayed quotes, and monthly allocation history." />
+  <meta property="og:url" content="https://qqqq-plum.vercel.app/" />
+  <meta property="og:image" content="https://qqqq-plum.vercel.app/icon.svg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="QQQQ Component Tracker" />
+  <meta name="twitter:description" content="Nasdaq-100 holdings, weights, and monthly allocation history." />
   <meta name="theme-color" content="#00d1b2" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="preload" href="styles.css" as="style" />
   <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "QQQQ Component Tracker",
+    "description": "Dashboard for Invesco QQQ Trust (Nasdaq-100) holdings, weights, and allocation history.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "url": "https://qqqq-plum.vercel.app/"
+  }
+  </script>
   <script>
     /* Apply the saved (or OS-preferred) theme before first paint. */
     try {
@@ -40,6 +61,7 @@
           <input type="checkbox" id="autoRefresh" checked />
           <span id="autoLabel">Auto-refresh</span>
         </label>
+        <button id="helpBtn" class="btn btn-ghost" title="Keyboard shortcuts">?</button>
         <button id="themeBtn" class="btn btn-ghost">Light mode</button>
         <button id="refreshBtn" class="btn">Refresh now</button>
       </div>
@@ -47,7 +69,14 @@
 
     <div class="status-banner" id="statusBanner" role="alert" hidden></div>
 
-    <section class="cards" id="cards"></section>
+    <div class="digest-banner" id="digestBanner" hidden></div>
+
+    <section class="cards" id="cards">
+      <div class="card skeleton" aria-hidden="true"><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+      <div class="card skeleton" aria-hidden="true"><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+      <div class="card skeleton" aria-hidden="true"><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+      <div class="card skeleton" aria-hidden="true"><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+    </section>
 
     <div class="changes-banner" id="changesBanner" hidden></div>
 
@@ -65,6 +94,7 @@
           <select id="sectorFilter" aria-label="Filter holdings by sector">
             <option value="">All sectors</option>
           </select>
+          <button id="watchBtn" class="btn btn-ghost" title="Show watchlist only">&#9734; Watchlist</button>
           <button id="shareBtn" class="btn btn-ghost"
             title="Copy a link to this filtered/sorted view">Copy link</button>
           <button id="exportBtn" class="btn btn-ghost">Export CSV</button>
@@ -85,7 +115,9 @@
               <th>6-month allocation</th>
             </tr>
           </thead>
-          <tbody id="holdingsBody"></tbody>
+          <tbody id="holdingsBody">
+            <tr class="skeleton-row"><td colspan="9"><div class="sk-line"></div></td></tr>
+          </tbody>
         </table>
       </div>
       <p class="table-foot" id="tableFoot">&mdash;</p>
@@ -196,6 +228,8 @@
 
     <footer class="footer">
       <p class="data-health" id="dataHealth">&mdash;</p>
+      <p class="data-quality" id="dataQuality">&mdash;</p>
+      <p class="provenance" id="provenance">&mdash;</p>
       <p>
         &ldquo;QQQQ&rdquo; is the legacy ticker for the Invesco QQQ Trust (now <strong>QQQ</strong>),
         which tracks the Nasdaq-100. Holdings sourced from Invesco; prices from Yahoo Finance,
@@ -208,6 +242,19 @@
       </p>
     </footer>
   </div>
-  <script src="app.js"></script>
+  <div id="chartTip" class="chart-tip" hidden role="tooltip"></div>
+  <dialog id="shortcutDialog" class="shortcut-dialog">
+    <form method="dialog">
+      <h2>Keyboard shortcuts</h2>
+      <dl>
+        <dt><kbd>/</kbd></dt><dd>Focus holdings filter</dd>
+        <dt><kbd>?</kbd></dt><dd>Show this help</dd>
+        <dt><kbd>Esc</kbd></dt><dd>Clear filter / close dialog</dd>
+        <dt><kbd>w</kbd></dt><dd>Toggle watchlist-only view</dd>
+      </dl>
+      <button class="btn" value="close">Close</button>
+    </form>
+  </dialog>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

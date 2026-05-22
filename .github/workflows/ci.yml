@@ -57,3 +57,7 @@ jobs:
 
       - name: End-to-end smoke test
         run: npm run test:e2e
+
+      - name: Production smoke (main only)
+        if: github.ref == 'refs/heads/main'
+        run: npm run smoke:prod

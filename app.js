@@ -1,4 +1,9 @@
-'use strict';
+import {
+  holdingContributionBps,
+  sourceProvenance,
+  dataQualityWarnings,
+  concentrationAlert,
+} from './lib/analytics.js';
 
 const REFRESH_SECONDS = 60;
 const COLS = 9;
@@ -26,6 +31,9 @@ const SORT_KEYS = new Set(
   ['rank', 'ticker', 'name', 'sector', 'weight', 'price', 'changePct', 'mom']
 );
 
+const LS_WATCH = 'qqqq-watchlist';
+const LS_LAST_VISIT = 'qqqq-last-visit';
+
 const state = {
   holdings: null,
   monthly: null,
@@ -34,6 +42,9 @@ const state = {
   refreshStatus: null,
   offline: typeof navigator !== 'undefined' ? !navigator.onLine : false,
   loadError: null,
+  loading: true,
+  watchlist: new Set(),
+  watchOnly: false,
   sort: { key: 'weight', dir: 'desc' },
   search: '',
   sector: '',
@@ -167,6 +178,7 @@ function barChart(ticker) {
 function visibleHoldings() {
   const q = state.search.trim().toLowerCase();
   let rows = state.holdings.holdings.filter((h) => {
+    if (state.watchOnly && !state.watchlist.has(h.ticker)) return false;
     if (state.sector && h.sector !== state.sector) return false;
     if (!q) return true;
     return h.ticker.toLowerCase().includes(q) || h.name.toLowerCase().includes(q);
@@ -188,23 +200,26 @@ function visibleHoldings() {
 }
 
 /* ---------- rendering ---------- */
-function setStatusBanner(kind, message) {
+function setStatusBanner(kind, message, showRetry = false) {
   const el = $('#statusBanner');
   if (!el) return;
   if (!message) {
     el.hidden = true;
-    el.textContent = '';
+    el.innerHTML = '';
     el.className = 'status-banner';
     return;
   }
   el.hidden = false;
   el.className = 'status-banner' + (kind ? ` ${kind}` : '');
-  el.textContent = message;
+  el.innerHTML = escapeHtml(message) +
+    (showRetry ? ' <button type="button" class="btn btn-ghost banner-retry">Retry</button>' : '');
+  const retry = el.querySelector('.banner-retry');
+  if (retry) retry.addEventListener('click', () => loadData().catch(console.error), { once: true });
 }
 
 function updateConnectivityBanner() {
   if (state.loadError) {
-    setStatusBanner('error', state.loadError);
+    setStatusBanner('error', state.loadError, true);
     return;
   }
   if (state.offline) {
@@ -213,6 +228,78 @@ function updateConnectivityBanner() {
     return;
   }
   setStatusBanner('', '');
+}
+
+function loadWatchlist() {
+  try {
+    const raw = localStorage.getItem(LS_WATCH);
+    if (raw) JSON.parse(raw).forEach((t) => state.watchlist.add(t));
+  } catch { /* ignore */ }
+}
+
+function saveWatchlist() {
+  try {
+    localStorage.setItem(LS_WATCH, JSON.stringify([...state.watchlist]));
+  } catch { /* ignore */ }
+}
+
+function toggleWatch(tk, e) {
+  if (e) e.stopPropagation();
+  if (state.watchlist.has(tk)) state.watchlist.delete(tk);
+  else state.watchlist.add(tk);
+  saveWatchlist();
+  renderTable();
+}
+
+function renderDigest() {
+  const el = $('#digestBanner');
+  if (!el || !state.holdings) return;
+  let last;
+  try { last = localStorage.getItem(LS_LAST_VISIT); } catch { last = null; }
+  const parts = [];
+  const ev = state.changes?.events?.[0];
+  if (ev && (ev.added?.length || ev.removed?.length)) {
+    const when = new Date(ev.date).toLocaleDateString();
+    if (ev.added?.length) parts.push(`${ev.added.length} added (${ev.added.map((x) => x.ticker).join(', ')})`);
+    if (ev.removed?.length) parts.push(`${ev.removed.length} removed (${ev.removed.map((x) => x.ticker).join(', ')})`);
+    parts.unshift(`Index change ${when}:`);
+  }
+  if (last) {
+    const top = state.holdings.holdings.slice(0, 3);
+    const shifts = top.filter((h) => {
+      const mom = momDelta(h.ticker);
+      return mom != null && Math.abs(mom) >= 0.15;
+    });
+    if (shifts.length) {
+      parts.push(`Notable weight shifts: ${shifts.map((h) =>
+        `${h.ticker} ${fmtSigned(momDelta(h.ticker), 2, ' pp')}`).join(', ')}`);
+    }
+  }
+  if (!parts.length) { el.hidden = true; return; }
+  el.innerHTML = `<strong>Since your last visit</strong> &mdash; ${parts.join(' · ')}`;
+  el.hidden = false;
+  try { localStorage.setItem(LS_LAST_VISIT, new Date().toISOString()); } catch { /* ignore */ }
+}
+
+function renderProvenance() {
+  const d = state.holdings;
+  const rs = state.refreshStatus;
+  if (!d) return;
+  const prov = sourceProvenance(d.source, rs?.quoteSource || 'yahoo');
+  $('#provenance').innerHTML =
+    `<strong>Provenance:</strong> Weights from ${escapeHtml(prov.weights)} &middot; ` +
+    `Prices from ${escapeHtml(prov.prices)} (not real-time).`;
+}
+
+function renderDataQuality() {
+  const el = $('#dataQuality');
+  if (!el || !state.holdings) return;
+  const warnings = dataQualityWarnings(state.holdings, state.refreshStatus);
+  if (!warnings.length) {
+    el.innerHTML = '<strong>Data quality:</strong> Snapshot looks complete.';
+    return;
+  }
+  el.innerHTML = `<strong>Data quality:</strong> <span class="down">${escapeHtml(warnings.join(' · '))}</span>`;
 }
 
 function renderStatus() {
@@ -252,6 +339,8 @@ function renderStatus() {
         + 'updated it recently</span>'
       : '') +
     refreshHealthLine();
+  renderProvenance();
+  renderDataQuality();
   updateConnectivityBanner();
 }
 
@@ -319,11 +408,16 @@ function renderTable() {
       const mom = momDelta(h.ticker);
       const open = state.open.has(h.ticker);
       const main = `
-        <tr class="row ${open ? 'open' : ''}" data-tk="${h.ticker}"
-          tabindex="0" role="button" aria-expanded="${open}"
-          aria-label="${h.ticker}, ${escapeHtml(h.name)}, weight ${h.weight.toFixed(2)} percent">
-          <td class="num" data-label="Rank">${h.rank}</td>
-          <td class="tk" data-label="Ticker"><span class="caret">▸</span>${h.ticker}</td>
+        <tr class="row ${open ? 'open' : ''}" data-tk="${h.ticker}">
+          <td class="num" data-label="Rank">
+            <button type="button" class="expand-btn" data-tk="${h.ticker}"
+              aria-expanded="${open}" aria-label="Toggle ${h.ticker} details">▸</button>
+            ${h.rank}</td>
+          <td class="tk" data-label="Ticker">
+            <button type="button" class="star ${state.watchlist.has(h.ticker) ? 'on' : ''}"
+              data-star="${h.ticker}" aria-label="${state.watchlist.has(h.ticker) ? 'Remove from' : 'Add to'} watchlist"
+              title="Watchlist">${state.watchlist.has(h.ticker) ? '★' : '☆'}</button>
+            ${h.ticker}</td>
           <td class="co-name" data-label="Company" title="${escapeHtml(h.name)}">${escapeHtml(h.name)}</td>
           <td class="sector-tag" data-label="Sector">${escapeHtml(h.sector)}</td>
           <td class="num weight-cell" data-label="Weight %">
@@ -450,13 +544,17 @@ function renderMovers() {
   const gainers = ranked.filter((h) => h.changePct > 0).slice(0, MOVERS_PER_SIDE);
   const losers = ranked.filter((h) => h.changePct < 0).slice(-MOVERS_PER_SIDE).reverse();
 
-  const chip = (h) => `
+  const chip = (h) => {
+    const contrib = holdingContributionBps(h);
+    return `
     <button class="mover" type="button" data-tk="${h.ticker}"
       aria-label="${h.ticker}, ${escapeHtml(h.name)}, ${fmtSigned(h.changePct)} today">
       <span class="mv-tk">${h.ticker}</span>
       <span class="mv-price">${fmtPrice(h.price)}</span>
       <span class="mv-chg ${classOf(h.changePct)}">${fmtSigned(h.changePct)}</span>
+      ${contrib != null ? `<span class="mv-contrib">${fmtSigned(contrib, 2, ' pp')}</span>` : ''}
     </button>`;
+  };
   const col = (title, list) => `
     <div class="mv-col">
       <div class="mv-head">${title}</div>
@@ -553,9 +651,11 @@ function renderConcentration() {
   const first = series[0];
   const last = series[series.length - 1];
   const d10 = last.top10 - first.top10;
+  const alert = concentrationAlert(series);
   note.innerHTML =
     `Top 10 hold <strong>${last.top10.toFixed(1)}%</strong> of the fund ` +
-    `(<span class="${classOf(d10)}">${fmtSigned(d10, 1, ' pp')}</span> since ${first.month})`;
+    `(<span class="${classOf(d10)}">${fmtSigned(d10, 1, ' pp')}</span> since ${first.month})` +
+    (alert ? ` &middot; <span class="amber">${escapeHtml(alert)}</span>` : '');
 }
 
 /* ---------- compare holdings ---------- */
@@ -920,7 +1020,9 @@ function renderWeightHistory() {
 }
 
 function render() {
+  state.loading = false;
   renderStatus();
+  renderDigest();
   renderCards();
   renderChanges();
   renderMovers();
@@ -932,6 +1034,7 @@ function render() {
   renderSectorTrends();
   renderSectors();
   renderChangeHistory();
+  wireChartTooltips();
 }
 
 /* ---------- data loading ---------- */
@@ -1220,11 +1323,17 @@ function wireEvents() {
 
   const body = $('#holdingsBody');
   body.addEventListener('click', (e) => {
+    const star = e.target.closest('[data-star]');
+    if (star) { toggleWatch(star.dataset.star, e); return; }
+    const exp = e.target.closest('.expand-btn');
+    if (exp) { toggleRow(exp.dataset.tk); return; }
     const row = e.target.closest('tr.row');
     if (row) toggleRow(row.dataset.tk);
   });
   body.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
+    const exp = e.target.closest('.expand-btn');
+    if (exp) { e.preventDefault(); toggleRow(exp.dataset.tk); return; }
     const row = e.target.closest('tr.row');
     if (row) { e.preventDefault(); toggleRow(row.dataset.tk); }
   });
@@ -1248,6 +1357,12 @@ function wireEvents() {
   $('#exportBtn').addEventListener('click', exportCsv);
   $('#shareBtn').addEventListener('click', copyShareLink);
   $('#themeBtn').addEventListener('click', toggleTheme);
+  $('#helpBtn').addEventListener('click', () => $('#shortcutDialog').showModal());
+  $('#watchBtn').addEventListener('click', () => {
+    state.watchOnly = !state.watchOnly;
+    $('#watchBtn').classList.toggle('active', state.watchOnly);
+    renderTable();
+  });
 
   $('#movers').addEventListener('click', (e) => {
     const chip = e.target.closest('.mover');
@@ -1282,10 +1397,56 @@ function wireEvents() {
 
   // Press "/" anywhere outside a field to jump to the holdings filter.
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if ($('#shortcutDialog').open) return;
+      state.search = '';
+      $('#search').value = '';
+      renderTable();
+      syncUrl();
+      return;
+    }
+    if (e.key === '?' && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName)) {
+      e.preventDefault();
+      $('#shortcutDialog').showModal();
+      return;
+    }
+    if (e.key === 'w' && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName)) {
+      state.watchOnly = !state.watchOnly;
+      $('#watchBtn')?.classList.toggle('active', state.watchOnly);
+      renderTable();
+      return;
+    }
     if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
     if (/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName)) return;
     e.preventDefault();
     $('#search').focus();
+  });
+}
+
+function wireChartTooltips() {
+  const tip = $('#chartTip');
+  if (!tip) return;
+  const show = (text, x, y) => {
+    tip.textContent = text;
+    tip.hidden = false;
+    tip.style.left = `${x + 12}px`;
+    tip.style.top = `${y - 8}px`;
+  };
+  const hide = () => { tip.hidden = true; };
+  document.querySelectorAll('.chartbox svg, .concentration svg, .compare svg').forEach((svg) => {
+    svg.addEventListener('mousemove', (e) => {
+      const circle = e.target.closest('circle');
+      if (!circle) { hide(); return; }
+      const title = circle.querySelector('title');
+      if (title) show(title.textContent, e.clientX, e.clientY);
+    });
+    svg.addEventListener('mouseleave', hide);
+    svg.addEventListener('touchstart', (e) => {
+      const circle = e.target.closest('circle');
+      if (!circle) return;
+      const title = circle.querySelector('title');
+      if (title) show(title.textContent, e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
   });
 }
 
@@ -1326,6 +1487,7 @@ function registerServiceWorker() {
 
 /* ---------- boot ---------- */
 (async function init() {
+  loadWatchlist();
   wireEvents();
   wireConnectivity();
   registerServiceWorker();

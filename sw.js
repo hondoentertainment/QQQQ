@@ -1,6 +1,6 @@
 // Offline cache for the static dashboard and last-good data snapshots.
 const CACHE = 'qqqq-v1';
-const SHELL = ['/', '/index.html', '/app.js', '/styles.css', '/manifest.json', '/icon.svg'];
+const SHELL = ['/', '/index.html', '/embed.html', '/app.js', '/lib/analytics.js', '/styles.css', '/manifest.json', '/icon.svg'];
 const DATA = [
   '/data/holdings.json',
   '/data/monthly-allocations.json',

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BUDGET_BYTES = 180 * 1024;
 
-const FILES = ['index.html', 'app.js', 'styles.css', 'manifest.json', 'sw.js', 'icon.svg'];
+const FILES = ['index.html', 'embed.html', 'app.js', 'lib/analytics.js', 'styles.css', 'manifest.json', 'sw.js', 'icon.svg'];
 
 let total = 0;
 for (const file of FILES) {

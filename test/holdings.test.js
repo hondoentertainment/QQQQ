@@ -197,6 +197,23 @@ test('parseSecNportHoldings maps SEC names to tickers via a prior snapshot', () 
   assert.throws(() => parseSecNportHoldings(xml, nameMap), /mapped only 2/);
 });
 
+test('parseSecNportHoldings reports unmapped SEC names', () => {
+  const nameMap = buildNameTickerMap(
+    Array.from({ length: 80 }, (_, i) => ({
+      ticker: 'T' + i,
+      name: 'Company ' + i,
+    }))
+  );
+  let block = '';
+  for (let i = 0; i < 80; i++) {
+    block += `<invstOrSec><name>Company ${i}</name><pctVal>1.1</pctVal><assetCat>EC</assetCat></invstOrSec>`;
+  }
+  block += '<invstOrSec><name>Unknown Corp XYZ</name><pctVal>1.2</pctVal><assetCat>EC</assetCat></invstOrSec>';
+  const { unmapped, holdings } = parseSecNportHoldings(block, nameMap);
+  assert.equal(unmapped.length, 1);
+  assert.equal(holdings.length, 80);
+});
+
 test('buildRefreshStatus records quote success rate and attempts', () => {
   const status = buildRefreshStatus({
     runAt: '2026-05-22T12:00:00.000Z',
