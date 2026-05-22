@@ -37,8 +37,12 @@
       <div class="panel-head">
         <h2>Holdings &amp; monthly allocation</h2>
         <div class="controls">
-          <input type="search" id="search" placeholder="Filter ticker or name&hellip;" autocomplete="off" />
-          <select id="sectorFilter"><option value="">All sectors</option></select>
+          <input type="search" id="search" placeholder="Filter ticker or name&hellip;"
+            autocomplete="off" aria-label="Filter holdings by ticker or company name" />
+          <select id="sectorFilter" aria-label="Filter holdings by sector">
+            <option value="">All sectors</option>
+          </select>
+          <button id="exportBtn" class="btn btn-ghost">Export CSV</button>
         </div>
       </div>
       <div class="table-wrap">

@@ -102,15 +102,23 @@ const server = http.createServer(async (req, res) => {
   createReadStream(filePath).pipe(res);
 });
 
-server.listen(PORT, () => {
-  console.log(`QQQQ component tracker -> http://localhost:${PORT}`);
-});
+// Only listen when run directly (`node server.js`), not when imported by tests.
+const invokedDirectly =
+  process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
-const refreshMinutes = Number(process.env.REFRESH_MINUTES) || 0;
-if (refreshMinutes > 0) {
-  console.log(`auto-refresh enabled: every ${refreshMinutes} min`);
-  setInterval(() => {
-    console.log('[server] running scheduled refresh');
-    runRefresh();
-  }, refreshMinutes * 60 * 1000);
+if (invokedDirectly) {
+  server.listen(PORT, () => {
+    console.log(`QQQQ component tracker -> http://localhost:${PORT}`);
+  });
+
+  const refreshMinutes = Number(process.env.REFRESH_MINUTES) || 0;
+  if (refreshMinutes > 0) {
+    console.log(`auto-refresh enabled: every ${refreshMinutes} min`);
+    setInterval(() => {
+      console.log('[server] running scheduled refresh');
+      runRefresh();
+    }, refreshMinutes * 60 * 1000);
+  }
 }
+
+export { server };

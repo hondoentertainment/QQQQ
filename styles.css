@@ -73,6 +73,12 @@ body {
 .btn:hover { opacity: 0.9; }
 .btn:active { transform: translateY(1px); }
 .btn:disabled { opacity: 0.5; cursor: progress; }
+.btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--line); font-weight: 600;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---- cards ---- */
 .cards {

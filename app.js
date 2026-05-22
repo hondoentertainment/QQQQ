@@ -28,9 +28,6 @@ function escapeHtml(s) {
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
   ));
 }
-function fmtPct(n, d = 2) {
-  return Number.isFinite(n) ? n.toFixed(d) + '%' : '—';
-}
 function fmtSigned(n, d = 2, unit = '%') {
   if (!Number.isFinite(n)) return '—';
   return (n >= 0 ? '+' : '') + n.toFixed(d) + unit;
@@ -207,7 +204,9 @@ function renderTable() {
       const mom = momDelta(h.ticker);
       const open = state.open.has(h.ticker);
       const main = `
-        <tr class="row ${open ? 'open' : ''}" data-tk="${h.ticker}">
+        <tr class="row ${open ? 'open' : ''}" data-tk="${h.ticker}"
+          tabindex="0" role="button" aria-expanded="${open}"
+          aria-label="${h.ticker}, ${escapeHtml(h.name)}, weight ${h.weight.toFixed(2)} percent">
           <td class="num">${h.rank}</td>
           <td class="tk"><span class="caret">▸</span>${h.ticker}</td>
           <td class="co-name" title="${escapeHtml(h.name)}">${escapeHtml(h.name)}</td>
@@ -227,10 +226,14 @@ function renderTable() {
 
   document.querySelectorAll('#holdingsTable thead th').forEach((th) => {
     th.classList.remove('sorted', 'desc');
-    if (th.dataset.sort === state.sort.key) {
+    const active = th.dataset.sort === state.sort.key;
+    if (active) {
       th.classList.add('sorted');
       if (state.sort.dir === 'desc') th.classList.add('desc');
     }
+    th.setAttribute('aria-sort', active
+      ? (state.sort.dir === 'asc' ? 'ascending' : 'descending')
+      : 'none');
   });
   $('#tableFoot').textContent =
     `Showing ${rows.length} of ${state.holdings.count} holdings · ` +
@@ -387,27 +390,71 @@ async function manualRefresh() {
 }
 
 /* ---------- events ---------- */
+function sortBy(key) {
+  if (!key) return;
+  if (state.sort.key === key) {
+    state.sort.dir = state.sort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.sort.key = key;
+    state.sort.dir = ['ticker', 'name', 'sector'].includes(key) ? 'asc' : 'desc';
+  }
+  renderTable();
+}
+
+function toggleRow(tk) {
+  if (!tk) return;
+  if (state.open.has(tk)) state.open.delete(tk);
+  else state.open.add(tk);
+  renderTable();
+}
+
+function csvCell(value) {
+  const s = value == null ? '' : String(value);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+// Export the currently filtered/sorted holdings, including monthly allocations.
+function exportCsv() {
+  const rows = visibleHoldings();
+  const months = state.monthly.months;
+  const header = ['Rank', 'Ticker', 'Company', 'Sector', 'Weight %', 'Price',
+    'Day Change %', 'MoM Delta (pp)', ...months.map((m) => 'Alloc ' + m)];
+  const lines = [header];
+  for (const h of rows) {
+    const series = monthSeries(h.ticker);
+    lines.push([h.rank, h.ticker, h.name, h.sector, h.weight, h.price,
+      h.changePct, momDelta(h.ticker), ...series]);
+  }
+  const csv = lines.map((r) => r.map(csvCell).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `qqqq-holdings-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 function wireEvents() {
   document.querySelectorAll('#holdingsTable thead th').forEach((th) => {
-    th.addEventListener('click', () => {
-      const key = th.dataset.sort;
-      if (state.sort.key === key) {
-        state.sort.dir = state.sort.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        state.sort.key = key;
-        state.sort.dir = ['ticker', 'name', 'sector'].includes(key) ? 'asc' : 'desc';
-      }
-      renderTable();
+    th.tabIndex = 0;
+    th.setAttribute('aria-sort', 'none');
+    th.addEventListener('click', () => sortBy(th.dataset.sort));
+    th.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortBy(th.dataset.sort); }
     });
   });
 
-  $('#holdingsBody').addEventListener('click', (e) => {
+  const body = $('#holdingsBody');
+  body.addEventListener('click', (e) => {
     const row = e.target.closest('tr.row');
-    if (!row) return;
-    const tk = row.dataset.tk;
-    if (state.open.has(tk)) state.open.delete(tk);
-    else state.open.add(tk);
-    renderTable();
+    if (row) toggleRow(row.dataset.tk);
+  });
+  body.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const row = e.target.closest('tr.row');
+    if (row) { e.preventDefault(); toggleRow(row.dataset.tk); }
   });
 
   $('#search').addEventListener('input', (e) => {
@@ -424,6 +471,7 @@ function wireEvents() {
     renderStatus();
   });
   $('#refreshBtn').addEventListener('click', manualRefresh);
+  $('#exportBtn').addEventListener('click', exportCsv);
 }
 
 function startClock() {
