@@ -2,7 +2,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-05-22T16:54:38.175Z",
+  "asOf": "2026-05-22T17:32:31.463Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -12,71 +12,71 @@
       "name": "NVIDIA Corp",
       "sector": "Technology",
       "weight": 9.6,
-      "price": 216.84,
-      "changePct": -2.97
+      "price": 217.75,
+      "changePct": -2.56
     },
     {
       "ticker": "AAPL",
       "name": "Apple Inc",
       "sector": "Technology",
       "weight": 8.1,
-      "price": 309.22,
-      "changePct": 2.31
+      "price": 309.83,
+      "changePct": 2.51
     },
     {
       "ticker": "MSFT",
       "name": "Microsoft Corp",
       "sector": "Technology",
       "weight": 7.9,
-      "price": 419.07,
-      "changePct": -0.47
+      "price": 418.74,
+      "changePct": -0.55
     },
     {
       "ticker": "AMZN",
       "name": "Amazon.com Inc",
       "sector": "Consumer Discretionary",
       "weight": 5.6,
-      "price": 267.65,
-      "changePct": 1
+      "price": 269.08,
+      "changePct": 1.54
     },
     {
       "ticker": "AVGO",
       "name": "Broadcom Inc",
       "sector": "Technology",
       "weight": 5.2,
-      "price": 413.77,
-      "changePct": -0.95
+      "price": 414.31,
+      "changePct": -0.83
     },
     {
       "ticker": "META",
       "name": "Meta Platforms Inc Class A",
       "sector": "Communication Services",
       "weight": 3.9,
-      "price": 607.64,
-      "changePct": 0.43
+      "price": 609.74,
+      "changePct": 0.77
     },
     {
       "ticker": "TSLA",
       "name": "Tesla Inc",
       "sector": "Consumer Discretionary",
       "weight": 2.9,
-      "price": 427.22,
-      "changePct": 2.39
+      "price": 429.63,
+      "changePct": 2.96
     },
     {
       "ticker": "NFLX",
       "name": "Netflix Inc",
       "sector": "Communication Services",
       "weight": 2.7,
-      "price": 88.53,
-      "changePct": 0.5
+      "price": 88.45,
+      "changePct": 0.41
     },
     {
       "ticker": "GOOGL",
       "name": "Alphabet Inc Class A",
       "sector": "Communication Services",
       "weight": 2.6,
-      "price": 385.94,
+      "price": 385.96,
       "changePct": -0.76
     },
     {
@@ -84,63 +84,63 @@
       "name": "Costco Wholesale Corp",
       "sector": "Consumer Staples",
       "weight": 2.6,
-      "price": 1030.5,
-      "changePct": -4.05
+      "price": 1028.01,
+      "changePct": -4.28
     },
     {
       "ticker": "GOOG",
       "name": "Alphabet Inc Class C",
       "sector": "Communication Services",
       "weight": 2.5,
-      "price": 382.3,
-      "changePct": -0.68
+      "price": 382.16,
+      "changePct": -0.71
     },
     {
       "ticker": "PLTR",
       "name": "Palantir Technologies Inc",
       "sector": "Technology",
       "weight": 2,
-      "price": 136.76,
-      "changePct": -0.28
+      "price": 137.27,
+      "changePct": 0.09
     },
     {
       "ticker": "CSCO",
       "name": "Cisco Systems Inc",
       "sector": "Technology",
       "weight": 1.4,
-      "price": 120.59,
-      "changePct": 5.46
+      "price": 120.5,
+      "changePct": 5.38
     },
     {
       "ticker": "TMUS",
       "name": "T-Mobile US Inc",
       "sector": "Communication Services",
       "weight": 1.3,
-      "price": 191.16,
-      "changePct": 0.52
+      "price": 190.78,
+      "changePct": 0.33
     },
     {
       "ticker": "AMD",
       "name": "Advanced Micro Devices Inc",
       "sector": "Technology",
       "weight": 1.3,
-      "price": 469.57,
-      "changePct": 4.91
+      "price": 471.46,
+      "changePct": 5.34
     },
     {
       "ticker": "INTU",
       "name": "Intuit Inc",
       "sector": "Technology",
       "weight": 1.2,
-      "price": 310.87,
-      "changePct": -19.03
+      "price": 316.96,
+      "changePct": -17.44
     },
     {
       "ticker": "APP",
       "name": "AppLovin Corp",
       "sector": "Technology",
       "weight": 1.2,
-      "price": 485.64,
+      "price": 485.68,
       "changePct": 0.7
     },
     {
@@ -148,15 +148,15 @@
       "name": "PepsiCo Inc",
       "sector": "Consumer Staples",
       "weight": 1.2,
-      "price": 149.78,
-      "changePct": 0.33
+      "price": 149.85,
+      "changePct": 0.38
     },
     {
       "ticker": "TXN",
       "name": "Texas Instruments Inc",
       "sector": "Technology",
       "weight": 1.1,
-      "price": 314.64,
+      "price": 314.63,
       "changePct": 3.2
     },
     {
@@ -164,632 +164,632 @@
       "name": "Qualcomm Inc",
       "sector": "Technology",
       "weight": 1.1,
-      "price": 239.18,
-      "changePct": 18.11
+      "price": 239.06,
+      "changePct": 18.05
     },
     {
       "ticker": "AMGN",
       "name": "Amgen Inc",
       "sector": "Health Care",
       "weight": 1.1,
-      "price": 339.06,
-      "changePct": 2.26
+      "price": 339,
+      "changePct": 2.24
     },
     {
       "ticker": "ISRG",
       "name": "Intuitive Surgical Inc",
       "sector": "Health Care",
       "weight": 1.1,
-      "price": 439.38,
-      "changePct": -2.15
+      "price": 438.85,
+      "changePct": -2.27
     },
     {
       "ticker": "BKNG",
       "name": "Booking Holdings Inc",
       "sector": "Consumer Discretionary",
       "weight": 1.1,
-      "price": 161.14,
-      "changePct": 2.67
+      "price": 162.04,
+      "changePct": 3.24
     },
     {
       "ticker": "ADBE",
       "name": "Adobe Inc",
       "sector": "Technology",
       "weight": 1,
-      "price": 244.4,
-      "changePct": -3.54
+      "price": 244.67,
+      "changePct": -3.43
     },
     {
       "ticker": "HON",
       "name": "Honeywell International Inc",
       "sector": "Industrials",
       "weight": 0.9,
-      "price": 228.31,
-      "changePct": 5.03
+      "price": 228.1,
+      "changePct": 4.93
     },
     {
       "ticker": "CMCSA",
       "name": "Comcast Corp",
       "sector": "Communication Services",
       "weight": 0.9,
-      "price": 25.05,
-      "changePct": 0.7
+      "price": 25.04,
+      "changePct": 0.62
     },
     {
       "ticker": "AMAT",
       "name": "Applied Materials Inc",
       "sector": "Technology",
       "weight": 0.9,
-      "price": 435.95,
-      "changePct": 2.13
+      "price": 437.66,
+      "changePct": 2.53
     },
     {
       "ticker": "MU",
       "name": "Micron Technology Inc",
       "sector": "Technology",
       "weight": 0.9,
-      "price": 766.72,
-      "changePct": 4.74
+      "price": 769.14,
+      "changePct": 5.08
     },
     {
       "ticker": "GILD",
       "name": "Gilead Sciences Inc",
       "sector": "Health Care",
       "weight": 0.8,
-      "price": 133.42,
-      "changePct": 2.09
+      "price": 133.71,
+      "changePct": 2.31
     },
     {
       "ticker": "PANW",
       "name": "Palo Alto Networks Inc",
       "sector": "Technology",
       "weight": 0.8,
-      "price": 260.27,
-      "changePct": 5.52
+      "price": 259.23,
+      "changePct": 5.09
     },
     {
       "ticker": "ARM",
       "name": "Arm Holdings plc ADR",
       "sector": "Technology",
       "weight": 0.8,
-      "price": 307.69,
-      "changePct": 19.85
+      "price": 306.69,
+      "changePct": 19.46
     },
     {
       "ticker": "ADP",
       "name": "Automatic Data Processing Inc",
       "sector": "Industrials",
       "weight": 0.8,
-      "price": 224.65,
-      "changePct": 1.79
+      "price": 224.78,
+      "changePct": 1.86
     },
     {
       "ticker": "LRCX",
       "name": "Lam Research Corp",
       "sector": "Technology",
       "weight": 0.8,
-      "price": 307.43,
-      "changePct": 5.25
+      "price": 309.01,
+      "changePct": 5.79
     },
     {
       "ticker": "VRTX",
       "name": "Vertex Pharmaceuticals Inc",
       "sector": "Health Care",
       "weight": 0.7,
-      "price": 434.18,
-      "changePct": 0.87
+      "price": 435.52,
+      "changePct": 1.18
     },
     {
       "ticker": "KLAC",
       "name": "KLA Corp",
       "sector": "Technology",
       "weight": 0.7,
-      "price": 1900.16,
-      "changePct": 3.86
+      "price": 1908.5,
+      "changePct": 4.32
     },
     {
       "ticker": "CRWD",
       "name": "CrowdStrike Holdings Inc",
       "sector": "Technology",
       "weight": 0.7,
-      "price": 669.46,
-      "changePct": 2.98
+      "price": 667.04,
+      "changePct": 2.6
     },
     {
       "ticker": "SBUX",
       "name": "Starbucks Corp",
       "sector": "Consumer Discretionary",
       "weight": 0.6,
-      "price": 102.63,
-      "changePct": -3.64
+      "price": 102.86,
+      "changePct": -3.42
     },
     {
       "ticker": "INTC",
       "name": "Intel Corp",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 120.6,
-      "changePct": 1.38
+      "price": 121.1,
+      "changePct": 1.8
     },
     {
       "ticker": "MELI",
       "name": "MercadoLibre Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.6,
-      "price": 1651.83,
-      "changePct": 0.04
+      "price": 1670,
+      "changePct": 1.14
     },
     {
       "ticker": "ADI",
       "name": "Analog Devices Inc",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 397.08,
-      "changePct": -0.24
+      "price": 397.16,
+      "changePct": -0.22
     },
     {
       "ticker": "MSTR",
       "name": "MicroStrategy Inc",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 162.94,
-      "changePct": -1.73
+      "price": 163.5,
+      "changePct": -1.4
     },
     {
       "ticker": "CEG",
       "name": "Constellation Energy Corp",
       "sector": "Utilities",
       "weight": 0.6,
-      "price": 296.06,
-      "changePct": 5.26
+      "price": 295.16,
+      "changePct": 4.94
     },
     {
       "ticker": "CDNS",
       "name": "Cadence Design Systems Inc",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 378.71,
-      "changePct": 7.93
+      "price": 379.1,
+      "changePct": 8.04
     },
     {
       "ticker": "MDLZ",
       "name": "Mondelez International Inc",
       "sector": "Consumer Staples",
       "weight": 0.5,
-      "price": 61.87,
-      "changePct": 0.05
+      "price": 61.85,
+      "changePct": 0.02
     },
     {
       "ticker": "REGN",
       "name": "Regeneron Pharmaceuticals Inc",
       "sector": "Health Care",
       "weight": 0.5,
-      "price": 635.1,
-      "changePct": -2.26
+      "price": 636,
+      "changePct": -2.12
     },
     {
       "ticker": "SNPS",
       "name": "Synopsys Inc",
       "sector": "Technology",
       "weight": 0.5,
-      "price": 530.5,
-      "changePct": 6.33
+      "price": 532.01,
+      "changePct": 6.63
     },
     {
       "ticker": "PYPL",
       "name": "PayPal Holdings Inc",
       "sector": "Financials",
       "weight": 0.5,
-      "price": 44.23,
-      "changePct": -0.32
+      "price": 44.19,
+      "changePct": -0.42
     },
     {
       "ticker": "MRVL",
       "name": "Marvell Technology Inc",
       "sector": "Technology",
       "weight": 0.5,
-      "price": 197.6,
-      "changePct": 5.78
+      "price": 196.75,
+      "changePct": 5.33
     },
     {
       "ticker": "ORLY",
       "name": "O'Reilly Automotive Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.5,
-      "price": 92.85,
-      "changePct": 0.68
+      "price": 92.33,
+      "changePct": 0.12
     },
     {
       "ticker": "PDD",
       "name": "PDD Holdings Inc ADR",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 93.89,
-      "changePct": -4.35
+      "price": 94.11,
+      "changePct": -4.11
     },
     {
       "ticker": "CSX",
       "name": "CSX Corp",
       "sector": "Industrials",
       "weight": 0.4,
-      "price": 45.8,
-      "changePct": -0.32
+      "price": 45.74,
+      "changePct": -0.44
     },
     {
       "ticker": "ABNB",
       "name": "Airbnb Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 132.38,
-      "changePct": -2.34
+      "price": 132.73,
+      "changePct": -2.08
     },
     {
       "ticker": "WDAY",
       "name": "Workday Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 128.66,
-      "changePct": 1.62
+      "price": 128.59,
+      "changePct": 1.56
     },
     {
       "ticker": "FTNT",
       "name": "Fortinet Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 133.5,
-      "changePct": 2.69
+      "price": 133.51,
+      "changePct": 2.7
     },
     {
       "ticker": "NXPI",
       "name": "NXP Semiconductors NV",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 312.24,
-      "changePct": 0.67
+      "price": 315.67,
+      "changePct": 1.78
     },
     {
       "ticker": "ADSK",
       "name": "Autodesk Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 241.28,
-      "changePct": -0.96
+      "price": 241.04,
+      "changePct": -1.06
     },
     {
       "ticker": "PCAR",
       "name": "PACCAR Inc",
       "sector": "Industrials",
       "weight": 0.4,
-      "price": 109.58,
-      "changePct": -1.85
+      "price": 109.62,
+      "changePct": -1.81
     },
     {
       "ticker": "ROP",
       "name": "Roper Technologies Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 326.32,
-      "changePct": 0.99
+      "price": 325.51,
+      "changePct": 0.74
     },
     {
       "ticker": "MAR",
       "name": "Marriott International Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 368.44,
-      "changePct": -0.35
+      "price": 369.17,
+      "changePct": -0.16
     },
     {
       "ticker": "DASH",
       "name": "DoorDash Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 161.67,
-      "changePct": 0.58
+      "price": 162.52,
+      "changePct": 1.11
     },
     {
       "ticker": "AZN",
       "name": "AstraZeneca plc ADR",
       "sector": "Health Care",
       "weight": 0.3,
-      "price": 187.91,
-      "changePct": 0.24
+      "price": 188.24,
+      "changePct": 0.42
     },
     {
       "ticker": "ASML",
       "name": "ASML Holding NV ADR",
       "sector": "Technology",
       "weight": 0.3,
-      "price": 1643.59,
-      "changePct": 6.03
+      "price": 1651.76,
+      "changePct": 6.56
     },
     {
       "ticker": "TTD",
       "name": "The Trade Desk Inc",
       "sector": "Technology",
       "weight": 0.3,
-      "price": 22.36,
-      "changePct": 6.4
+      "price": 22.46,
+      "changePct": 6.85
     },
     {
       "ticker": "MNST",
       "name": "Monster Beverage Corp",
       "sector": "Consumer Staples",
       "weight": 0.3,
-      "price": 86.42,
-      "changePct": -0.52
+      "price": 86.5,
+      "changePct": -0.43
     },
     {
       "ticker": "AEP",
       "name": "American Electric Power Co",
       "sector": "Utilities",
       "weight": 0.3,
-      "price": 131.16,
-      "changePct": 1.78
+      "price": 130.98,
+      "changePct": 1.64
     },
     {
       "ticker": "CPRT",
       "name": "Copart Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 33.94,
-      "changePct": 2.71
+      "price": 33.98,
+      "changePct": 2.85
     },
     {
       "ticker": "PAYX",
       "name": "Paychex Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 96.67,
-      "changePct": 1.84
+      "price": 96.64,
+      "changePct": 1.81
     },
     {
       "ticker": "ROST",
       "name": "Ross Stores Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.3,
-      "price": 231.78,
-      "changePct": 6.42
+      "price": 232.25,
+      "changePct": 6.64
     },
     {
       "ticker": "KDP",
       "name": "Keurig Dr Pepper Inc",
       "sector": "Consumer Staples",
       "weight": 0.3,
-      "price": 29.04,
-      "changePct": 1.2
+      "price": 29.02,
+      "changePct": 1.13
     },
     {
       "ticker": "CTAS",
       "name": "Cintas Corp",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 173.23,
-      "changePct": 1.09
+      "price": 173.42,
+      "changePct": 1.2
     },
     {
       "ticker": "ODFL",
       "name": "Old Dominion Freight Line Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 209.09,
-      "changePct": -0.35
+      "price": 209.83,
+      "changePct": 0
     },
     {
       "ticker": "FAST",
       "name": "Fastenal Co",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 43.91,
-      "changePct": 0.52
+      "price": 43.88,
+      "changePct": 0.45
     },
     {
       "ticker": "DDOG",
       "name": "Datadog Inc",
       "sector": "Technology",
       "weight": 0.3,
-      "price": 223,
-      "changePct": 5.07
+      "price": 222.55,
+      "changePct": 4.86
     },
     {
       "ticker": "CHTR",
       "name": "Charter Communications Inc",
       "sector": "Communication Services",
       "weight": 0.3,
-      "price": 144.31,
-      "changePct": -0.21
+      "price": 144.37,
+      "changePct": -0.17
     },
     {
       "ticker": "EXC",
       "name": "Exelon Corp",
       "sector": "Utilities",
       "weight": 0.3,
-      "price": 46.02,
-      "changePct": 2.55
+      "price": 45.8,
+      "changePct": 2.08
     },
     {
       "ticker": "AXON",
       "name": "Axon Enterprise Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 386.43,
-      "changePct": -3.01
+      "price": 385.54,
+      "changePct": -3.24
     },
     {
       "ticker": "VRSK",
       "name": "Verisk Analytics Inc",
       "sector": "Industrials",
       "weight": 0.2,
-      "price": 171.85,
-      "changePct": 0.7
+      "price": 171.43,
+      "changePct": 0.45
     },
     {
       "ticker": "XEL",
       "name": "Xcel Energy Inc",
       "sector": "Utilities",
       "weight": 0.2,
-      "price": 80.93,
-      "changePct": 1.34
+      "price": 80.88,
+      "changePct": 1.28
     },
     {
       "ticker": "EA",
       "name": "Electronic Arts Inc",
       "sector": "Communication Services",
       "weight": 0.2,
-      "price": 201.47,
-      "changePct": -0.06
+      "price": 201.38,
+      "changePct": -0.1
     },
     {
       "ticker": "CTSH",
       "name": "Cognizant Technology Solutions Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 52.88,
-      "changePct": 3.07
+      "price": 52.87,
+      "changePct": 3.06
     },
     {
       "ticker": "TTWO",
       "name": "Take-Two Interactive Software Inc",
       "sector": "Communication Services",
       "weight": 0.2,
-      "price": 228.05,
-      "changePct": -3.62
+      "price": 229.36,
+      "changePct": -3.07
     },
     {
       "ticker": "IDXX",
       "name": "IDEXX Laboratories Inc",
       "sector": "Health Care",
       "weight": 0.2,
-      "price": 557.95,
-      "changePct": 0.79
+      "price": 557.66,
+      "changePct": 0.74
     },
     {
       "ticker": "BKR",
       "name": "Baker Hughes Co",
       "sector": "Energy",
       "weight": 0.2,
-      "price": 65.86,
-      "changePct": -1.39
+      "price": 65.9,
+      "changePct": -1.33
     },
     {
       "ticker": "KHC",
       "name": "Kraft Heinz Co",
       "sector": "Consumer Staples",
       "weight": 0.2,
-      "price": 23.91,
-      "changePct": 1.64
+      "price": 23.86,
+      "changePct": 1.42
     },
     {
       "ticker": "FANG",
       "name": "Diamondback Energy Inc",
       "sector": "Energy",
       "weight": 0.2,
-      "price": 200.11,
-      "changePct": -2.07
+      "price": 198.75,
+      "changePct": -2.73
     },
     {
       "ticker": "GEHC",
       "name": "GE HealthCare Technologies Inc",
       "sector": "Health Care",
       "weight": 0.2,
-      "price": 64.22,
-      "changePct": -0.06
+      "price": 64.12,
+      "changePct": -0.22
     },
     {
       "ticker": "CDW",
       "name": "CDW Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 109.89,
-      "changePct": 3.46
+      "price": 110.39,
+      "changePct": 3.94
     },
     {
       "ticker": "DXCM",
       "name": "DexCom Inc",
       "sector": "Health Care",
       "weight": 0.2,
-      "price": 72.88,
-      "changePct": 2.02
+      "price": 72.59,
+      "changePct": 1.61
     },
     {
       "ticker": "CCEP",
       "name": "Coca-Cola Europacific Partners plc",
       "sector": "Consumer Staples",
       "weight": 0.2,
-      "price": 93.99,
-      "changePct": 0.76
+      "price": 94.09,
+      "changePct": 0.87
     },
     {
       "ticker": "TEAM",
       "name": "Atlassian Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 85.88,
-      "changePct": -0.41
+      "price": 85.97,
+      "changePct": -0.3
     },
     {
       "ticker": "MCHP",
       "name": "Microchip Technology Inc",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 94.41,
-      "changePct": 0.41
+      "price": 94.42,
+      "changePct": 0.43
     },
     {
       "ticker": "ON",
       "name": "ON Semiconductor Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 116.67,
-      "changePct": 5.87
+      "price": 117.73,
+      "changePct": 6.82
     },
     {
       "ticker": "CSGP",
       "name": "CoStar Group Inc",
       "sector": "Real Estate",
       "weight": 0.2,
-      "price": 33.82,
-      "changePct": -0.56
+      "price": 33.73,
+      "changePct": -0.84
     },
     {
       "ticker": "WBD",
       "name": "Warner Bros Discovery Inc",
       "sector": "Communication Services",
       "weight": 0.2,
-      "price": 27.12,
-      "changePct": -1.09
+      "price": 27.11,
+      "changePct": -1.15
     },
     {
       "ticker": "ZS",
       "name": "Zscaler Inc",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 178.89,
-      "changePct": 2.55
+      "price": 180.05,
+      "changePct": 3.21
     },
     {
       "ticker": "LULU",
       "name": "Lululemon Athletica Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.2,
-      "price": 126.2,
-      "changePct": 0.81
+      "price": 126.77,
+      "changePct": 1.26
     },
     {
       "ticker": "GFS",
       "name": "GlobalFoundries Inc",
       "sector": "Technology",
       "weight": 0.1,
-      "price": 85.8,
-      "changePct": 21.2
+      "price": 86.48,
+      "changePct": 22.17
     },
     {
       "ticker": "BIIB",
       "name": "Biogen Inc",
       "sector": "Health Care",
       "weight": 0.1,
-      "price": 193.21,
-      "changePct": 2.88
+      "price": 194.1,
+      "changePct": 3.35
     }
   ]
 }
