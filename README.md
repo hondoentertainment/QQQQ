@@ -123,7 +123,9 @@ project settings — without it the function falls back to Yahoo Finance.
 
 The Vercel CLI is included as a dev dependency: run `npx vercel dev` to
 preview the dashboard and the `/api/quotes` function together locally, or
-`npx vercel deploy` to deploy from the command line.
+`npx vercel deploy` to deploy from the command line. The CLI bundles many
+transitive packages, so `npm audit` reports advisories from them — all
+dev-only and never shipped to the app; see [`SECURITY.md`](SECURITY.md).
 
 ## Data sources & notes
 
