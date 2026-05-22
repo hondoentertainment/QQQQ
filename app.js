@@ -4,6 +4,12 @@ const REFRESH_SECONDS = 60;
 const COLS = 9;
 
 const QUOTE_POLL_SECONDS = 20;
+const MOVERS_PER_SIDE = 5;
+
+// Sort keys accepted from the table headers and the shareable URL.
+const SORT_KEYS = new Set(
+  ['rank', 'ticker', 'name', 'sector', 'weight', 'price', 'changePct', 'mom']
+);
 
 const state = {
   holdings: null,
@@ -311,10 +317,44 @@ function renderChanges() {
   el.hidden = false;
 }
 
+// Biggest daily gainers and losers among priced holdings. Hidden entirely
+// until prices are available (e.g. before the first cron run on static hosting).
+function renderMovers() {
+  const panel = $('#moversPanel');
+  const priced = state.holdings.holdings.filter((h) => Number.isFinite(h.changePct));
+  if (!priced.length) {
+    panel.hidden = true;
+    return;
+  }
+  const ranked = priced.slice().sort((a, b) => b.changePct - a.changePct);
+  const gainers = ranked.filter((h) => h.changePct > 0).slice(0, MOVERS_PER_SIDE);
+  const losers = ranked.filter((h) => h.changePct < 0).slice(-MOVERS_PER_SIDE).reverse();
+
+  const chip = (h) => `
+    <button class="mover" type="button" data-tk="${h.ticker}"
+      aria-label="${h.ticker}, ${escapeHtml(h.name)}, ${fmtSigned(h.changePct)} today">
+      <span class="mv-tk">${h.ticker}</span>
+      <span class="mv-price">${fmtPrice(h.price)}</span>
+      <span class="mv-chg ${classOf(h.changePct)}">${fmtSigned(h.changePct)}</span>
+    </button>`;
+  const col = (title, list) => `
+    <div class="mv-col">
+      <div class="mv-head">${title}</div>
+      <div class="mv-list">${
+        list.length ? list.map(chip).join('') : '<span class="mv-none">No movers</span>'
+      }</div>
+    </div>`;
+
+  $('#movers').innerHTML =
+    col('&#9650; Top gainers', gainers) + col('&#9660; Top losers', losers);
+  panel.hidden = false;
+}
+
 function render() {
   renderStatus();
   renderCards();
   renderChanges();
+  renderMovers();
   renderTable();
   renderSectors();
 }
@@ -389,6 +429,82 @@ async function manualRefresh() {
   }
 }
 
+/* ---------- shareable view state ---------- */
+// The current filter/sort/expanded-row selection is mirrored into the URL
+// query string so a particular view can be bookmarked or shared. Only
+// non-default values are written, keeping a pristine view at a clean URL.
+function syncUrl() {
+  const p = new URLSearchParams();
+  if (state.sort.key !== 'weight' || state.sort.dir !== 'desc') {
+    p.set('sort', `${state.sort.key}:${state.sort.dir}`);
+  }
+  if (state.search.trim()) p.set('q', state.search.trim());
+  if (state.sector) p.set('sector', state.sector);
+  if (state.open.size) p.set('open', [...state.open].join(','));
+  const qs = p.toString();
+  history.replaceState(null, '', qs ? '?' + qs : location.pathname);
+}
+
+function restoreFromUrl() {
+  const p = new URLSearchParams(location.search);
+  const sort = p.get('sort');
+  if (sort) {
+    const [key, dir] = sort.split(':');
+    if (SORT_KEYS.has(key)) {
+      state.sort.key = key;
+      state.sort.dir = dir === 'asc' ? 'asc' : 'desc';
+    }
+  }
+  state.search = p.get('q') || '';
+  state.sector = p.get('sector') || '';
+  const open = p.get('open');
+  if (open) open.split(',').forEach((t) => t && state.open.add(t));
+}
+
+// Reflect restored state into the controls once the data (and so the sector
+// list) is loaded; drops a `sector` value that isn't a real option.
+function syncControlsFromState() {
+  $('#search').value = state.search;
+  const sel = $('#sectorFilter');
+  sel.value = state.sector;
+  state.sector = sel.value;
+  renderTable();
+  syncUrl();
+}
+
+// Open a holding's row and bring it into view — used by the movers chips.
+function focusHolding(tk) {
+  if (!tk) return;
+  state.open.add(tk);
+  if (!visibleHoldings().some((h) => h.ticker === tk)) {
+    state.search = '';
+    state.sector = '';
+    $('#search').value = '';
+    $('#sectorFilter').value = '';
+  }
+  renderTable();
+  syncUrl();
+  const row = document.querySelector(`tr.row[data-tk="${CSS.escape(tk)}"]`);
+  if (row) {
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    row.focus({ preventScroll: true });
+  }
+}
+
+async function copyShareLink() {
+  const btn = $('#shareBtn');
+  const done = (msg) => {
+    btn.textContent = msg;
+    setTimeout(() => { btn.textContent = 'Copy link'; }, 1600);
+  };
+  try {
+    await navigator.clipboard.writeText(location.href);
+    done('Copied!');
+  } catch {
+    done('Copy failed');
+  }
+}
+
 /* ---------- events ---------- */
 function sortBy(key) {
   if (!key) return;
@@ -399,6 +515,7 @@ function sortBy(key) {
     state.sort.dir = ['ticker', 'name', 'sector'].includes(key) ? 'asc' : 'desc';
   }
   renderTable();
+  syncUrl();
 }
 
 function toggleRow(tk) {
@@ -406,6 +523,7 @@ function toggleRow(tk) {
   if (state.open.has(tk)) state.open.delete(tk);
   else state.open.add(tk);
   renderTable();
+  syncUrl();
 }
 
 function csvCell(value) {
@@ -460,10 +578,12 @@ function wireEvents() {
   $('#search').addEventListener('input', (e) => {
     state.search = e.target.value;
     renderTable();
+    syncUrl();
   });
   $('#sectorFilter').addEventListener('change', (e) => {
     state.sector = e.target.value;
     renderTable();
+    syncUrl();
   });
   $('#autoRefresh').addEventListener('change', (e) => {
     state.auto = e.target.checked;
@@ -472,6 +592,20 @@ function wireEvents() {
   });
   $('#refreshBtn').addEventListener('click', manualRefresh);
   $('#exportBtn').addEventListener('click', exportCsv);
+  $('#shareBtn').addEventListener('click', copyShareLink);
+
+  $('#movers').addEventListener('click', (e) => {
+    const chip = e.target.closest('.mover');
+    if (chip) focusHolding(chip.dataset.tk);
+  });
+
+  // Press "/" anywhere outside a field to jump to the holdings filter.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName)) return;
+    e.preventDefault();
+    $('#search').focus();
+  });
 }
 
 function startClock() {
@@ -490,6 +624,7 @@ function startClock() {
 /* ---------- boot ---------- */
 (async function init() {
   wireEvents();
+  restoreFromUrl();
   try {
     await loadData();
   } catch (err) {
@@ -501,6 +636,7 @@ function startClock() {
     console.error(err);
     return;
   }
+  syncControlsFromState();
   startClock();
   pollQuotes();
   quoteTimer = setInterval(pollQuotes, QUOTE_POLL_SECONDS * 1000);

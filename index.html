@@ -33,15 +33,22 @@
 
     <div class="changes-banner" id="changesBanner" hidden></div>
 
+    <section class="panel movers-panel" id="moversPanel" hidden>
+      <div class="panel-head"><h2>Today&rsquo;s movers</h2></div>
+      <div class="movers" id="movers"></div>
+    </section>
+
     <section class="panel">
       <div class="panel-head">
         <h2>Holdings &amp; monthly allocation</h2>
         <div class="controls">
-          <input type="search" id="search" placeholder="Filter ticker or name&hellip;"
+          <input type="search" id="search" placeholder="Filter ticker or name&hellip; (press /)"
             autocomplete="off" aria-label="Filter holdings by ticker or company name" />
           <select id="sectorFilter" aria-label="Filter holdings by sector">
             <option value="">All sectors</option>
           </select>
+          <button id="shareBtn" class="btn btn-ghost"
+            title="Copy a link to this filtered/sorted view">Copy link</button>
           <button id="exportBtn" class="btn btn-ghost">Export CSV</button>
         </div>
       </div>

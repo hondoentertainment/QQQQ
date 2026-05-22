@@ -104,6 +104,32 @@ body {
 .chg-add { color: var(--up); }
 .chg-rem { color: var(--down); }
 
+/* ---- today's movers ---- */
+.movers {
+  padding: 14px 16px; display: grid; gap: 18px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 560px) { .movers { grid-template-columns: 1fr; } }
+.mv-col { display: flex; flex-direction: column; gap: 9px; }
+.mv-head {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
+  font-weight: 700;
+}
+.mv-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.mover {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; color: var(--text);
+  transition: border-color 0.15s, transform 0.05s;
+}
+.mover:hover { border-color: var(--accent); }
+.mover:active { transform: translateY(1px); }
+.mv-tk { font-weight: 700; }
+.mv-price { color: var(--muted); font-variant-numeric: tabular-nums; }
+.mv-chg { font-weight: 700; font-variant-numeric: tabular-nums; }
+.mv-none { color: var(--muted); font-size: 12.5px; }
+
 /* ---- panels ---- */
 .panel {
   background: var(--panel); border: 1px solid var(--line);
