@@ -23,9 +23,10 @@ that keeps the data fresh.
 - **CSV export** of the current (filtered/sorted) holdings with monthly history.
 - **Keyboard accessible** — sortable headers and expandable rows work without a
   mouse, with `aria-sort` / `aria-expanded` state.
-- **Zero dependencies** — plain HTML/CSS/JS frontend, a Node built-in static
-  server, and fetch scripts using only the Node standard library. Unit-tested
-  data pipeline (`npm test`).
+- **Zero runtime dependencies** — plain HTML/CSS/JS frontend, a Node built-in
+  static server, and fetch scripts using only the Node standard library.
+  Unit-tested data pipeline and server (`npm test`); the only dev dependency
+  is ESLint (`npm run lint`).
 
 ## Project layout
 
@@ -35,23 +36,27 @@ server.js                          Zero-dep static server (+ /api/refresh, /api/
 lib/holdings.js                    Pure, tested data-pipeline helpers
 lib/quotes.js                      Shared live-quote fetching (FMP or Yahoo)
 scripts/fetch-holdings.js          Fetches holdings + prices, writes data/*.json
-test/holdings.test.js              Unit tests for the data pipeline
+test/*.test.js                     Unit tests (data pipeline, quotes, server)
 data/holdings.json                 Current holdings snapshot
 data/monthly-allocations.json      Per-ticker monthly allocation history
 data/changes.json                 Log of constituent additions/removals
+.github/workflows/ci.yml           Lints and runs the test suite on every PR
 .github/workflows/refresh.yml      The recurring data-refresh cron job
 .github/workflows/pages.yml        Deploys the dashboard to GitHub Pages
 ```
 
 ## Run it locally
 
-Requires Node.js 20+ (no `npm install` needed — there are no dependencies).
+Requires Node.js 20+. The app itself has no runtime dependencies; run
+`npm install` once to get the dev tooling (ESLint) for `lint`/`test`.
 
 ```bash
+npm install                    # install dev dependencies (ESLint) — one time
 npm start                      # serve the dashboard at http://localhost:3000
 npm run refresh                # refresh data/*.json once, right now
 REFRESH_MINUTES=30 npm start   # serve + auto-refresh data every 30 min
-npm test                       # run the data-pipeline unit tests
+npm run lint                   # lint the JavaScript sources
+npm test                       # run the unit tests
 ```
 
 ## The recurring cron job

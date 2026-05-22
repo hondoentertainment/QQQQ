@@ -8,9 +8,15 @@
     "start": "node server.js",
     "dev": "REFRESH_MINUTES=30 node server.js",
     "refresh": "node scripts/fetch-holdings.js",
+    "lint": "eslint .",
     "test": "node --test test/*.test.js"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0"
   }
 }

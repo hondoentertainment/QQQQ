@@ -28,9 +28,6 @@ function escapeHtml(s) {
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
   ));
 }
-function fmtPct(n, d = 2) {
-  return Number.isFinite(n) ? n.toFixed(d) + '%' : '—';
-}
 function fmtSigned(n, d = 2, unit = '%') {
   if (!Number.isFinite(n)) return '—';
   return (n >= 0 ? '+' : '') + n.toFixed(d) + unit;

@@ -3,13 +3,10 @@ set -euo pipefail
 
 # SessionStart hook for the QQQQ Component Tracker.
 #
-# This project intentionally has ZERO npm dependencies — the frontend, the
-# zero-dep static server, and the data scripts all run on the Node.js standard
-# library (see package.json: no dependencies, no lockfile). There is therefore
-# nothing to `npm install`.
-#
-# This hook simply verifies that a supported Node.js toolchain is present so
-# that `npm test` and `npm run refresh` work immediately in the session.
+# The app, server, and data scripts have ZERO runtime dependencies — they run
+# on the Node.js standard library. The only dependencies are dev tooling
+# (ESLint), so this hook runs `npm install` to make `npm run lint` and
+# `npm test` work in the session.
 #
 # Idempotent, non-interactive, and safe to run on every session start.
 
@@ -29,4 +26,15 @@ if [ "$NODE_MAJOR" -lt 20 ]; then
   exit 1
 fi
 
-echo "session-start: Node $(node --version) ready — zero dependencies, nothing to install."
+cd "${CLAUDE_PROJECT_DIR:-.}"
+
+# `npm ci` if the lockfile is in sync, otherwise `npm install`. Both leave a
+# populated node_modules that the container caches for subsequent sessions.
+echo "session-start: installing dependencies with npm..."
+if [ -f package-lock.json ]; then
+  npm ci || npm install
+else
+  npm install
+fi
+
+echo "session-start: Node $(node --version) ready — dependencies installed."
