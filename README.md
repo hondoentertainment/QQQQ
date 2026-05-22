@@ -35,11 +35,13 @@ index.html / styles.css / app.js   The dashboard interface
 server.js                          Zero-dep static server (+ /api/refresh, /api/quotes)
 lib/holdings.js                    Pure, tested data-pipeline helpers
 lib/quotes.js                      Shared live-quote fetching (FMP or Yahoo)
+api/quotes.js                      Vercel serverless function for /api/quotes
 scripts/fetch-holdings.js          Fetches holdings + prices, writes data/*.json
 test/*.test.js                     Unit tests (data pipeline, quotes, server)
 data/holdings.json                 Current holdings snapshot
 data/monthly-allocations.json      Per-ticker monthly allocation history
 data/changes.json                 Log of constituent additions/removals
+vercel.json                        Vercel deploy config (static + function)
 .github/workflows/ci.yml           Lints and runs the test suite on every PR
 .github/workflows/refresh.yml      The recurring data-refresh cron job
 .github/workflows/pages.yml        Deploys the dashboard to GitHub Pages
@@ -102,10 +104,22 @@ add it to the repo:
 
 ## Deploy as a site
 
+### GitHub Pages
+
 The dashboard is fully static. **`.github/workflows/pages.yml`** publishes it
 to GitHub Pages on every push to `main` (including the cron's data commits).
 
 One-time setup: **Settings → Pages → Source = "GitHub Actions"**.
+
+### Vercel
+
+**`vercel.json`** deploys the same static dashboard to Vercel, plus a
+serverless function (**`api/quotes.js`**) that backs `GET /api/quotes` — so
+live price polling works on Vercel (unlike GitHub Pages, where it no-ops).
+
+One-time setup: import the repo at [vercel.com/new](https://vercel.com/new).
+For reliable prices, add an `FMP_API_KEY` environment variable in the Vercel
+project settings — without it the function falls back to Yahoo Finance.
 
 ## Data sources & notes
 

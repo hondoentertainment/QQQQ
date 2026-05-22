@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/quotes.js": {
+      "includeFiles": "data/holdings.json"
+    }
+  },
+  "headers": [
+    {
+      "source": "/data/(.*)",
+      "headers": [{ "key": "cache-control", "value": "no-cache" }]
+    }
+  ]
+}

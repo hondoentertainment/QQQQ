@@ -1,0 +1,8 @@
+# Files not needed by the Vercel deployment (static dashboard + api/quotes.js).
+node_modules
+.claude
+.github
+test
+scripts
+server.js
+eslint.config.js
