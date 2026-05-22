@@ -5,15 +5,15 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "REFRESH_MINUTES=30 node server.js",
-    "refresh": "node scripts/fetch-holdings.js",
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "REFRESH_MINUTES=30 node --env-file-if-exists=.env server.js",
+    "refresh": "node --env-file-if-exists=.env scripts/fetch-holdings.js",
     "lint": "eslint .",
     "test": "node --test test/*.test.js",
     "test:e2e": "node --test e2e/*.test.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.18.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
