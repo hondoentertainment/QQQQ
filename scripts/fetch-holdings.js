@@ -16,15 +16,21 @@ import {
   diffConstituents,
   monthKey,
   applyMonthlySnapshot,
+  applyPriceSnapshot,
   isFallbackSource,
+  SCHEMA_VERSION,
 } from '../lib/holdings.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HOLDINGS_FILE = path.join(ROOT, 'data', 'holdings.json');
 const MONTHLY_FILE = path.join(ROOT, 'data', 'monthly-allocations.json');
 const CHANGES_FILE = path.join(ROOT, 'data', 'changes.json');
+const PRICE_HISTORY_FILE = path.join(ROOT, 'data', 'price-history.json');
 const MAX_MONTHS = 24;
 const MAX_CHANGE_EVENTS = 50;
+const MAX_PRICE_DAYS = 180;
+// Per-component fundamentals carried over from the quote source onto holdings.
+const FUNDAMENTAL_FIELDS = ['marketCap', 'pe', 'yearHigh', 'yearLow'];
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
   '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -113,8 +119,10 @@ async function main() {
   }
 
   log('fetching live quotes…');
+  // Fetch QQQ itself alongside the components so the fund price-history can be
+  // tracked from the same quote source.
   const { source: quoteSource, quotes } = await fetchQuotes(
-    holdings.map((h) => h.ticker),
+    [...holdings.map((h) => h.ticker), 'QQQ'],
     { fmpKey }
   );
   let priced = 0;
@@ -123,6 +131,10 @@ async function main() {
     if (q) {
       h.price = q.price;
       h.changePct = q.changePct;
+      // Carry whichever fundamentals the source supplied; leave the rest unset.
+      for (const f of FUNDAMENTAL_FIELDS) {
+        if (Number.isFinite(q[f])) h[f] = q[f];
+      }
       priced++;
     }
   }
@@ -138,12 +150,14 @@ async function main() {
       changes.events = Array.isArray(changes.events) ? changes.events : [];
       changes.events.unshift({ date: now.toISOString(), added, removed });
       changes.events = changes.events.slice(0, MAX_CHANGE_EVENTS);
+      changes.schemaVersion = SCHEMA_VERSION;
       await writeFile(CHANGES_FILE, JSON.stringify(changes, null, 2) + '\n');
       log(`recorded index change: +${added.length} / -${removed.length}`);
     }
   }
 
   const holdingsDoc = {
+    schemaVersion: SCHEMA_VERSION,
     fund: 'QQQ',
     name: 'Invesco QQQ Trust (Nasdaq-100 Index)',
     legacyTicker: 'QQQQ',
@@ -159,9 +173,29 @@ async function main() {
   const mk = monthKey(now);
   const monthly = await readJson(MONTHLY_FILE);
   const updated = applyMonthlySnapshot(monthly, holdings, mk, MAX_MONTHS);
+  updated.schemaVersion = SCHEMA_VERSION;
   updated.updatedAt = now.toISOString();
   await writeFile(MONTHLY_FILE, JSON.stringify(updated, null, 2) + '\n');
   log('wrote', path.relative(ROOT, MONTHLY_FILE), `(${mk} snapshot)`);
+
+  // Append today's QQQ close to the fund price history (idempotent per day).
+  const qqq = quotes.QQQ;
+  if (qqq && Number.isFinite(qqq.price)) {
+    const prevHistory = await readJson(PRICE_HISTORY_FILE);
+    const history = applyPriceSnapshot(
+      prevHistory?.history, now.toISOString().slice(0, 10), qqq.price, MAX_PRICE_DAYS
+    );
+    const priceDoc = {
+      schemaVersion: SCHEMA_VERSION,
+      fund: 'QQQ',
+      updatedAt: now.toISOString(),
+      history,
+    };
+    await writeFile(PRICE_HISTORY_FILE, JSON.stringify(priceDoc, null, 2) + '\n');
+    log('wrote', path.relative(ROOT, PRICE_HISTORY_FILE), `(${history.length} days)`);
+  } else {
+    log('no QQQ quote — skipping price-history update');
+  }
 
   // When running in GitHub Actions, expose whether this run could only serve
   // fallback (cached / seed) data so the refresh workflow can alert on a

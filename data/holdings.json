@@ -1,8 +1,9 @@
 {
+  "schemaVersion": 1,
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-05-22T16:54:38.175Z",
+  "asOf": "2026-05-22T18:32:44.200Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -12,256 +13,384 @@
       "name": "NVIDIA Corp",
       "sector": "Technology",
       "weight": 9.6,
-      "price": 216.84,
-      "changePct": -2.97
+      "price": 215.92,
+      "changePct": -3.38,
+      "marketCap": 2688000000000,
+      "pe": 20.7,
+      "yearHigh": 236.54,
+      "yearLow": 129.16
     },
     {
       "ticker": "AAPL",
       "name": "Apple Inc",
       "sector": "Technology",
       "weight": 8.1,
-      "price": 309.22,
-      "changePct": 2.31
+      "price": 309.33,
+      "changePct": 2.34,
+      "marketCap": 2268000000000,
+      "pe": 22.03,
+      "yearHigh": 311.4,
+      "yearLow": 193.46
     },
     {
       "ticker": "MSFT",
       "name": "Microsoft Corp",
       "sector": "Technology",
       "weight": 7.9,
-      "price": 419.07,
-      "changePct": -0.47
+      "price": 419.37,
+      "changePct": -0.4,
+      "marketCap": 2212000000000,
+      "pe": 15.22,
+      "yearHigh": 555.45,
+      "yearLow": 356.28
     },
     {
       "ticker": "AMZN",
       "name": "Amazon.com Inc",
       "sector": "Consumer Discretionary",
       "weight": 5.6,
-      "price": 267.65,
-      "changePct": 1
+      "price": 268.04,
+      "changePct": 1.14,
+      "marketCap": 1568000000000,
+      "pe": 42.59,
+      "yearHigh": 278.56,
+      "yearLow": 196
     },
     {
       "ticker": "AVGO",
       "name": "Broadcom Inc",
       "sector": "Technology",
       "weight": 5.2,
-      "price": 413.77,
-      "changePct": -0.95
+      "price": 412.3,
+      "changePct": -1.31,
+      "marketCap": 1456000000000,
+      "pe": 14.85,
+      "yearHigh": 442.36,
+      "yearLow": 226.18
     },
     {
       "ticker": "META",
       "name": "Meta Platforms Inc Class A",
       "sector": "Communication Services",
       "weight": 3.9,
-      "price": 607.64,
-      "changePct": 0.43
+      "price": 610.88,
+      "changePct": 0.96,
+      "marketCap": 1092000000000,
+      "pe": 35.45,
+      "yearHigh": 796.25,
+      "yearLow": 520.26
     },
     {
       "ticker": "TSLA",
       "name": "Tesla Inc",
       "sector": "Consumer Discretionary",
       "weight": 2.9,
-      "price": 427.22,
-      "changePct": 2.39
+      "price": 429.01,
+      "changePct": 2.82,
+      "marketCap": 812000000000,
+      "pe": 31.79,
+      "yearHigh": 498.83,
+      "yearLow": 273.21
     },
     {
       "ticker": "NFLX",
       "name": "Netflix Inc",
       "sector": "Communication Services",
       "weight": 2.7,
-      "price": 88.53,
-      "changePct": 0.5
+      "price": 88.26,
+      "changePct": 0.19,
+      "marketCap": 756000000000,
+      "pe": 27.09,
+      "yearHigh": 134.12,
+      "yearLow": 75.01
     },
     {
       "ticker": "GOOGL",
       "name": "Alphabet Inc Class A",
       "sector": "Communication Services",
       "weight": 2.6,
-      "price": 385.94,
-      "changePct": -0.76
+      "price": 384.9,
+      "changePct": -1.03,
+      "marketCap": 728000000000,
+      "pe": 33.76,
+      "yearHigh": 408.61,
+      "yearLow": 162
     },
     {
       "ticker": "COST",
       "name": "Costco Wholesale Corp",
       "sector": "Consumer Staples",
       "weight": 2.6,
-      "price": 1030.5,
-      "changePct": -4.05
+      "price": 1029.05,
+      "changePct": -4.19,
+      "marketCap": 728000000000,
+      "pe": 37.07,
+      "yearHigh": 1096.5,
+      "yearLow": 844.06
     },
     {
       "ticker": "GOOG",
       "name": "Alphabet Inc Class C",
       "sector": "Communication Services",
       "weight": 2.5,
-      "price": 382.3,
-      "changePct": -0.68
+      "price": 381.05,
+      "changePct": -1,
+      "marketCap": 700000000000,
+      "pe": 15.73,
+      "yearHigh": 404.47,
+      "yearLow": 163.33
     },
     {
       "ticker": "PLTR",
       "name": "Palantir Technologies Inc",
       "sector": "Technology",
       "weight": 2,
-      "price": 136.76,
-      "changePct": -0.28
+      "price": 137.32,
+      "changePct": 0.13,
+      "marketCap": 560000000000,
+      "pe": 20.35,
+      "yearHigh": 207.52,
+      "yearLow": 118.93
     },
     {
       "ticker": "CSCO",
       "name": "Cisco Systems Inc",
       "sector": "Technology",
       "weight": 1.4,
-      "price": 120.59,
-      "changePct": 5.46
+      "price": 119.78,
+      "changePct": 4.75,
+      "marketCap": 392000000000,
+      "pe": 21.61,
+      "yearHigh": 120.79,
+      "yearLow": 62.3
     },
     {
       "ticker": "TMUS",
       "name": "T-Mobile US Inc",
       "sector": "Communication Services",
       "weight": 1.3,
-      "price": 191.16,
-      "changePct": 0.52
+      "price": 191.29,
+      "changePct": 0.59,
+      "marketCap": 364000000000,
+      "pe": 32.62,
+      "yearHigh": 261.56,
+      "yearLow": 181.36
     },
     {
       "ticker": "AMD",
       "name": "Advanced Micro Devices Inc",
       "sector": "Technology",
       "weight": 1.3,
-      "price": 469.57,
-      "changePct": 4.91
+      "price": 470.77,
+      "changePct": 5.18,
+      "marketCap": 364000000000,
+      "pe": 38.88,
+      "yearHigh": 481.37,
+      "yearLow": 107.67
     },
     {
       "ticker": "INTU",
       "name": "Intuit Inc",
       "sector": "Technology",
       "weight": 1.2,
-      "price": 310.87,
-      "changePct": -19.03
+      "price": 318.75,
+      "changePct": -16.98,
+      "marketCap": 336000000000,
+      "pe": 28.13,
+      "yearHigh": 813.7,
+      "yearLow": 302.36
     },
     {
       "ticker": "APP",
       "name": "AppLovin Corp",
       "sector": "Technology",
       "weight": 1.2,
-      "price": 485.64,
-      "changePct": 0.7
+      "price": 479.68,
+      "changePct": -0.54,
+      "marketCap": 336000000000,
+      "pe": 46.67,
+      "yearHigh": 745.61,
+      "yearLow": 320
     },
     {
       "ticker": "PEP",
       "name": "PepsiCo Inc",
       "sector": "Consumer Staples",
       "weight": 1.2,
-      "price": 149.78,
-      "changePct": 0.33
+      "price": 150.37,
+      "changePct": 0.72,
+      "marketCap": 336000000000,
+      "pe": 29.59,
+      "yearHigh": 171.48,
+      "yearLow": 127.6
     },
     {
       "ticker": "TXN",
       "name": "Texas Instruments Inc",
       "sector": "Technology",
       "weight": 1.1,
-      "price": 314.64,
-      "changePct": 3.2
+      "price": 311.79,
+      "changePct": 2.26,
+      "marketCap": 308000000000,
+      "pe": 42.81,
+      "yearHigh": 315.57,
+      "yearLow": 152.73
     },
     {
       "ticker": "QCOM",
       "name": "Qualcomm Inc",
       "sector": "Technology",
       "weight": 1.1,
-      "price": 239.18,
-      "changePct": 18.11
+      "price": 240.12,
+      "changePct": 18.57,
+      "marketCap": 308000000000,
+      "pe": 38.91,
+      "yearHigh": 247.9,
+      "yearLow": 121.99
     },
     {
       "ticker": "AMGN",
       "name": "Amgen Inc",
       "sector": "Health Care",
       "weight": 1.1,
-      "price": 339.06,
-      "changePct": 2.26
+      "price": 339.21,
+      "changePct": 2.31,
+      "marketCap": 308000000000,
+      "pe": 40.57,
+      "yearHigh": 391.29,
+      "yearLow": 267.83
     },
     {
       "ticker": "ISRG",
       "name": "Intuitive Surgical Inc",
       "sector": "Health Care",
       "weight": 1.1,
-      "price": 439.38,
-      "changePct": -2.15
+      "price": 439.44,
+      "changePct": -2.14,
+      "marketCap": 308000000000,
+      "pe": 24.21,
+      "yearHigh": 603.88,
+      "yearLow": 417.74
     },
     {
       "ticker": "BKNG",
       "name": "Booking Holdings Inc",
       "sector": "Consumer Discretionary",
       "weight": 1.1,
-      "price": 161.14,
-      "changePct": 2.67
+      "price": 161.49,
+      "changePct": 2.89,
+      "marketCap": 308000000000,
+      "pe": 41.68,
+      "yearHigh": 233.58,
+      "yearLow": 150.14
     },
     {
       "ticker": "ADBE",
       "name": "Adobe Inc",
       "sector": "Technology",
       "weight": 1,
-      "price": 244.4,
-      "changePct": -3.54
+      "price": 245,
+      "changePct": -3.3,
+      "marketCap": 280000000000,
+      "pe": 44.02,
+      "yearHigh": 421.48,
+      "yearLow": 224.13
     },
     {
       "ticker": "HON",
       "name": "Honeywell International Inc",
       "sector": "Industrials",
       "weight": 0.9,
-      "price": 228.31,
-      "changePct": 5.03
+      "price": 228.44,
+      "changePct": 5.09,
+      "marketCap": 252000000000,
+      "pe": 32.64,
+      "yearHigh": 248.18,
+      "yearLow": 186.76
     },
     {
       "ticker": "CMCSA",
       "name": "Comcast Corp",
       "sector": "Communication Services",
       "weight": 0.9,
-      "price": 25.05,
-      "changePct": 0.7
+      "price": 25.08,
+      "changePct": 0.8,
+      "marketCap": 252000000000,
+      "pe": 34.69,
+      "yearHigh": 34.36,
+      "yearLow": 24.13
     },
     {
       "ticker": "AMAT",
       "name": "Applied Materials Inc",
       "sector": "Technology",
       "weight": 0.9,
-      "price": 435.95,
-      "changePct": 2.13
+      "price": 434.17,
+      "changePct": 1.71,
+      "marketCap": 252000000000,
+      "pe": 31.27,
+      "yearHigh": 448.45,
+      "yearLow": 153.47
     },
     {
       "ticker": "MU",
       "name": "Micron Technology Inc",
       "sector": "Technology",
       "weight": 0.9,
-      "price": 766.72,
-      "changePct": 4.74
+      "price": 770.83,
+      "changePct": 5.31,
+      "marketCap": 252000000000,
+      "pe": 17.31,
+      "yearHigh": 818.67,
+      "yearLow": 90.93
     },
     {
       "ticker": "GILD",
       "name": "Gilead Sciences Inc",
       "sector": "Health Care",
       "weight": 0.8,
-      "price": 133.42,
-      "changePct": 2.09
+      "price": 134.13,
+      "changePct": 2.64,
+      "marketCap": 224000000000,
+      "pe": 20.21,
+      "yearHigh": 157.29,
+      "yearLow": 104.46
     },
     {
       "ticker": "PANW",
       "name": "Palo Alto Networks Inc",
       "sector": "Technology",
       "weight": 0.8,
-      "price": 260.27,
-      "changePct": 5.52
+      "price": 258.91,
+      "changePct": 4.97,
+      "marketCap": 224000000000,
+      "pe": 14.89,
+      "yearHigh": 261.41,
+      "yearLow": 139.57
     },
     {
       "ticker": "ARM",
       "name": "Arm Holdings plc ADR",
       "sector": "Technology",
       "weight": 0.8,
-      "price": 307.69,
-      "changePct": 19.85
+      "price": 306.25,
+      "changePct": 19.29,
+      "marketCap": 224000000000,
+      "pe": 36.95,
+      "yearHigh": 315,
+      "yearLow": 100.02
     },
     {
       "ticker": "ADP",
       "name": "Automatic Data Processing Inc",
       "sector": "Industrials",
       "weight": 0.8,
-      "price": 224.65,
-      "changePct": 1.79
+      "price": 225.64,
+      "changePct": 2.24,
+      "marketCap": 224000000000,
+      "pe": 14.61,
+      "yearHigh": 329.93,
+      "yearLow": 188.16
     },
     {
       "ticker": "LRCX",
@@ -269,351 +398,527 @@
       "sector": "Technology",
       "weight": 0.8,
       "price": 307.43,
-      "changePct": 5.25
+      "changePct": 5.25,
+      "marketCap": 224000000000,
+      "pe": 26.11,
+      "yearHigh": 309.98,
+      "yearLow": 79.49
     },
     {
       "ticker": "VRTX",
       "name": "Vertex Pharmaceuticals Inc",
       "sector": "Health Care",
       "weight": 0.7,
-      "price": 434.18,
-      "changePct": 0.87
+      "price": 435.81,
+      "changePct": 1.25,
+      "marketCap": 196000000000,
+      "pe": 37.04,
+      "yearHigh": 507.92,
+      "yearLow": 362.5
     },
     {
       "ticker": "KLAC",
       "name": "KLA Corp",
       "sector": "Technology",
       "weight": 0.7,
-      "price": 1900.16,
-      "changePct": 3.86
+      "price": 1901.1,
+      "changePct": 3.92,
+      "marketCap": 196000000000,
+      "pe": 45.82,
+      "yearHigh": 1939.36,
+      "yearLow": 740.44
     },
     {
       "ticker": "CRWD",
       "name": "CrowdStrike Holdings Inc",
       "sector": "Technology",
       "weight": 0.7,
-      "price": 669.46,
-      "changePct": 2.98
+      "price": 664.7,
+      "changePct": 2.24,
+      "marketCap": 196000000000,
+      "pe": 20.38,
+      "yearHigh": 674.84,
+      "yearLow": 342.72
     },
     {
       "ticker": "SBUX",
       "name": "Starbucks Corp",
       "sector": "Consumer Discretionary",
       "weight": 0.6,
-      "price": 102.63,
-      "changePct": -3.64
+      "price": 103.07,
+      "changePct": -3.22,
+      "marketCap": 168000000000,
+      "pe": 29.49,
+      "yearHigh": 108.88,
+      "yearLow": 77.99
     },
     {
       "ticker": "INTC",
       "name": "Intel Corp",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 120.6,
-      "changePct": 1.38
+      "price": 120.47,
+      "changePct": 1.27,
+      "marketCap": 168000000000,
+      "pe": 26.07,
+      "yearHigh": 132.75,
+      "yearLow": 18.97
     },
     {
       "ticker": "MELI",
       "name": "MercadoLibre Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.6,
-      "price": 1651.83,
-      "changePct": 0.04
+      "price": 1666.52,
+      "changePct": 0.93,
+      "marketCap": 168000000000,
+      "pe": 28.71,
+      "yearHigh": 2645.22,
+      "yearLow": 1495
     },
     {
       "ticker": "ADI",
       "name": "Analog Devices Inc",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 397.08,
-      "changePct": -0.24
+      "price": 397.55,
+      "changePct": -0.13,
+      "marketCap": 168000000000,
+      "pe": 19.98,
+      "yearHigh": 435.72,
+      "yearLow": 206
     },
     {
       "ticker": "MSTR",
       "name": "MicroStrategy Inc",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 162.94,
-      "changePct": -1.73
+      "price": 162.39,
+      "changePct": -2.06,
+      "marketCap": 168000000000,
+      "pe": 21.39,
+      "yearHigh": 457.22,
+      "yearLow": 104.17
     },
     {
       "ticker": "CEG",
       "name": "Constellation Energy Corp",
       "sector": "Utilities",
       "weight": 0.6,
-      "price": 296.06,
-      "changePct": 5.26
+      "price": 293.43,
+      "changePct": 4.33,
+      "marketCap": 168000000000,
+      "pe": 26.39,
+      "yearHigh": 412.7,
+      "yearLow": 243.3
     },
     {
       "ticker": "CDNS",
       "name": "Cadence Design Systems Inc",
       "sector": "Technology",
       "weight": 0.6,
-      "price": 378.71,
-      "changePct": 7.93
+      "price": 377.53,
+      "changePct": 7.59,
+      "marketCap": 168000000000,
+      "pe": 34.26,
+      "yearHigh": 381.55,
+      "yearLow": 262.75
     },
     {
       "ticker": "MDLZ",
       "name": "Mondelez International Inc",
       "sector": "Consumer Staples",
       "weight": 0.5,
-      "price": 61.87,
-      "changePct": 0.05
+      "price": 61.99,
+      "changePct": 0.24,
+      "marketCap": 140000000000,
+      "pe": 35.29,
+      "yearHigh": 71.15,
+      "yearLow": 51.2
     },
     {
       "ticker": "REGN",
       "name": "Regeneron Pharmaceuticals Inc",
       "sector": "Health Care",
       "weight": 0.5,
-      "price": 635.1,
-      "changePct": -2.26
+      "price": 635.76,
+      "changePct": -2.15,
+      "marketCap": 140000000000,
+      "pe": 37.21,
+      "yearHigh": 821.11,
+      "yearLow": 476.49
     },
     {
       "ticker": "SNPS",
       "name": "Synopsys Inc",
       "sector": "Technology",
       "weight": 0.5,
-      "price": 530.5,
-      "changePct": 6.33
+      "price": 526.6,
+      "changePct": 5.55,
+      "marketCap": 140000000000,
+      "pe": 20.21,
+      "yearHigh": 651.73,
+      "yearLow": 376.18
     },
     {
       "ticker": "PYPL",
       "name": "PayPal Holdings Inc",
       "sector": "Financials",
       "weight": 0.5,
-      "price": 44.23,
-      "changePct": -0.32
+      "price": 44.17,
+      "changePct": -0.45,
+      "marketCap": 140000000000,
+      "pe": 39.58,
+      "yearHigh": 79.5,
+      "yearLow": 38.46
     },
     {
       "ticker": "MRVL",
       "name": "Marvell Technology Inc",
       "sector": "Technology",
       "weight": 0.5,
-      "price": 197.6,
-      "changePct": 5.78
+      "price": 195.84,
+      "changePct": 4.84,
+      "marketCap": 140000000000,
+      "pe": 14.04,
+      "yearHigh": 198.4,
+      "yearLow": 58.61
     },
     {
       "ticker": "ORLY",
       "name": "O'Reilly Automotive Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.5,
-      "price": 92.85,
-      "changePct": 0.68
+      "price": 92.47,
+      "changePct": 0.27,
+      "marketCap": 140000000000,
+      "pe": 27.81,
+      "yearHigh": 108.72,
+      "yearLow": 86.77
     },
     {
       "ticker": "PDD",
       "name": "PDD Holdings Inc ADR",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 93.89,
-      "changePct": -4.35
+      "price": 94.24,
+      "changePct": -3.98,
+      "marketCap": 112000000000,
+      "pe": 46.62,
+      "yearHigh": 139.41,
+      "yearLow": 92.59
     },
     {
       "ticker": "CSX",
       "name": "CSX Corp",
       "sector": "Industrials",
       "weight": 0.4,
-      "price": 45.8,
-      "changePct": -0.32
+      "price": 45.52,
+      "changePct": -0.91,
+      "marketCap": 112000000000,
+      "pe": 34.11,
+      "yearHigh": 46.74,
+      "yearLow": 30.17
     },
     {
       "ticker": "ABNB",
       "name": "Airbnb Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 132.38,
-      "changePct": -2.34
+      "price": 132.44,
+      "changePct": -2.29,
+      "marketCap": 112000000000,
+      "pe": 29.38,
+      "yearHigh": 147.25,
+      "yearLow": 110.81
     },
     {
       "ticker": "WDAY",
       "name": "Workday Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 128.66,
-      "changePct": 1.62
+      "price": 128.49,
+      "changePct": 1.48,
+      "marketCap": 112000000000,
+      "pe": 30.78,
+      "yearHigh": 257.09,
+      "yearLow": 110.36
     },
     {
       "ticker": "FTNT",
       "name": "Fortinet Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 133.5,
-      "changePct": 2.69
+      "price": 133.6,
+      "changePct": 2.77,
+      "marketCap": 112000000000,
+      "pe": 36.81,
+      "yearHigh": 133.84,
+      "yearLow": 70.12
     },
     {
       "ticker": "NXPI",
       "name": "NXP Semiconductors NV",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 312.24,
-      "changePct": 0.67
+      "price": 314.58,
+      "changePct": 1.43,
+      "marketCap": 112000000000,
+      "pe": 16.8,
+      "yearHigh": 315.67,
+      "yearLow": 183
     },
     {
       "ticker": "ADSK",
       "name": "Autodesk Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 241.28,
-      "changePct": -0.96
+      "price": 241.5,
+      "changePct": -0.87,
+      "marketCap": 112000000000,
+      "pe": 17.37,
+      "yearHigh": 329.09,
+      "yearLow": 214.1
     },
     {
       "ticker": "PCAR",
       "name": "PACCAR Inc",
       "sector": "Industrials",
       "weight": 0.4,
-      "price": 109.58,
-      "changePct": -1.85
+      "price": 109.3,
+      "changePct": -2.1,
+      "marketCap": 112000000000,
+      "pe": 45.74,
+      "yearHigh": 131.88,
+      "yearLow": 90.05
     },
     {
       "ticker": "ROP",
       "name": "Roper Technologies Inc",
       "sector": "Technology",
       "weight": 0.4,
-      "price": 326.32,
-      "changePct": 0.99
+      "price": 326.44,
+      "changePct": 1.03,
+      "marketCap": 112000000000,
+      "pe": 21.56,
+      "yearHigh": 576.55,
+      "yearLow": 305.96
     },
     {
       "ticker": "MAR",
       "name": "Marriott International Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 368.44,
-      "changePct": -0.35
+      "price": 368.61,
+      "changePct": -0.31,
+      "marketCap": 112000000000,
+      "pe": 14.51,
+      "yearHigh": 380,
+      "yearLow": 253.56
     },
     {
       "ticker": "DASH",
       "name": "DoorDash Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.4,
-      "price": 161.67,
-      "changePct": 0.58
+      "price": 162.55,
+      "changePct": 1.13,
+      "marketCap": 112000000000,
+      "pe": 42.78,
+      "yearHigh": 285.5,
+      "yearLow": 143.3
     },
     {
       "ticker": "AZN",
       "name": "AstraZeneca plc ADR",
       "sector": "Health Care",
       "weight": 0.3,
-      "price": 187.91,
-      "changePct": 0.24
+      "price": 188.34,
+      "changePct": 0.47,
+      "marketCap": 84000000000,
+      "pe": 26.25,
+      "yearHigh": 212.71,
+      "yearLow": 137.22
     },
     {
       "ticker": "ASML",
       "name": "ASML Holding NV ADR",
       "sector": "Technology",
       "weight": 0.3,
-      "price": 1643.59,
-      "changePct": 6.03
+      "price": 1638.5,
+      "changePct": 5.7,
+      "marketCap": 84000000000,
+      "pe": 38.34,
+      "yearHigh": 1653.53,
+      "yearLow": 683.48
     },
     {
       "ticker": "TTD",
       "name": "The Trade Desk Inc",
       "sector": "Technology",
       "weight": 0.3,
-      "price": 22.36,
-      "changePct": 6.4
+      "price": 22.12,
+      "changePct": 5.23,
+      "marketCap": 84000000000,
+      "pe": 34.49,
+      "yearHigh": 91.45,
+      "yearLow": 19.74
     },
     {
       "ticker": "MNST",
       "name": "Monster Beverage Corp",
       "sector": "Consumer Staples",
       "weight": 0.3,
-      "price": 86.42,
-      "changePct": -0.52
+      "price": 86.72,
+      "changePct": -0.18,
+      "marketCap": 84000000000,
+      "pe": 40.27,
+      "yearHigh": 88.77,
+      "yearLow": 58.09
     },
     {
       "ticker": "AEP",
       "name": "American Electric Power Co",
       "sector": "Utilities",
       "weight": 0.3,
-      "price": 131.16,
-      "changePct": 1.78
+      "price": 131.55,
+      "changePct": 2.08,
+      "marketCap": 84000000000,
+      "pe": 35.8,
+      "yearHigh": 139.44,
+      "yearLow": 100.72
     },
     {
       "ticker": "CPRT",
       "name": "Copart Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 33.94,
-      "changePct": 2.71
+      "price": 33.87,
+      "changePct": 2.51,
+      "marketCap": 84000000000,
+      "pe": 41.15,
+      "yearHigh": 58.07,
+      "yearLow": 32.2
     },
     {
       "ticker": "PAYX",
       "name": "Paychex Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 96.67,
-      "changePct": 1.84
+      "price": 96.85,
+      "changePct": 2.03,
+      "marketCap": 84000000000,
+      "pe": 36.87,
+      "yearHigh": 161.24,
+      "yearLow": 85.45
     },
     {
       "ticker": "ROST",
       "name": "Ross Stores Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.3,
-      "price": 231.78,
-      "changePct": 6.42
+      "price": 232.72,
+      "changePct": 6.86,
+      "marketCap": 84000000000,
+      "pe": 24.98,
+      "yearHigh": 235.8,
+      "yearLow": 124.49
     },
     {
       "ticker": "KDP",
       "name": "Keurig Dr Pepper Inc",
       "sector": "Consumer Staples",
       "weight": 0.3,
-      "price": 29.04,
-      "changePct": 1.2
+      "price": 29.12,
+      "changePct": 1.5,
+      "marketCap": 84000000000,
+      "pe": 22.06,
+      "yearHigh": 35.94,
+      "yearLow": 24.88
     },
     {
       "ticker": "CTAS",
       "name": "Cintas Corp",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 173.23,
-      "changePct": 1.09
+      "price": 173.18,
+      "changePct": 1.06,
+      "marketCap": 84000000000,
+      "pe": 42.06,
+      "yearHigh": 229.24,
+      "yearLow": 161.16
     },
     {
       "ticker": "ODFL",
       "name": "Old Dominion Freight Line Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 209.09,
-      "changePct": -0.35
+      "price": 210.2,
+      "changePct": 0.18,
+      "marketCap": 84000000000,
+      "pe": 17.89,
+      "yearHigh": 233.79,
+      "yearLow": 126.01
     },
     {
       "ticker": "FAST",
       "name": "Fastenal Co",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 43.91,
-      "changePct": 0.52
+      "price": 43.79,
+      "changePct": 0.24,
+      "marketCap": 84000000000,
+      "pe": 41.99,
+      "yearHigh": 50.63,
+      "yearLow": 38.97
     },
     {
       "ticker": "DDOG",
       "name": "Datadog Inc",
       "sector": "Technology",
       "weight": 0.3,
-      "price": 223,
-      "changePct": 5.07
+      "price": 222.66,
+      "changePct": 4.91,
+      "marketCap": 84000000000,
+      "pe": 29.15,
+      "yearHigh": 224.77,
+      "yearLow": 98.01
     },
     {
       "ticker": "CHTR",
       "name": "Charter Communications Inc",
       "sector": "Communication Services",
       "weight": 0.3,
-      "price": 144.31,
-      "changePct": -0.21
+      "price": 144.68,
+      "changePct": 0.04,
+      "marketCap": 84000000000,
+      "pe": 17.28,
+      "yearHigh": 422.29,
+      "yearLow": 136.63
     },
     {
       "ticker": "EXC",
       "name": "Exelon Corp",
       "sector": "Utilities",
       "weight": 0.3,
-      "price": 46.02,
-      "changePct": 2.55
+      "price": 46.05,
+      "changePct": 2.63,
+      "marketCap": 84000000000,
+      "pe": 37.7,
+      "yearHigh": 50.65,
+      "yearLow": 42.11
     },
     {
       "ticker": "AXON",
       "name": "Axon Enterprise Inc",
       "sector": "Industrials",
       "weight": 0.3,
-      "price": 386.43,
-      "changePct": -3.01
+      "price": 388.74,
+      "changePct": -2.44,
+      "marketCap": 84000000000,
+      "pe": 28.87,
+      "yearHigh": 885.92,
+      "yearLow": 339.01
     },
     {
       "ticker": "VRSK",
@@ -621,175 +926,263 @@
       "sector": "Industrials",
       "weight": 0.2,
       "price": 171.85,
-      "changePct": 0.7
+      "changePct": 0.7,
+      "marketCap": 56000000000,
+      "pe": 32.64,
+      "yearHigh": 322.92,
+      "yearLow": 155.94
     },
     {
       "ticker": "XEL",
       "name": "Xcel Energy Inc",
       "sector": "Utilities",
       "weight": 0.2,
-      "price": 80.93,
-      "changePct": 1.34
+      "price": 81.01,
+      "changePct": 1.44,
+      "marketCap": 56000000000,
+      "pe": 15.56,
+      "yearHigh": 84.23,
+      "yearLow": 65.21
     },
     {
       "ticker": "EA",
       "name": "Electronic Arts Inc",
       "sector": "Communication Services",
       "weight": 0.2,
-      "price": 201.47,
-      "changePct": -0.06
+      "price": 201.25,
+      "changePct": -0.17,
+      "marketCap": 56000000000,
+      "pe": 31.3,
+      "yearHigh": 204.89,
+      "yearLow": 141.19
     },
     {
       "ticker": "CTSH",
       "name": "Cognizant Technology Solutions Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 52.88,
-      "changePct": 3.07
+      "price": 52.73,
+      "changePct": 2.8,
+      "marketCap": 56000000000,
+      "pe": 16.61,
+      "yearHigh": 87.03,
+      "yearLow": 45.48
     },
     {
       "ticker": "TTWO",
       "name": "Take-Two Interactive Software Inc",
       "sector": "Communication Services",
       "weight": 0.2,
-      "price": 228.05,
-      "changePct": -3.62
+      "price": 228.27,
+      "changePct": -3.53,
+      "marketCap": 56000000000,
+      "pe": 21.95,
+      "yearHigh": 264.79,
+      "yearLow": 187.63
     },
     {
       "ticker": "IDXX",
       "name": "IDEXX Laboratories Inc",
       "sector": "Health Care",
       "weight": 0.2,
-      "price": 557.95,
-      "changePct": 0.79
+      "price": 559.32,
+      "changePct": 1.04,
+      "marketCap": 56000000000,
+      "pe": 19.24,
+      "yearHigh": 769.98,
+      "yearLow": 496.61
     },
     {
       "ticker": "BKR",
       "name": "Baker Hughes Co",
       "sector": "Energy",
       "weight": 0.2,
-      "price": 65.86,
-      "changePct": -1.39
+      "price": 66.26,
+      "changePct": -0.79,
+      "marketCap": 56000000000,
+      "pe": 13.12,
+      "yearHigh": 70.41,
+      "yearLow": 36.03
     },
     {
       "ticker": "KHC",
       "name": "Kraft Heinz Co",
       "sector": "Consumer Staples",
       "weight": 0.2,
-      "price": 23.91,
-      "changePct": 1.64
+      "price": 23.88,
+      "changePct": 1.49,
+      "marketCap": 56000000000,
+      "pe": 19.28,
+      "yearHigh": 29.19,
+      "yearLow": 21.04
     },
     {
       "ticker": "FANG",
       "name": "Diamondback Energy Inc",
       "sector": "Energy",
       "weight": 0.2,
-      "price": 200.11,
-      "changePct": -2.07
+      "price": 200.06,
+      "changePct": -2.09,
+      "marketCap": 56000000000,
+      "pe": 22.48,
+      "yearHigh": 214.51,
+      "yearLow": 133.75
     },
     {
       "ticker": "GEHC",
       "name": "GE HealthCare Technologies Inc",
       "sector": "Health Care",
       "weight": 0.2,
-      "price": 64.22,
-      "changePct": -0.06
+      "price": 64.3,
+      "changePct": 0.06,
+      "marketCap": 56000000000,
+      "pe": 39.6,
+      "yearHigh": 89.77,
+      "yearLow": 58.75
     },
     {
       "ticker": "CDW",
       "name": "CDW Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 109.89,
-      "changePct": 3.46
+      "price": 110.45,
+      "changePct": 4,
+      "marketCap": 56000000000,
+      "pe": 44.81,
+      "yearHigh": 186.7,
+      "yearLow": 97.12
     },
     {
       "ticker": "DXCM",
       "name": "DexCom Inc",
       "sector": "Health Care",
       "weight": 0.2,
-      "price": 72.88,
-      "changePct": 2.02
+      "price": 72.47,
+      "changePct": 1.44,
+      "marketCap": 56000000000,
+      "pe": 24.47,
+      "yearHigh": 89.98,
+      "yearLow": 54.11
     },
     {
       "ticker": "CCEP",
       "name": "Coca-Cola Europacific Partners plc",
       "sector": "Consumer Staples",
       "weight": 0.2,
-      "price": 93.99,
-      "changePct": 0.76
+      "price": 94.22,
+      "changePct": 1.01,
+      "marketCap": 56000000000,
+      "pe": 40.87,
+      "yearHigh": 110.9,
+      "yearLow": 84.66
     },
     {
       "ticker": "TEAM",
       "name": "Atlassian Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 85.88,
-      "changePct": -0.41
+      "price": 85.93,
+      "changePct": -0.35,
+      "marketCap": 56000000000,
+      "pe": 18.44,
+      "yearHigh": 222.59,
+      "yearLow": 56.01
     },
     {
       "ticker": "MCHP",
       "name": "Microchip Technology Inc",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 94.41,
-      "changePct": 0.41
+      "price": 94.16,
+      "changePct": 0.15,
+      "marketCap": 56000000000,
+      "pe": 27.9,
+      "yearHigh": 105.91,
+      "yearLow": 48.52
     },
     {
       "ticker": "ON",
       "name": "ON Semiconductor Corp",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 116.67,
-      "changePct": 5.87
+      "price": 116.92,
+      "changePct": 6.09,
+      "marketCap": 56000000000,
+      "pe": 28.31,
+      "yearHigh": 119.1,
+      "yearLow": 40.62
     },
     {
       "ticker": "CSGP",
       "name": "CoStar Group Inc",
       "sector": "Real Estate",
       "weight": 0.2,
-      "price": 33.82,
-      "changePct": -0.56
+      "price": 33.88,
+      "changePct": -0.37,
+      "marketCap": 56000000000,
+      "pe": 35.87,
+      "yearHigh": 97.43,
+      "yearLow": 31.36
     },
     {
       "ticker": "WBD",
       "name": "Warner Bros Discovery Inc",
       "sector": "Communication Services",
       "weight": 0.2,
-      "price": 27.12,
-      "changePct": -1.09
+      "price": 27.09,
+      "changePct": -1.19,
+      "marketCap": 56000000000,
+      "pe": 23.99,
+      "yearHigh": 30,
+      "yearLow": 8.84
     },
     {
       "ticker": "ZS",
       "name": "Zscaler Inc",
       "sector": "Technology",
       "weight": 0.2,
-      "price": 178.89,
-      "changePct": 2.55
+      "price": 181,
+      "changePct": 3.75,
+      "marketCap": 56000000000,
+      "pe": 21.75,
+      "yearHigh": 336.99,
+      "yearLow": 114.63
     },
     {
       "ticker": "LULU",
       "name": "Lululemon Athletica Inc",
       "sector": "Consumer Discretionary",
       "weight": 0.2,
-      "price": 126.2,
-      "changePct": 0.81
+      "price": 126.75,
+      "changePct": 1.25,
+      "marketCap": 56000000000,
+      "pe": 39.13,
+      "yearHigh": 340.25,
+      "yearLow": 116.63
     },
     {
       "ticker": "GFS",
       "name": "GlobalFoundries Inc",
       "sector": "Technology",
       "weight": 0.1,
-      "price": 85.8,
-      "changePct": 21.2
+      "price": 86.61,
+      "changePct": 22.35,
+      "marketCap": 28000000000,
+      "pe": 22.29,
+      "yearHigh": 89.9,
+      "yearLow": 31.51
     },
     {
       "ticker": "BIIB",
       "name": "Biogen Inc",
       "sector": "Health Care",
       "weight": 0.1,
-      "price": 193.21,
-      "changePct": 2.88
+      "price": 193.37,
+      "changePct": 2.97,
+      "marketCap": 28000000000,
+      "pe": 18.95,
+      "yearHigh": 205.97,
+      "yearLow": 121.05
     }
   ]
 }

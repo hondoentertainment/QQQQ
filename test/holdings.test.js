@@ -9,6 +9,7 @@ import {
   diffConstituents,
   monthKey,
   applyMonthlySnapshot,
+  applyPriceSnapshot,
   isFallbackSource,
   MIN_HOLDINGS,
 } from '../lib/holdings.js';
@@ -142,4 +143,38 @@ test('isFallbackSource flags cached and seed sources but not live ones', () => {
   assert.equal(isFallbackSource('invesco-cached'), true);
   assert.equal(isFallbackSource('fmp-cached'), true);
   assert.equal(isFallbackSource('seed'), true);
+});
+
+test('applyPriceSnapshot records a new day and keeps history sorted', () => {
+  const out = applyPriceSnapshot(
+    [{ date: '2026-05-21', close: 480 }], '2026-05-22', 485, 180
+  );
+  assert.deepEqual(out, [
+    { date: '2026-05-21', close: 480 },
+    { date: '2026-05-22', close: 485 },
+  ]);
+});
+
+test('applyPriceSnapshot is idempotent for a same-day re-run', () => {
+  const history = [{ date: '2026-05-22', close: 480 }];
+  const out = applyPriceSnapshot(history, '2026-05-22', 491, 180);
+  assert.deepEqual(out, [{ date: '2026-05-22', close: 491 }]);
+});
+
+test('applyPriceSnapshot prunes to the most recent maxDays entries', () => {
+  const history = [
+    { date: '2026-05-19', close: 1 },
+    { date: '2026-05-20', close: 2 },
+    { date: '2026-05-21', close: 3 },
+  ];
+  const out = applyPriceSnapshot(history, '2026-05-22', 4, 2);
+  assert.deepEqual(out, [
+    { date: '2026-05-21', close: 3 },
+    { date: '2026-05-22', close: 4 },
+  ]);
+});
+
+test('applyPriceSnapshot ignores a non-finite close', () => {
+  const history = [{ date: '2026-05-21', close: 480 }];
+  assert.deepEqual(applyPriceSnapshot(history, '2026-05-22', null, 180), history);
 });
