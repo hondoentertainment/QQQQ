@@ -5,6 +5,9 @@ import {
   parseCsv,
   parseInvescoCsv,
   parseFmpHoldings,
+  parseSecNportHoldings,
+  buildNameTickerMap,
+  buildRefreshStatus,
   validateHoldings,
   diffConstituents,
   monthKey,
@@ -55,6 +58,22 @@ test('parseInvescoCsv extracts holdings and skips cash rows', () => {
 
 test('parseInvescoCsv throws when required columns are missing', () => {
   assert.throws(() => parseInvescoCsv('foo,bar\n1,2\n3,4\n5,6\n7,8\n9,10\n11,12\n13,14\n15,16\n17,18\n'));
+});
+
+test('parseInvescoCsv rejects HTML responses', () => {
+  assert.throws(() => parseInvescoCsv('<!DOCTYPE html><html></html>'), /HTML/);
+});
+
+test('parseInvescoCsv finds the header row after preamble lines', () => {
+  const csv =
+    'Invesco QQQ Trust\n' +
+    'As of date\n' +
+    'Fund Ticker,Holding Ticker,Name,Weight,Sector\n' +
+    'QQQ,NVDA,NVIDIA Corp,9.6,Technology\n' +
+    'QQQ,AAPL,Apple Inc,8.1,Technology\n';
+  const holdings = parseInvescoCsv(csv);
+  assert.equal(holdings.length, 2);
+  assert.equal(holdings[0].ticker, 'NVDA');
 });
 
 test('parseFmpHoldings maps the etf-holder shape', () => {
@@ -149,9 +168,50 @@ test('applyMonthlySnapshot prunes history beyond maxMonths', () => {
   assert.deepEqual(Object.keys(out.allocations.AAPL).sort(), ['2026-03', '2026-04']);
 });
 
+test('applyMonthlySnapshot updates the current month on a same-month re-run', () => {
+  const monthly = {
+    months: ['2026-05'],
+    allocations: { AAPL: { '2026-05': 8.0 } },
+  };
+  const out = applyMonthlySnapshot(monthly, [{ ticker: 'AAPL', weight: 8.4 }], '2026-05', 24);
+  assert.deepEqual(out.months, ['2026-05']);
+  assert.equal(out.allocations.AAPL['2026-05'], 8.4);
+});
+
+test('parseSecNportHoldings maps SEC names to tickers via a prior snapshot', () => {
+  const nameMap = buildNameTickerMap([
+    { ticker: 'NVDA', name: 'NVIDIA Corp' },
+    { ticker: 'AAPL', name: 'Apple Inc' },
+  ]);
+  const xml = `
+    <invstOrSec>
+      <name>NVIDIA Corp.</name><pctVal>9.500</pctVal><assetCat>EC</assetCat>
+    </invstOrSec>
+    <invstOrSec>
+      <name>Apple Inc.</name><pctVal>8.100</pctVal><assetCat>EC</assetCat>
+    </invstOrSec>`;
+  assert.throws(() => parseSecNportHoldings(xml, nameMap), /mapped only 2/);
+});
+
+test('buildRefreshStatus records quote success rate and attempts', () => {
+  const status = buildRefreshStatus({
+    runAt: '2026-05-22T12:00:00.000Z',
+    holdingsSource: 'fmp',
+    quoteSource: 'yahoo',
+    holdingsCount: 100,
+    pricedCount: 95,
+    attempts: [{ source: 'fmp', ok: true, count: 100 }],
+    fallback: false,
+  });
+  assert.equal(status.quoteSuccessRate, 0.95);
+  assert.equal(status.holdingsSource, 'fmp');
+  assert.equal(status.attempts.length, 1);
+});
+
 test('isFallbackSource flags cached and seed sources but not live ones', () => {
   assert.equal(isFallbackSource('invesco'), false);
   assert.equal(isFallbackSource('fmp'), false);
+  assert.equal(isFallbackSource('sec-nport'), false);
   assert.equal(isFallbackSource('invesco-cached'), true);
   assert.equal(isFallbackSource('fmp-cached'), true);
   assert.equal(isFallbackSource('seed'), true);

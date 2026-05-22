@@ -69,11 +69,13 @@ data/holdings.json                 Current holdings snapshot
 data/monthly-allocations.json      Per-ticker monthly allocation history
 data/changes.json                 Log of constituent additions/removals
 data/price-history.json            Daily QQQ closing prices (fund performance)
+data/refresh-status.json             Last refresh run summary (source, quote rate)
 vercel.json                        Vercel deploy config (static + function)
 .github/workflows/ci.yml           Lints and runs the test suite on every PR
 .github/workflows/refresh.yml      The recurring data-refresh cron job
 .github/workflows/pages.yml        Deploys the dashboard to GitHub Pages
 ROADMAP.md                         Planned features and project direction
+CONTRIBUTING.md                    Contributor workflow and deployment notes
 ```
 
 See [`ROADMAP.md`](ROADMAP.md) for where the project is headed.

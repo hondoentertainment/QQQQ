@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "runAt": "2026-05-22T20:00:37.571Z",
+  "holdingsSource": "sec-nport",
+  "quoteSource": "yahoo",
+  "holdingsCount": 91,
+  "pricedCount": 91,
+  "quoteSuccessRate": 1,
+  "fallback": false,
+  "attempts": [
+    {
+      "source": "invesco",
+      "ok": false,
+      "error": "Invesco response is HTML, not CSV"
+    },
+    {
+      "source": "fmp",
+      "ok": false,
+      "error": "FMP_API_KEY not set"
+    },
+    {
+      "source": "sec-nport",
+      "ok": true,
+      "count": 91
+    }
+  ]
+}

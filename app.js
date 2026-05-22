@@ -31,10 +31,12 @@ const state = {
   monthly: null,
   changes: null,
   prices: null,
+  refreshStatus: null,
   sort: { key: 'weight', dir: 'desc' },
   search: '',
   sector: '',
   compare: [],
+  weightChart: { ticker: '', months: 12 },
   open: new Set(),
   auto: true,
   countdown: REFRESH_SECONDS,
@@ -187,6 +189,7 @@ function renderStatus() {
   const map = {
     invesco: ['LIVE · INVESCO', ''],
     fmp: ['LIVE · FMP', ''],
+    'sec-nport': ['LIVE · SEC', ''],
     'invesco-cached': ['CACHED', 'cached'],
     'fmp-cached': ['CACHED', 'cached'],
     seed: ['SAMPLE DATA', 'seed'],
@@ -215,7 +218,22 @@ function renderStatus() {
     (fresh.stale
       ? ' &middot; <span class="down">may be stale &mdash; the refresh job has not '
         + 'updated it recently</span>'
-      : '');
+      : '') +
+    refreshHealthLine();
+}
+
+function refreshHealthLine() {
+  const rs = state.refreshStatus;
+  if (!rs) return '';
+  const pct = Number.isFinite(rs.quoteSuccessRate)
+    ? Math.round(rs.quoteSuccessRate * 100) : null;
+  const quote = rs.quoteSource ? escapeHtml(rs.quoteSource) : '—';
+  const attempts = Array.isArray(rs.attempts)
+    ? rs.attempts.map((a) => `${a.source}:${a.ok ? 'ok' : 'fail'}`).join(', ')
+    : '';
+  return ` &middot; last refresh ${relTime(rs.runAt)} via <strong>${quote}</strong>` +
+    (pct != null ? ` (${pct}% quotes)` : '') +
+    (attempts ? ` &middot; pipeline: ${escapeHtml(attempts)}` : '');
 }
 
 function renderCards() {
@@ -684,6 +702,182 @@ function renderPerformance() {
     `over ${hist.length} trading days (since ${hist[0].date})`;
 }
 
+/* ---------- sector trends ---------- */
+function sectorTrendSeries() {
+  const months = state.monthly ? state.monthly.months : [];
+  const sectorOf = Object.fromEntries(
+    state.holdings.holdings.map((h) => [h.ticker, h.sector || 'Unclassified'])
+  );
+  return months.map((m) => {
+    const totals = {};
+    for (const [tk, rec] of Object.entries(state.monthly?.allocations || {})) {
+      if (!Number.isFinite(rec[m])) continue;
+      const sec = sectorOf[tk] || 'Unclassified';
+      totals[sec] = (totals[sec] || 0) + rec[m];
+    }
+    return { month: m, totals };
+  });
+}
+
+function sectorTrendChart(series, sectors) {
+  const W = 720, H = 250, padL = 42, padR = 16, padT = 16, padB = 34;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const vals = series.flatMap((p) => sectors.map((s) => p.totals[s] || 0));
+  let lo = 0;
+  let hi = Math.max(...vals, 1);
+  const pad = hi * 0.08 || 1;
+  hi += pad;
+  const n = series.length;
+  const x = (i) => padL + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+  const y = (v) => padT + innerH - ((v - lo) / (hi - lo || 1)) * innerH;
+
+  let grid = '';
+  const TICKS = 4;
+  for (let t = 0; t <= TICKS; t++) {
+    const v = lo + (t / TICKS) * (hi - lo);
+    const gy = y(v).toFixed(1);
+    grid += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="var(--line)"/>
+      <text x="${padL - 6}" y="${(+gy + 3).toFixed(1)}" text-anchor="end"
+        font-size="9.5" fill="var(--muted)">${v.toFixed(0)}%</text>`;
+  }
+  let xlab = '';
+  series.forEach((p, i) => {
+    if (n > 12 && i % 2 !== 0 && i !== n - 1) return;
+    xlab += `<text x="${x(i).toFixed(1)}" y="${H - 12}" text-anchor="middle"
+      font-size="9.5" fill="var(--muted)">${p.month.slice(2)}</text>`;
+  });
+  let paths = '';
+  sectors.forEach((sec, idx) => {
+    const color = COMPARE_COLORS[idx % COMPARE_COLORS.length];
+    const pts = series
+      .map((p, i) => ({ v: p.totals[sec] || 0, i }))
+      .filter((p) => Number.isFinite(p.v));
+    if (pts.length < 2) return;
+    const d = pts
+      .map((p, k) => `${k ? 'L' : 'M'}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`)
+      .join(' ');
+    paths += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round"/>`;
+  });
+  const legend = sectors
+    .map((sec, idx) => `<span class="lg">
+      <span class="swatch" style="background:${COMPARE_COLORS[idx % COMPARE_COLORS.length]}"></span>
+      ${escapeHtml(sec)}</span>`)
+    .join('');
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    role="img" aria-label="Sector allocation trend over monthly history">
+    ${grid}${paths}${xlab}</svg>
+    <div class="line-legend">${legend}</div>`;
+}
+
+function renderSectorTrends() {
+  const series = sectorTrendSeries();
+  const note = $('#sectorTrendNote');
+  const chart = $('#sectorTrendChart');
+  if (series.length < 2) {
+    note.textContent = '';
+    chart.innerHTML = '<p class="empty">Not enough monthly history yet.</p>';
+    return;
+  }
+  const lastTotals = series[series.length - 1].totals;
+  const sectors = Object.entries(lastTotals)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([s]) => s);
+  chart.innerHTML = sectorTrendChart(series, sectors);
+  const first = series[0];
+  const last = series[series.length - 1];
+  const top = sectors[0];
+  const d = top ? (last.totals[top] || 0) - (first.totals[top] || 0) : null;
+  note.innerHTML = top
+    ? `<strong>${escapeHtml(top)}</strong> leads at ${(last.totals[top] || 0).toFixed(1)}%` +
+      (d != null ? ` (<span class="${classOf(d)}">${fmtSigned(d, 1, ' pp')}</span> since ${first.month})` : '')
+    : '';
+}
+
+/* ---------- weight history ---------- */
+function weightHistorySeries(ticker, maxMonths) {
+  const months = state.monthly ? state.monthly.months : [];
+  const kept = months.slice(-maxMonths);
+  const rec = state.monthly?.allocations?.[ticker] || {};
+  return kept.map((m) => ({ month: m, weight: Number.isFinite(rec[m]) ? rec[m] : null }));
+}
+
+function weightHistoryChart(series, ticker) {
+  const pts = series.filter((p) => p.weight != null);
+  if (pts.length < 2) return '<p class="empty">Not enough history for this holding.</p>';
+  const W = 720, H = 250, padL = 42, padR = 16, padT = 16, padB = 34;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const vals = pts.map((p) => p.weight);
+  let lo = Math.min(...vals);
+  let hi = Math.max(...vals);
+  const pad = (hi - lo) * 0.25 || hi * 0.1 || 1;
+  lo = Math.max(0, lo - pad);
+  hi += pad;
+  const n = series.length;
+  const x = (i) => padL + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+  const y = (v) => padT + innerH - ((v - lo) / (hi - lo || 1)) * innerH;
+
+  let grid = '';
+  const TICKS = 4;
+  for (let t = 0; t <= TICKS; t++) {
+    const v = lo + (t / TICKS) * (hi - lo);
+    const gy = y(v).toFixed(1);
+    grid += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="var(--line)"/>
+      <text x="${padL - 6}" y="${(+gy + 3).toFixed(1)}" text-anchor="end"
+        font-size="9.5" fill="var(--muted)">${v.toFixed(1)}%</text>`;
+  }
+  let xlab = '';
+  series.forEach((p, i) => {
+    if (n > 12 && i % 2 !== 0 && i !== n - 1) return;
+    xlab += `<text x="${x(i).toFixed(1)}" y="${H - 12}" text-anchor="middle"
+      font-size="9.5" fill="var(--muted)">${p.month.slice(2)}</text>`;
+  });
+  const present = series.map((p, i) => ({ ...p, i })).filter((p) => p.weight != null);
+  const d = present
+    .map((p, k) => `${k ? 'L' : 'M'}${x(p.i).toFixed(1)},${y(p.weight).toFixed(1)}`)
+    .join(' ');
+  const trend = present[present.length - 1].weight - present[0].weight;
+  const color = trend >= 0 ? 'var(--up)' : 'var(--down)';
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    role="img" aria-label="${ticker} index weight over the selected window">
+    ${grid}<path d="${d}" fill="none" stroke="${color}" stroke-width="2.2"
+      stroke-linejoin="round" stroke-linecap="round"/>${xlab}</svg>`;
+}
+
+function renderWeightHistory() {
+  const sel = $('#weightTicker');
+  const win = $('#weightWindow');
+  if (!state.weightChart.ticker && state.holdings?.holdings?.length) {
+    state.weightChart.ticker = state.holdings.holdings[0].ticker;
+  }
+  if (sel && sel.value !== state.weightChart.ticker) sel.value = state.weightChart.ticker;
+  if (win) win.value = String(state.weightChart.months);
+  const tk = state.weightChart.ticker;
+  const months = Number(state.weightChart.months) || 12;
+  const series = weightHistorySeries(tk, months);
+  const note = $('#weightHistoryNote');
+  const chart = $('#weightHistoryChart');
+  if (!tk) {
+    note.textContent = '';
+    chart.innerHTML = '<p class="empty">Select a holding.</p>';
+    return;
+  }
+  chart.innerHTML = weightHistoryChart(series, tk);
+  const present = series.filter((p) => p.weight != null);
+  if (present.length < 2) {
+    note.textContent = '';
+    return;
+  }
+  const first = present[0];
+  const last = present[present.length - 1];
+  const d = last.weight - first.weight;
+  note.innerHTML =
+    `<strong>${escapeHtml(tk)}</strong> weight ` +
+    `<strong>${last.weight.toFixed(2)}%</strong> &middot; ` +
+    `<span class="${classOf(d)}">${fmtSigned(d, 2, ' pp')}</span> over ${present.length} months`;
+}
+
 function render() {
   renderStatus();
   renderCards();
@@ -693,6 +887,8 @@ function render() {
   renderPerformance();
   renderConcentration();
   renderCompare();
+  renderWeightHistory();
+  renderSectorTrends();
   renderSectors();
   renderChangeHistory();
 }
@@ -700,11 +896,12 @@ function render() {
 /* ---------- data loading ---------- */
 async function loadData() {
   const bust = '?t=' + Date.now();
-  const [h, m, c, p] = await Promise.all([
+  const [h, m, c, p, rs] = await Promise.all([
     fetch('data/holdings.json' + bust).then((r) => r.json()),
     fetch('data/monthly-allocations.json' + bust).then((r) => r.json()),
     fetch('data/changes.json' + bust).then((r) => r.json()).catch(() => ({ events: [] })),
     fetch('data/price-history.json' + bust).then((r) => r.json()).catch(() => null),
+    fetch('data/refresh-status.json' + bust).then((r) => r.json()).catch(() => null),
   ]);
   if (Number.isFinite(h.schemaVersion) && h.schemaVersion > KNOWN_SCHEMA) {
     console.warn(
@@ -728,11 +925,19 @@ async function loadData() {
       o.value = o.textContent = tk;
       cmpSel.appendChild(o);
     });
+    const weightSel = $('#weightTicker');
+    h.holdings.forEach((x) => {
+      const o = document.createElement('option');
+      o.value = o.textContent = x.ticker;
+      weightSel.appendChild(o);
+    });
+    state.weightChart.ticker = h.holdings[0]?.ticker || '';
   }
   state.holdings = h;
   state.monthly = m;
   state.changes = c;
   state.prices = p;
+  state.refreshStatus = rs;
   render();
 }
 
@@ -1010,6 +1215,15 @@ function wireEvents() {
     state.compare = state.compare.filter((t) => t !== chip.dataset.tk);
     renderCompare();
     syncUrl();
+  });
+
+  $('#weightTicker').addEventListener('change', (e) => {
+    state.weightChart.ticker = e.target.value;
+    renderWeightHistory();
+  });
+  $('#weightWindow').addEventListener('change', (e) => {
+    state.weightChart.months = Number(e.target.value) || 12;
+    renderWeightHistory();
   });
 
   // Press "/" anywhere outside a field to jump to the holdings filter.

@@ -46,7 +46,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/holdings.json data/monthly-allocations.json data/changes.json data/price-history.json
+          git add data/holdings.json data/monthly-allocations.json data/changes.json data/price-history.json data/refresh-status.json
           if git diff --cached --quiet; then
             echo "No data changes to commit."
           else
@@ -70,7 +70,7 @@ jobs:
               `/actions/runs/${context.runId}`;
             const body = [
               `The scheduled refresh could not reach a live holdings source `,
-              `(Invesco / FMP) and fell back to \`${source}\` data.`,
+              `(Invesco / FMP / SEC) and fell back to \`${source}\` data.`,
               ``,
               `The dashboard is still online but its holdings may be stale. `,
               `A later run that reaches a live source will close this automatically.`,

@@ -34,15 +34,19 @@ jobs:
           cp data/*.json _site/data/
 
       - name: Configure Pages
+        id: pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+        continue-on-error: true
 
       - name: Upload artifact
+        if: steps.pages.outcome == 'success'
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
       - name: Deploy
+        if: steps.pages.outcome == 'success'
         id: deploy
         uses: actions/deploy-pages@v4

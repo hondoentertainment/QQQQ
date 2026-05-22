@@ -118,6 +118,30 @@
     </section>
 
     <section class="panel">
+      <div class="panel-head">
+        <h2>Weight history</h2>
+        <div class="panel-controls">
+          <select id="weightTicker" class="panel-select" aria-label="Select holding"></select>
+          <select id="weightWindow" class="panel-select" aria-label="History window">
+            <option value="6">6 months</option>
+            <option value="12" selected>12 months</option>
+            <option value="24">24 months</option>
+          </select>
+        </div>
+      </div>
+      <span class="panel-note" id="weightHistoryNote">&mdash;</span>
+      <div id="weightHistoryChart" class="chartbox"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Sector trends</h2>
+        <span class="panel-note" id="sectorTrendNote">&mdash;</span>
+      </div>
+      <div id="sectorTrendChart" class="chartbox"></div>
+    </section>
+
+    <section class="panel">
       <div class="panel-head"><h2>Sector allocation</h2></div>
       <div id="sectors" class="sectors"></div>
     </section>
@@ -133,8 +157,9 @@
         <dl>
           <dt>Data sources</dt>
           <dd>Holdings and index weights come from the official Invesco QQQ
-            holdings file, or Financial Modeling Prep as a fallback. Quotes come
-            from Financial Modeling Prep or Yahoo Finance.</dd>
+            holdings file, Financial Modeling Prep when configured, or the
+            latest SEC N-PORT filing as a third fallback. Quotes come from
+            Financial Modeling Prep or Yahoo Finance.</dd>
           <dt>Update cadence</dt>
           <dd>A scheduled job refreshes the data every 30 minutes during US
             market hours, plus a post-close snapshot. This page re-reads the

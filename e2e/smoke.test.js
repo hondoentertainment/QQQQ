@@ -50,9 +50,35 @@ test('dashboard renders and is interactive', async (t) => {
     await page.waitForSelector('table tbody tr:nth-child(2)', { timeout: 5000 });
   });
 
+  await t.test('sorts the holdings table by ticker', async () => {
+    await page.locator('th[data-sort="ticker"]').click();
+    const tickers = (await page.locator('table tbody tr.row .tk').allTextContents())
+      .map((t) => t.replace(/▸/g, '').trim());
+    const sorted = [...tickers].sort();
+    assert.deepEqual(tickers, sorted);
+  });
+
+  await t.test('filters the holdings table by sector', async () => {
+    const options = await page.locator('#sectorFilter option').allTextContents();
+    const sector = options.find((o) => o && o !== 'All sectors');
+    assert.ok(sector, 'expected at least one sector option');
+    await page.locator('#sectorFilter').selectOption({ label: sector });
+    const count = await page.locator('table tbody tr.row').count();
+    assert.ok(count > 0 && count < 50, `expected a narrowed sector view, got ${count} rows`);
+    await page.locator('#sectorFilter').selectOption({ label: 'All sectors' });
+  });
+
   await t.test('expands a holding row on click', async () => {
-    await page.locator('table tbody tr').first().click();
+    await page.locator('table tbody tr.row').first().click();
     await page.waitForSelector('[aria-expanded="true"]', { timeout: 5000 });
+  });
+
+  await t.test('exports the current view as CSV', async () => {
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.locator('#exportBtn').click(),
+    ]);
+    assert.match(download.suggestedFilename(), /^qqqq-holdings-\d{4}-\d{2}-\d{2}\.csv$/);
   });
 
   await t.test('adds a holding to the comparison chart', async () => {
@@ -60,5 +86,10 @@ test('dashboard renders and is interactive', async (t) => {
     await page.waitForSelector('.cmp-chip', { timeout: 5000 });
     assert.equal(await page.locator('.cmp-chip').count(), 1);
     assert.equal(await page.locator('#compareChart svg').count(), 1);
+  });
+
+  await t.test('renders weight history and sector trend panels', async () => {
+    await page.waitForSelector('#weightHistoryChart svg', { timeout: 5000 });
+    await page.waitForSelector('#sectorTrendChart svg', { timeout: 5000 });
   });
 });
