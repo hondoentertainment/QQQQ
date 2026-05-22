@@ -57,10 +57,21 @@ async function fetchInvescoHoldings() {
 }
 
 async function fetchFmpHoldings(apiKey) {
-  const url =
-    `https://financialmodelingprep.com/api/v3/etf-holder/QQQ?apikey=${encodeURIComponent(apiKey)}`;
-  const res = await fetch(url, { headers: { 'User-Agent': UA } });
-  if (!res.ok) throw new Error('FMP HTTP ' + res.status);
+  const headers = { 'User-Agent': UA, apikey: apiKey };
+  const key = encodeURIComponent(apiKey);
+
+  // Stable API — current FMP keys; legacy /api/v3 often returns 401.
+  const stableUrl =
+    `https://financialmodelingprep.com/stable/etf/holdings?symbol=QQQ&apikey=${key}`;
+  let res = await fetch(stableUrl, { headers });
+  if (res.ok) {
+    return validateHoldings(parseFmpHoldings(await res.json()), 'FMP stable');
+  }
+
+  const legacyUrl =
+    `https://financialmodelingprep.com/api/v3/etf-holder/QQQ?apikey=${key}`;
+  res = await fetch(legacyUrl, { headers });
+  if (!res.ok) throw new Error(`FMP HTTP ${res.status}`);
   return validateHoldings(parseFmpHoldings(await res.json()), 'FMP');
 }
 

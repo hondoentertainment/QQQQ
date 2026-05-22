@@ -67,6 +67,18 @@ test('parseFmpHoldings maps the etf-holder shape', () => {
   assert.equal(holdings[0].ticker, 'AAPL');
 });
 
+test('parseFmpHoldings maps the stable etf/holdings shape', () => {
+  const holdings = parseFmpHoldings({
+    holdings: [
+      { symbol: 'NVDA', name: 'NVIDIA Corp', weight: 9.6, sector: 'Technology' },
+      { symbol: 'AAPL', name: 'Apple Inc', weight: 8.1 },
+    ],
+  });
+  assert.equal(holdings.length, 2);
+  assert.equal(holdings[0].ticker, 'NVDA');
+  assert.equal(holdings[0].sector, 'Technology');
+});
+
 test('validateHoldings accepts a well-formed snapshot', () => {
   const h = makeHoldings(100);
   assert.equal(validateHoldings(h), h);

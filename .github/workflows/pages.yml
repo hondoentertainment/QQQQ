@@ -12,8 +12,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  # Allow configure-pages to enable GitHub Pages when not yet configured.
-  administration: write
 
 concurrency:
   group: pages
