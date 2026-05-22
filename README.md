@@ -46,7 +46,10 @@ vercel.json                        Vercel deploy config (static + function)
 .github/workflows/ci.yml           Lints and runs the test suite on every PR
 .github/workflows/refresh.yml      The recurring data-refresh cron job
 .github/workflows/pages.yml        Deploys the dashboard to GitHub Pages
+ROADMAP.md                         Planned features and project direction
 ```
+
+See [`ROADMAP.md`](ROADMAP.md) for where the project is headed.
 
 ## Run it locally
 
