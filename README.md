@@ -38,6 +38,7 @@ lib/quotes.js                      Shared live-quote fetching (FMP or Yahoo)
 api/quotes.js                      Vercel serverless function for /api/quotes
 scripts/fetch-holdings.js          Fetches holdings + prices, writes data/*.json
 test/*.test.js                     Unit tests (data pipeline, quotes, server)
+e2e/smoke.test.js                  Browser smoke test of the dashboard
 data/holdings.json                 Current holdings snapshot
 data/monthly-allocations.json      Per-ticker monthly allocation history
 data/changes.json                 Log of constituent additions/removals
@@ -50,15 +51,17 @@ vercel.json                        Vercel deploy config (static + function)
 ## Run it locally
 
 Requires Node.js 20+. The app itself has no runtime dependencies; run
-`npm install` once to get the dev tooling (ESLint) for `lint`/`test`.
+`npm install` once to get the dev tooling (ESLint, Playwright, Vercel CLI)
+for `lint` / `test` / `test:e2e`.
 
 ```bash
-npm install                    # install dev dependencies (ESLint) — one time
+npm install                    # install dev tooling — one time
 npm start                      # serve the dashboard at http://localhost:3000
 npm run refresh                # refresh data/*.json once, right now
 REFRESH_MINUTES=30 npm start   # serve + auto-refresh data every 30 min
 npm run lint                   # lint the JavaScript sources
 npm test                       # run the unit tests
+npm run test:e2e               # browser smoke test (needs `npx playwright install chromium`)
 ```
 
 ## The recurring cron job
@@ -123,7 +126,9 @@ project settings — without it the function falls back to Yahoo Finance.
 
 The Vercel CLI is included as a dev dependency: run `npx vercel dev` to
 preview the dashboard and the `/api/quotes` function together locally, or
-`npx vercel deploy` to deploy from the command line.
+`npx vercel deploy` to deploy from the command line. The CLI bundles many
+transitive packages, so `npm audit` reports advisories from them — all
+dev-only and never shipped to the app; see [`SECURITY.md`](SECURITY.md).
 
 ## Data sources & notes
 
