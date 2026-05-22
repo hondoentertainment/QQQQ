@@ -17,12 +17,21 @@ that keeps the data fresh.
   sparkline; click a row for a full bar chart and month-by-month deltas.
 - **Index change tracking** — additions/removals between refreshes are
   recorded and surfaced in a banner.
+- **Today's movers** — the biggest daily gainers and losers at a glance; click
+  one to jump straight to its row.
 - **Sector allocation** breakdown of the whole fund.
+- **Fund concentration trend** — top-5 and top-10 weight charted across the
+  monthly history, showing how concentrated the fund has become over time.
 - **Near real-time** — the view auto-refreshes; when self-hosted it also polls
   live prices every 20s via the server.
+- **Shareable views** — the active filter, sort, and expanded rows are encoded
+  in the URL; **Copy link** shares the exact view you're looking at.
 - **CSV export** of the current (filtered/sorted) holdings with monthly history.
+- **Light & dark themes** — a header toggle that remembers your choice and
+  falls back to the OS colour-scheme preference.
 - **Keyboard accessible** — sortable headers and expandable rows work without a
-  mouse, with `aria-sort` / `aria-expanded` state.
+  mouse, with `aria-sort` / `aria-expanded` state; press `/` to jump to the
+  filter box.
 - **Zero runtime dependencies** — plain HTML/CSS/JS frontend, a Node built-in
   static server, and fetch scripts using only the Node standard library.
   Unit-tested data pipeline and server (`npm test`); the only dev dependency

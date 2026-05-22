@@ -4,6 +4,12 @@ const REFRESH_SECONDS = 60;
 const COLS = 9;
 
 const QUOTE_POLL_SECONDS = 20;
+const MOVERS_PER_SIDE = 5;
+
+// Sort keys accepted from the table headers and the shareable URL.
+const SORT_KEYS = new Set(
+  ['rank', 'ticker', 'name', 'sector', 'weight', 'price', 'changePct', 'mom']
+);
 
 const state = {
   holdings: null,
@@ -311,11 +317,134 @@ function renderChanges() {
   el.hidden = false;
 }
 
+// Biggest daily gainers and losers among priced holdings. Hidden entirely
+// until prices are available (e.g. before the first cron run on static hosting).
+function renderMovers() {
+  const panel = $('#moversPanel');
+  const priced = state.holdings.holdings.filter((h) => Number.isFinite(h.changePct));
+  if (!priced.length) {
+    panel.hidden = true;
+    return;
+  }
+  const ranked = priced.slice().sort((a, b) => b.changePct - a.changePct);
+  const gainers = ranked.filter((h) => h.changePct > 0).slice(0, MOVERS_PER_SIDE);
+  const losers = ranked.filter((h) => h.changePct < 0).slice(-MOVERS_PER_SIDE).reverse();
+
+  const chip = (h) => `
+    <button class="mover" type="button" data-tk="${h.ticker}"
+      aria-label="${h.ticker}, ${escapeHtml(h.name)}, ${fmtSigned(h.changePct)} today">
+      <span class="mv-tk">${h.ticker}</span>
+      <span class="mv-price">${fmtPrice(h.price)}</span>
+      <span class="mv-chg ${classOf(h.changePct)}">${fmtSigned(h.changePct)}</span>
+    </button>`;
+  const col = (title, list) => `
+    <div class="mv-col">
+      <div class="mv-head">${title}</div>
+      <div class="mv-list">${
+        list.length ? list.map(chip).join('') : '<span class="mv-none">No movers</span>'
+      }</div>
+    </div>`;
+
+  $('#movers').innerHTML =
+    col('&#9650; Top gainers', gainers) + col('&#9660; Top losers', losers);
+  panel.hidden = false;
+}
+
+/* ---------- fund concentration ---------- */
+// Per-month top-5 / top-10 weight concentration, derived from the same
+// monthly allocation history that drives each row's sparkline.
+function concentrationSeries() {
+  const months = state.monthly ? state.monthly.months : [];
+  const allocations = (state.monthly && state.monthly.allocations) || {};
+  return months.map((m) => {
+    const weights = [];
+    for (const rec of Object.values(allocations)) {
+      if (Number.isFinite(rec[m])) weights.push(rec[m]);
+    }
+    weights.sort((a, b) => b - a);
+    const sum = (n) => weights.slice(0, n).reduce((s, w) => s + w, 0);
+    return { month: m, count: weights.length, top5: sum(5), top10: sum(10) };
+  });
+}
+
+function concentrationChart(series) {
+  const W = 720, H = 230, padL = 40, padR = 16, padT = 16, padB = 34;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const lines = [
+    { key: 'top10', label: 'Top 10 holdings', color: 'var(--accent)' },
+    { key: 'top5', label: 'Top 5 holdings', color: 'var(--blue)' },
+  ];
+  const vals = series.flatMap((p) => [p.top5, p.top10]);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const pad = (hi - lo) * 0.25 || 1;
+  lo = Math.max(0, lo - pad);
+  hi += pad;
+  const n = series.length;
+  const x = (i) => padL + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+  const y = (v) => padT + innerH - ((v - lo) / (hi - lo || 1)) * innerH;
+
+  let grid = '';
+  const TICKS = 4;
+  for (let t = 0; t <= TICKS; t++) {
+    const v = lo + (t / TICKS) * (hi - lo);
+    const gy = y(v).toFixed(1);
+    grid += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="var(--line)"/>
+      <text x="${padL - 6}" y="${(+gy + 3).toFixed(1)}" text-anchor="end"
+        font-size="9.5" fill="var(--muted)">${v.toFixed(0)}%</text>`;
+  }
+  let xlab = '';
+  series.forEach((p, i) => {
+    if (n > 12 && i % 2 !== 0 && i !== n - 1) return;
+    xlab += `<text x="${x(i).toFixed(1)}" y="${H - 12}" text-anchor="middle"
+      font-size="9.5" fill="var(--muted)">${p.month.slice(2)}</text>`;
+  });
+  let paths = '';
+  for (const ln of lines) {
+    const d = series
+      .map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p[ln.key]).toFixed(1)}`)
+      .join(' ');
+    paths += `<path d="${d}" fill="none" stroke="${ln.color}" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round"/>`;
+    paths += series
+      .map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(p[ln.key]).toFixed(1)}"
+        r="2.6" fill="${ln.color}"/>`)
+      .join('');
+  }
+  const legend = lines
+    .map((ln) => `<span class="lg">
+      <span class="swatch" style="background:${ln.color}"></span>${ln.label}</span>`)
+    .join('');
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    role="img" aria-label="Top 5 and top 10 holding concentration by month">
+    ${grid}${paths}${xlab}</svg>
+    <div class="line-legend">${legend}</div>`;
+}
+
+function renderConcentration() {
+  const series = concentrationSeries();
+  const note = $('#concentrationNote');
+  const chart = $('#concentrationChart');
+  if (series.length < 2) {
+    note.textContent = '';
+    chart.innerHTML = '<p class="empty">Not enough monthly history yet.</p>';
+    return;
+  }
+  chart.innerHTML = concentrationChart(series);
+  const first = series[0];
+  const last = series[series.length - 1];
+  const d10 = last.top10 - first.top10;
+  note.innerHTML =
+    `Top 10 hold <strong>${last.top10.toFixed(1)}%</strong> of the fund ` +
+    `(<span class="${classOf(d10)}">${fmtSigned(d10, 1, ' pp')}</span> since ${first.month})`;
+}
+
 function render() {
   renderStatus();
   renderCards();
   renderChanges();
+  renderMovers();
   renderTable();
+  renderConcentration();
   renderSectors();
 }
 
@@ -389,6 +518,101 @@ async function manualRefresh() {
   }
 }
 
+/* ---------- shareable view state ---------- */
+// The current filter/sort/expanded-row selection is mirrored into the URL
+// query string so a particular view can be bookmarked or shared. Only
+// non-default values are written, keeping a pristine view at a clean URL.
+function syncUrl() {
+  const p = new URLSearchParams();
+  if (state.sort.key !== 'weight' || state.sort.dir !== 'desc') {
+    p.set('sort', `${state.sort.key}:${state.sort.dir}`);
+  }
+  if (state.search.trim()) p.set('q', state.search.trim());
+  if (state.sector) p.set('sector', state.sector);
+  if (state.open.size) p.set('open', [...state.open].join(','));
+  const qs = p.toString();
+  history.replaceState(null, '', qs ? '?' + qs : location.pathname);
+}
+
+function restoreFromUrl() {
+  const p = new URLSearchParams(location.search);
+  const sort = p.get('sort');
+  if (sort) {
+    const [key, dir] = sort.split(':');
+    if (SORT_KEYS.has(key)) {
+      state.sort.key = key;
+      state.sort.dir = dir === 'asc' ? 'asc' : 'desc';
+    }
+  }
+  state.search = p.get('q') || '';
+  state.sector = p.get('sector') || '';
+  const open = p.get('open');
+  if (open) open.split(',').forEach((t) => t && state.open.add(t));
+}
+
+// Reflect restored state into the controls once the data (and so the sector
+// list) is loaded; drops a `sector` value that isn't a real option.
+function syncControlsFromState() {
+  $('#search').value = state.search;
+  const sel = $('#sectorFilter');
+  sel.value = state.sector;
+  state.sector = sel.value;
+  renderTable();
+  syncUrl();
+}
+
+// Open a holding's row and bring it into view — used by the movers chips.
+function focusHolding(tk) {
+  if (!tk) return;
+  state.open.add(tk);
+  if (!visibleHoldings().some((h) => h.ticker === tk)) {
+    state.search = '';
+    state.sector = '';
+    $('#search').value = '';
+    $('#sectorFilter').value = '';
+  }
+  renderTable();
+  syncUrl();
+  const row = document.querySelector(`tr.row[data-tk="${CSS.escape(tk)}"]`);
+  if (row) {
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    row.focus({ preventScroll: true });
+  }
+}
+
+async function copyShareLink() {
+  const btn = $('#shareBtn');
+  const done = (msg) => {
+    btn.textContent = msg;
+    setTimeout(() => { btn.textContent = 'Copy link'; }, 1600);
+  };
+  try {
+    await navigator.clipboard.writeText(location.href);
+    done('Copied!');
+  } catch {
+    done('Copy failed');
+  }
+}
+
+/* ---------- theme ---------- */
+// The theme is applied before first paint by an inline script in index.html;
+// these helpers only keep the toggle button and stored preference in sync.
+function syncThemeButton() {
+  const light = document.documentElement.dataset.theme === 'light';
+  const btn = $('#themeBtn');
+  btn.textContent = light ? 'Dark mode' : 'Light mode';
+  btn.setAttribute('aria-label', `Switch to ${light ? 'dark' : 'light'} mode`);
+}
+
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = next;
+  try {
+    localStorage.setItem('qqqq-theme', next);
+  } catch { /* preference just won't persist */ }
+  syncThemeButton();
+}
+
 /* ---------- events ---------- */
 function sortBy(key) {
   if (!key) return;
@@ -399,6 +623,7 @@ function sortBy(key) {
     state.sort.dir = ['ticker', 'name', 'sector'].includes(key) ? 'asc' : 'desc';
   }
   renderTable();
+  syncUrl();
 }
 
 function toggleRow(tk) {
@@ -406,6 +631,7 @@ function toggleRow(tk) {
   if (state.open.has(tk)) state.open.delete(tk);
   else state.open.add(tk);
   renderTable();
+  syncUrl();
 }
 
 function csvCell(value) {
@@ -460,10 +686,12 @@ function wireEvents() {
   $('#search').addEventListener('input', (e) => {
     state.search = e.target.value;
     renderTable();
+    syncUrl();
   });
   $('#sectorFilter').addEventListener('change', (e) => {
     state.sector = e.target.value;
     renderTable();
+    syncUrl();
   });
   $('#autoRefresh').addEventListener('change', (e) => {
     state.auto = e.target.checked;
@@ -472,6 +700,21 @@ function wireEvents() {
   });
   $('#refreshBtn').addEventListener('click', manualRefresh);
   $('#exportBtn').addEventListener('click', exportCsv);
+  $('#shareBtn').addEventListener('click', copyShareLink);
+  $('#themeBtn').addEventListener('click', toggleTheme);
+
+  $('#movers').addEventListener('click', (e) => {
+    const chip = e.target.closest('.mover');
+    if (chip) focusHolding(chip.dataset.tk);
+  });
+
+  // Press "/" anywhere outside a field to jump to the holdings filter.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName)) return;
+    e.preventDefault();
+    $('#search').focus();
+  });
 }
 
 function startClock() {
@@ -490,6 +733,8 @@ function startClock() {
 /* ---------- boot ---------- */
 (async function init() {
   wireEvents();
+  syncThemeButton();
+  restoreFromUrl();
   try {
     await loadData();
   } catch (err) {
@@ -501,6 +746,7 @@ function startClock() {
     console.error(err);
     return;
   }
+  syncControlsFromState();
   startClock();
   pollQuotes();
   quoteTimer = setInterval(pollQuotes, QUOTE_POLL_SECONDS * 1000);

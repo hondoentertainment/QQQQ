@@ -2,6 +2,7 @@
   --bg: #0a0e14;
   --panel: #111722;
   --panel-2: #161e2b;
+  --panel-deep: #0d131d;
   --line: #243044;
   --text: #e6edf3;
   --muted: #8b97a7;
@@ -12,6 +13,23 @@
   --amber: #f4b740;
   --blue: #4d9fff;
   --radius: 12px;
+}
+
+/* Light theme — applied via the data-theme attribute on <html>. */
+:root[data-theme="light"] {
+  --bg: #f3f5f9;
+  --panel: #ffffff;
+  --panel-2: #eceff4;
+  --panel-deep: #f0f2f7;
+  --line: #d6dce6;
+  --text: #1b2530;
+  --muted: #5c6775;
+  --accent: #00a18c;
+  --accent-dim: #cdeee9;
+  --up: #1a9d5f;
+  --down: #d8404d;
+  --amber: #9c6f00;
+  --blue: #2f6fd0;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,6 +71,8 @@ body {
 }
 .src-badge.seed { background: #3a2f10; color: var(--amber); }
 .src-badge.cached { background: #11283f; color: var(--blue); }
+:root[data-theme="light"] .src-badge.seed { background: #fbecc5; }
+:root[data-theme="light"] .src-badge.cached { background: #d9e8fb; }
 .as-of { color: var(--muted); font-size: 12px; }
 .live-tag { color: var(--accent); font-weight: 700; }
 .as-of .dot {
@@ -104,6 +124,32 @@ body {
 .chg-add { color: var(--up); }
 .chg-rem { color: var(--down); }
 
+/* ---- today's movers ---- */
+.movers {
+  padding: 14px 16px; display: grid; gap: 18px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 560px) { .movers { grid-template-columns: 1fr; } }
+.mv-col { display: flex; flex-direction: column; gap: 9px; }
+.mv-head {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
+  font-weight: 700;
+}
+.mv-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.mover {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; color: var(--text);
+  transition: border-color 0.15s, transform 0.05s;
+}
+.mover:hover { border-color: var(--accent); }
+.mover:active { transform: translateY(1px); }
+.mv-tk { font-weight: 700; }
+.mv-price { color: var(--muted); font-variant-numeric: tabular-nums; }
+.mv-chg { font-weight: 700; font-variant-numeric: tabular-nums; }
+.mv-none { color: var(--muted); font-size: 12.5px; }
+
 /* ---- panels ---- */
 .panel {
   background: var(--panel); border: 1px solid var(--line);
@@ -137,7 +183,7 @@ thead th.num { text-align: right; }
 thead th.sorted::after { content: " \25B4"; color: var(--accent); }
 thead th.sorted.desc::after { content: " \25BE"; }
 
-tbody td { padding: 9px 12px; border-bottom: 1px solid #1b2433; white-space: nowrap; }
+tbody td { padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
 tbody tr.row { cursor: pointer; }
 tbody tr.row:hover { background: var(--panel-2); }
@@ -163,7 +209,7 @@ tr.row.open .tk .caret { transform: rotate(90deg); color: var(--accent); }
 .spark { display: block; }
 
 /* ---- detail row ---- */
-tr.detail td { padding: 0; border-bottom: 1px solid var(--line); background: #0d131d; }
+tr.detail td { padding: 0; border-bottom: 1px solid var(--line); background: var(--panel-deep); }
 .detail-inner { padding: 16px 18px; display: grid; gap: 18px; grid-template-columns: 1.4fr 1fr; }
 @media (max-width: 720px) { .detail-inner { grid-template-columns: 1fr; } }
 .detail-chart { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
@@ -188,6 +234,15 @@ tr.detail td { padding: 0; border-bottom: 1px solid var(--line); background: #0d
 .sector-row .fill { height: 100%; background: linear-gradient(90deg, var(--accent), #0aa); }
 .sector-row .pct { text-align: right; font-variant-numeric: tabular-nums; font-size: 12.5px; }
 @media (max-width: 560px) { .sector-row { grid-template-columns: 110px 1fr 48px; } }
+
+/* ---- concentration trend ---- */
+.panel-note { color: var(--muted); font-size: 12px; }
+.panel-note strong { color: var(--text); }
+.concentration { padding: 14px 16px; }
+.concentration .empty { padding: 22px; }
+.line-legend { display: flex; gap: 18px; margin-top: 6px; flex-wrap: wrap; }
+.line-legend .lg { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+.line-legend .swatch { width: 14px; height: 3px; border-radius: 2px; }
 
 /* ---- footer ---- */
 .footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 16px; }
