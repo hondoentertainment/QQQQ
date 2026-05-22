@@ -5,7 +5,7 @@
 // Financial Modeling Prep when FMP_API_KEY is set, then to the last good data.
 // Prices: see lib/quotes.js. All sources are best-effort and validated, so a
 // flaky or malformed source can't corrupt the committed data or break the job.
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, appendFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fetchQuotes } from '../lib/quotes.js';
@@ -16,6 +16,7 @@ import {
   diffConstituents,
   monthKey,
   applyMonthlySnapshot,
+  isFallbackSource,
 } from '../lib/holdings.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -161,6 +162,15 @@ async function main() {
   updated.updatedAt = now.toISOString();
   await writeFile(MONTHLY_FILE, JSON.stringify(updated, null, 2) + '\n');
   log('wrote', path.relative(ROOT, MONTHLY_FILE), `(${mk} snapshot)`);
+
+  // When running in GitHub Actions, expose whether this run could only serve
+  // fallback (cached / seed) data so the refresh workflow can alert on a
+  // silently stale dashboard. A no-op outside Actions.
+  const fellBack = isFallbackSource(source);
+  if (process.env.GITHUB_OUTPUT) {
+    await appendFile(process.env.GITHUB_OUTPUT, `source=${source}\nfallback=${fellBack}\n`);
+  }
+  if (fellBack) log(`WARNING: no live source reached — serving fallback data (source: ${source})`);
   log('done.');
 }
 

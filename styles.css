@@ -244,7 +244,86 @@ tr.detail td { padding: 0; border-bottom: 1px solid var(--line); background: var
 .line-legend .lg { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
 .line-legend .swatch { width: 14px; height: 3px; border-radius: 2px; }
 
+/* ---- stale-data badge ---- */
+.stale-badge {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.4px; padding: 4px 9px; border-radius: 999px;
+  background: #3a1f12; color: var(--down); border: 1px solid var(--down);
+}
+:root[data-theme="light"] .stale-badge { background: #fbe0e2; }
+
+/* ---- compare holdings ---- */
+.panel-select {
+  background: var(--panel-2); border: 1px solid var(--line); color: var(--text);
+  padding: 7px 10px; border-radius: 7px; font-size: 12.5px; outline: none;
+  font-family: inherit; cursor: pointer;
+}
+.panel-select:focus { border-color: var(--accent); }
+.compare { padding: 14px 16px; }
+.cmp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.cmp-chips:not(:empty) { margin-bottom: 12px; }
+.cmp-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 5px 11px; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; font-weight: 700; color: var(--text);
+  transition: border-color 0.15s, transform 0.05s;
+}
+.cmp-chip:hover { border-color: var(--down); }
+.cmp-chip:active { transform: translateY(1px); }
+.cmp-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.cmp-x { color: var(--muted); font-size: 15px; line-height: 1; }
+.cmp-chip:hover .cmp-x { color: var(--down); }
+
+/* ---- index change history ---- */
+.change-history { padding: 4px 16px 10px; }
+.chg-event {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--line);
+}
+.chg-event:last-child { border-bottom: 0; }
+.chg-when { font-size: 12.5px; font-weight: 700; min-width: 150px; }
+.chg-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.chg-tag {
+  font-size: 11.5px; font-weight: 700; padding: 3px 8px;
+  border-radius: 6px; border: 1px solid var(--line);
+  background: var(--panel-2); font-variant-numeric: tabular-nums;
+}
+.chg-tag.add { color: var(--up); border-color: var(--up); }
+.chg-tag.rem { color: var(--down); border-color: var(--down); }
+
 /* ---- footer ---- */
 .footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 16px; }
 .footer strong { color: var(--text); }
+.data-health { margin-bottom: 8px; }
 .disclaimer { margin-top: 6px; font-size: 11px; opacity: 0.7; }
+
+/* ---- responsive: holdings table becomes a card list on narrow screens ---- */
+@media (max-width: 680px) {
+  .table-wrap { overflow-x: visible; }
+  #holdingsTable thead { display: none; }
+  #holdingsTable,
+  #holdingsTable tbody,
+  #holdingsTable tr,
+  #holdingsTable td { display: block; width: 100%; }
+  #holdingsTable tr.row {
+    border: 1px solid var(--line); border-radius: 10px;
+    margin: 0 0 10px; padding: 4px 0; background: var(--panel-2);
+  }
+  #holdingsTable tr.row.open { border-color: var(--accent); }
+  #holdingsTable tr.row td {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; border: 0; padding: 6px 13px; white-space: normal;
+    text-align: right;
+  }
+  #holdingsTable tr.row td::before {
+    content: attr(data-label);
+    color: var(--muted); font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px; text-align: left;
+  }
+  #holdingsTable tr.row td.co-name { max-width: none; }
+  #holdingsTable .weight-cell { position: static; }
+  #holdingsTable .weight-bar { display: none; }
+  #holdingsTable .spark { margin-left: auto; }
+  #holdingsTable tr.detail td { padding: 0; }
+}
