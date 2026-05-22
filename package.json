@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "REFRESH_MINUTES=30 node server.js",
-    "refresh": "node scripts/fetch-holdings.js"
+    "refresh": "node scripts/fetch-holdings.js",
+    "test": "node --test test/*.test.js"
   },
   "engines": {
     "node": ">=20"
