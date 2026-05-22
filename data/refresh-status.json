@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "runAt": "2026-05-22T20:00:37.571Z",
+  "runAt": "2026-05-22T20:02:44.646Z",
   "holdingsSource": "sec-nport",
   "quoteSource": "yahoo",
   "holdingsCount": 91,
@@ -16,7 +16,7 @@
     {
       "source": "fmp",
       "ok": false,
-      "error": "FMP_API_KEY not set"
+      "error": "FMP HTTP stable=402 legacy=403"
     },
     {
       "source": "sec-nport",
