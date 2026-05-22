@@ -1,11 +1,16 @@
 name: CI
 
-# Lints and runs the data-pipeline / server unit tests on every push and PR.
+# Lints and runs the unit + end-to-end tests on every push and PR.
 on:
   push:
     branches: [main]
   pull_request: {}
   workflow_dispatch: {}
+
+# Skip Playwright's postinstall browser download; the e2e job installs the
+# one browser it needs explicitly.
+env:
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
 jobs:
   test:
@@ -26,5 +31,26 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
+      - name: Unit tests
         run: npm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end smoke test
+        run: npm run test:e2e

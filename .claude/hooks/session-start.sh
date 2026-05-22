@@ -28,6 +28,10 @@ fi
 
 cd "${CLAUDE_PROJECT_DIR:-.}"
 
+# Don't download Playwright browsers here — the unit tests don't need them,
+# and the e2e suite installs Chromium explicitly when run.
+export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
 # `npm ci` if the lockfile is in sync, otherwise `npm install`. Both leave a
 # populated node_modules that the container caches for subsequent sessions.
 echo "session-start: installing dependencies with npm..."

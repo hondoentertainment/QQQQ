@@ -3,6 +3,7 @@ node_modules
 .claude
 .github
 test
+e2e
 scripts
 server.js
 eslint.config.js

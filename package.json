@@ -9,7 +9,8 @@
     "dev": "REFRESH_MINUTES=30 node server.js",
     "refresh": "node scripts/fetch-holdings.js",
     "lint": "eslint .",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "test:e2e": "node --test e2e/*.test.js"
   },
   "engines": {
     "node": ">=20"
@@ -18,6 +19,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
     "globals": "^17.6.0",
+    "playwright": "^1.60.0",
     "vercel": "^54.3.0"
   }
 }
