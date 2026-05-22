@@ -19,7 +19,9 @@
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#holdings-main">Skip to holdings</a>
   <div class="app">
+    <p id="srStatus" class="sr-only" role="status" aria-live="polite"></p>
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark">Q</div>
@@ -50,7 +52,7 @@
       <div class="movers" id="movers"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="holdings-main" tabindex="-1">
       <div class="panel-head">
         <h2>Holdings &amp; monthly allocation</h2>
         <div class="controls">
@@ -87,6 +89,14 @@
 
     <section class="panel">
       <div class="panel-head">
+        <h2>Fund performance</h2>
+        <span class="panel-note" id="perfNote">&mdash;</span>
+      </div>
+      <div id="perfChart" class="chartbox"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
         <h2>Fund concentration trend</h2>
         <span class="panel-note" id="concentrationNote">&mdash;</span>
       </div>
@@ -117,14 +127,56 @@
       <div id="changeHistory" class="change-history"></div>
     </section>
 
+    <section class="panel">
+      <div class="panel-head"><h2>Methodology &amp; disclosures</h2></div>
+      <div class="methodology">
+        <dl>
+          <dt>Data sources</dt>
+          <dd>Holdings and index weights come from the official Invesco QQQ
+            holdings file, or Financial Modeling Prep as a fallback. Quotes come
+            from Financial Modeling Prep or Yahoo Finance.</dd>
+          <dt>Update cadence</dt>
+          <dd>A scheduled job refreshes the data every 30 minutes during US
+            market hours, plus a post-close snapshot. This page re-reads the
+            committed data every 60 seconds.</dd>
+          <dt>Price latency</dt>
+          <dd>Quotes are <strong>delayed by up to ~15 minutes</strong> (free
+            market-data tiers). This is not a real-time trading feed.</dd>
+          <dt>Metric definitions</dt>
+          <dd><strong>Weight</strong> — a holding&rsquo;s share of index weight.
+            <strong>Day %</strong> — price change versus the prior close.
+            <strong>MoM &Delta;</strong> — change in index weight versus the
+            prior month. <strong>Top-10 concentration</strong> — combined weight
+            of the 10 largest holdings. <strong>Herfindahl index</strong> — the
+            sum of squared percentage weights (higher means more concentrated).
+            <strong>Fund performance</strong> — the QQQ closing price recorded
+            once per refresh day.</dd>
+          <dt>Data freshness</dt>
+          <dd>A &ldquo;data may be stale&rdquo; badge appears when the latest
+            snapshot is more than 72 hours old.</dd>
+        </dl>
+        <p class="method-disclaimer">
+          For informational purposes only. Nothing here is investment advice, an
+          offer, or a recommendation. Past performance does not indicate future
+          results. Figures are best-effort, may contain errors or omissions, and
+          are not an official record. This project is not affiliated with or
+          endorsed by Invesco or Nasdaq.
+        </p>
+      </div>
+    </section>
+
     <footer class="footer">
       <p class="data-health" id="dataHealth">&mdash;</p>
       <p>
         &ldquo;QQQQ&rdquo; is the legacy ticker for the Invesco QQQ Trust (now <strong>QQQ</strong>),
-        which tracks the Nasdaq-100. Holdings sourced from Invesco; prices from Yahoo Finance.
-        Data refreshes via a scheduled job &mdash; <span id="footerStatus">&mdash;</span>
+        which tracks the Nasdaq-100. Holdings sourced from Invesco; prices from Yahoo Finance,
+        delayed up to 15 minutes. Data refreshes via a scheduled job &mdash;
+        <span id="footerStatus">&mdash;</span>
       </p>
-      <p class="disclaimer">For informational purposes only. Not investment advice.</p>
+      <p class="disclaimer">
+        For informational purposes only. Not investment advice. See
+        &ldquo;Methodology &amp; disclosures&rdquo; above.
+      </p>
     </footer>
   </div>
   <script src="app.js"></script>

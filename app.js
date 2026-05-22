@@ -18,6 +18,9 @@ const COMPARE_COLORS = [
 // alarms.
 const STALE_AFTER_MS = 72 * 60 * 60 * 1000;
 
+// Highest data-document schemaVersion this build understands.
+const KNOWN_SCHEMA = 1;
+
 // Sort keys accepted from the table headers and the shareable URL.
 const SORT_KEYS = new Set(
   ['rank', 'ticker', 'name', 'sector', 'weight', 'price', 'changePct', 'mom']
@@ -27,6 +30,7 @@ const state = {
   holdings: null,
   monthly: null,
   changes: null,
+  prices: null,
   sort: { key: 'weight', dir: 'desc' },
   search: '',
   sector: '',
@@ -55,6 +59,16 @@ function fmtPrice(n) {
   return Number.isFinite(n)
     ? '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     : '—';
+}
+function fmtMarketCap(n) {
+  if (!Number.isFinite(n) || n <= 0) return '—';
+  if (n >= 1e12) return '$' + (n / 1e12).toFixed(2) + 'T';
+  if (n >= 1e9) return '$' + (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 function classOf(n) {
   return !Number.isFinite(n) || Math.abs(n) < 1e-9 ? 'flat' : n > 0 ? 'up' : 'down';
@@ -90,7 +104,9 @@ function momDelta(ticker) {
 function sparkline(values) {
   const W = 104, H = 28, P = 3;
   const pts = values.map((v, i) => ({ v, i })).filter((p) => p.v != null);
-  if (pts.length < 2) return `<svg class="spark" width="${W}" height="${H}"></svg>`;
+  if (pts.length < 2) {
+    return `<svg class="spark" width="${W}" height="${H}" aria-hidden="true"></svg>`;
+  }
   const vals = pts.map((p) => p.v);
   const min = Math.min(...vals), max = Math.max(...vals);
   const span = max - min || 1;
@@ -100,7 +116,7 @@ function sparkline(values) {
   const trend = vals[vals.length - 1] - vals[0];
   const color = trend > 0 ? 'var(--up)' : trend < 0 ? 'var(--down)' : 'var(--muted)';
   const last = pts[pts.length - 1];
-  return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+  return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true">
     <path d="${d}" fill="none" stroke="${color}" stroke-width="1.8"
       stroke-linejoin="round" stroke-linecap="round"/>
     <circle cx="${x(last.i).toFixed(1)}" cy="${y(last.v).toFixed(1)}" r="2.4" fill="${color}"/>
@@ -134,7 +150,8 @@ function barChart(ticker) {
       <text x="${cx.toFixed(1)}" y="${H - 9}" text-anchor="middle"
         font-size="10" fill="var(--muted)">${m.slice(2)}</text>`;
   });
-  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    role="img" aria-label="${ticker} monthly allocation history">
     <line x1="${padX}" y1="${padT + innerH}" x2="${W - 8}" y2="${padT + innerH}"
       stroke="var(--line)"/>${bars}</svg>`;
 }
@@ -182,7 +199,7 @@ function renderStatus() {
   $('#staleBadge').hidden = !fresh.stale;
 
   const live = state.liveQuotes === true
-    ? ` <span class="live-tag">&middot; live prices ${relTime(state.livePricesAt)}</span>`
+    ? ` <span class="live-tag">&middot; delayed quotes &middot; updated ${relTime(state.livePricesAt)}</span>`
     : '';
   $('#asOf').innerHTML = `<span class="dot"></span>as of ${relTime(d.asOf)} ` +
     `(${new Date(d.asOf).toLocaleString()})${live}`;
@@ -304,6 +321,16 @@ function detailRow(h) {
     </div>`;
   }).join('');
   const sixMo = first != null && last != null ? last - first : null;
+  const range = Number.isFinite(h.yearLow) && Number.isFinite(h.yearHigh)
+    ? `${fmtPrice(h.yearLow)} – ${fmtPrice(h.yearHigh)}`
+    : '—';
+  const fundStats = [
+    ['Market cap', fmtMarketCap(h.marketCap)],
+    ['P/E ratio', Number.isFinite(h.pe) ? h.pe.toFixed(1) : '—'],
+    ['52-week range', range],
+  ].map(([k, v]) => `<div class="fund-stat">
+      <div class="fk">${k}</div><div class="fv">${v}</div>
+    </div>`).join('');
   return `<tr class="detail"><td colspan="${COLS}">
     <div class="detail-inner">
       <div class="detail-chart">
@@ -317,6 +344,7 @@ function detailRow(h) {
           · 6-month change <span class="${classOf(sixMo)}">${fmtSigned(sixMo, 2, ' pp')}</span>
           · price ${fmtPrice(h.price)} (<span class="${classOf(h.changePct)}">${fmtSigned(h.changePct)}</span>)
         </p>
+        <div class="fund-stats">${fundStats}</div>
         <div class="month-grid">${cells}</div>
       </div>
     </div></td></tr>`;
@@ -586,12 +614,83 @@ function renderChangeHistory() {
     .join('');
 }
 
+/* ---------- fund performance ---------- */
+// A single-line chart of the QQQ closing price across the tracked window,
+// drawn from data/price-history.json (one close recorded per refresh day).
+function perfChart(history) {
+  const W = 720, H = 240, padL = 46, padR = 16, padT = 16, padB = 30;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const closes = history.map((p) => p.close);
+  let lo = Math.min(...closes), hi = Math.max(...closes);
+  const pad = (hi - lo) * 0.12 || 1;
+  lo -= pad;
+  hi += pad;
+  const n = history.length;
+  const x = (i) => padL + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+  const y = (v) => padT + innerH - ((v - lo) / (hi - lo || 1)) * innerH;
+
+  let grid = '';
+  const TICKS = 4;
+  for (let t = 0; t <= TICKS; t++) {
+    const v = lo + (t / TICKS) * (hi - lo);
+    const gy = y(v).toFixed(1);
+    grid += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="var(--line)"/>
+      <text x="${padL - 6}" y="${(+gy + 3).toFixed(1)}" text-anchor="end"
+        font-size="9.5" fill="var(--muted)">$${v.toFixed(0)}</text>`;
+  }
+  let xlab = '';
+  const step = Math.max(1, Math.round(n / 6));
+  history.forEach((p, i) => {
+    const isLast = i === n - 1;
+    // Label every `step`-th day plus the last, dropping a step label that
+    // would collide with the last one.
+    if (!isLast && (i % step !== 0 || n - 1 - i < step * 0.6)) return;
+    xlab += `<text x="${x(i).toFixed(1)}" y="${H - 10}" text-anchor="middle"
+      font-size="9.5" fill="var(--muted)">${p.date.slice(5)}</text>`;
+  });
+  const up = history[n - 1].close >= history[0].close;
+  const color = up ? 'var(--up)' : 'var(--down)';
+  const line = history
+    .map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.close).toFixed(1)}`)
+    .join(' ');
+  const area = `M${x(0).toFixed(1)},${y(lo).toFixed(1)} ` +
+    history.map((p, i) => `L${x(i).toFixed(1)},${y(p.close).toFixed(1)}`).join(' ') +
+    ` L${x(n - 1).toFixed(1)},${y(lo).toFixed(1)} Z`;
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    role="img" aria-label="QQQ closing price over the tracked window">
+    ${grid}<path d="${area}" fill="${color}" opacity="0.12"/>
+    <path d="${line}" fill="none" stroke="${color}" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round"/>${xlab}</svg>`;
+}
+
+function renderPerformance() {
+  const hist = state.prices && Array.isArray(state.prices.history)
+    ? state.prices.history : [];
+  const note = $('#perfNote');
+  const chart = $('#perfChart');
+  if (hist.length < 2) {
+    note.textContent = '';
+    chart.innerHTML = '<p class="empty">Fund price history will appear here as ' +
+      'the refresh job records daily closes.</p>';
+    return;
+  }
+  chart.innerHTML = perfChart(hist);
+  const first = hist[0].close;
+  const last = hist[hist.length - 1].close;
+  const ret = first ? ((last - first) / first) * 100 : null;
+  note.innerHTML =
+    `QQQ <strong>${fmtPrice(last)}</strong> &middot; ` +
+    `<span class="${classOf(ret)}">${fmtSigned(ret, 1)}</span> ` +
+    `over ${hist.length} trading days (since ${hist[0].date})`;
+}
+
 function render() {
   renderStatus();
   renderCards();
   renderChanges();
   renderMovers();
   renderTable();
+  renderPerformance();
   renderConcentration();
   renderCompare();
   renderSectors();
@@ -601,11 +700,18 @@ function render() {
 /* ---------- data loading ---------- */
 async function loadData() {
   const bust = '?t=' + Date.now();
-  const [h, m, c] = await Promise.all([
+  const [h, m, c, p] = await Promise.all([
     fetch('data/holdings.json' + bust).then((r) => r.json()),
     fetch('data/monthly-allocations.json' + bust).then((r) => r.json()),
     fetch('data/changes.json' + bust).then((r) => r.json()).catch(() => ({ events: [] })),
+    fetch('data/price-history.json' + bust).then((r) => r.json()).catch(() => null),
   ]);
+  if (Number.isFinite(h.schemaVersion) && h.schemaVersion > KNOWN_SCHEMA) {
+    console.warn(
+      `data schemaVersion ${h.schemaVersion} is newer than this build supports ` +
+      `(${KNOWN_SCHEMA}); some fields may not render.`
+    );
+  }
   h.holdings.forEach((row, i) => { row.rank = i + 1; });
   // populate the sector filter and compare picker once
   if (!state.holdings) {
@@ -626,6 +732,7 @@ async function loadData() {
   state.holdings = h;
   state.monthly = m;
   state.changes = c;
+  state.prices = p;
   render();
 }
 
@@ -642,7 +749,14 @@ async function pollQuotes() {
     let n = 0;
     for (const row of state.holdings.holdings) {
       const q = data.quotes[row.ticker];
-      if (q) { row.price = q.price; row.changePct = q.changePct; n++; }
+      if (q) {
+        row.price = q.price;
+        row.changePct = q.changePct;
+        for (const f of ['marketCap', 'pe', 'yearHigh', 'yearLow']) {
+          if (Number.isFinite(q[f])) row[f] = q[f];
+        }
+        n++;
+      }
     }
     if (!n) throw new Error('empty quote set');
     state.liveQuotes = true;
@@ -664,8 +778,12 @@ async function manualRefresh() {
     // Triggers a server-side fetch when self-hosted; harmless on static hosting.
     await fetch('/api/refresh', { method: 'POST' }).catch(() => {});
     await loadData();
+    // Announce the outcome for screen-reader users (visual cue is the badge).
+    $('#srStatus').textContent = 'Holdings refreshed. ' +
+      (freshnessOf(state.holdings.asOf).stale ? 'Data may be stale.' : 'Data is current.');
   } catch (err) {
     console.error('refresh failed', err);
+    $('#srStatus').textContent = 'Refresh failed.';
   } finally {
     state.busy = false;
     state.countdown = REFRESH_SECONDS;
@@ -738,7 +856,10 @@ function focusHolding(tk) {
   syncUrl();
   const row = document.querySelector(`tr.row[data-tk="${CSS.escape(tk)}"]`);
   if (row) {
-    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    row.scrollIntoView({
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      block: 'center',
+    });
     row.focus({ preventScroll: true });
   }
 }
@@ -807,12 +928,15 @@ function exportCsv() {
   const rows = visibleHoldings();
   const months = state.monthly.months;
   const header = ['Rank', 'Ticker', 'Company', 'Sector', 'Weight %', 'Price',
-    'Day Change %', 'MoM Delta (pp)', ...months.map((m) => 'Alloc ' + m)];
+    'Day Change %', 'MoM Delta (pp)', 'Market Cap', 'P/E', '52W High', '52W Low',
+    ...months.map((m) => 'Alloc ' + m)];
   const lines = [header];
   for (const h of rows) {
     const series = monthSeries(h.ticker);
     lines.push([h.rank, h.ticker, h.name, h.sector, h.weight, h.price,
-      h.changePct, momDelta(h.ticker), ...series]);
+      h.changePct, momDelta(h.ticker),
+      h.marketCap ?? '', h.pe ?? '', h.yearHigh ?? '', h.yearLow ?? '',
+      ...series]);
   }
   const csv = lines.map((r) => r.map(csvCell).join(',')).join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));

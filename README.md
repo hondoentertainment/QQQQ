@@ -22,12 +22,20 @@ that keeps the data fresh.
   one to jump straight to its row.
 - **Compare holdings** — overlay the monthly allocation history of several
   holdings on a single chart.
+- **Per-component fundamentals** — market cap, P/E, and 52-week range for each
+  holding, shown in its expanded detail view and the CSV export.
+- **Fund performance** — the QQQ closing price charted over a rolling window,
+  with the period return.
 - **Sector allocation** breakdown of the whole fund.
 - **Fund concentration trend** — top-5 and top-10 weight charted across the
   monthly history, plus a Herfindahl-index headline card, showing how
   concentrated the fund has become over time.
+- **Methodology & disclosures** — an in-page panel documenting data sources,
+  refresh cadence, price latency, and how each metric is computed.
+- **Delayed-quote labelling** — quotes are shown as delayed (~15 min), never
+  billed as a real-time feed.
 - **Near real-time** — the view auto-refreshes; when self-hosted it also polls
-  live prices every 20s via the server.
+  delayed quotes every 20s via the server.
 - **Stale-data indicator** — a header badge and a footer health line flag when
   the committed snapshot has not been refreshed recently.
 - **Shareable views** — the active filter, sort, expanded rows, and compared
@@ -39,7 +47,8 @@ that keeps the data fresh.
   with no horizontal scrolling.
 - **Keyboard accessible** — sortable headers and expandable rows work without a
   mouse, with `aria-sort` / `aria-expanded` state; press `/` to jump to the
-  filter box.
+  filter box. A skip link, a screen-reader status region, labelled charts, and
+  a `prefers-reduced-motion` pass round out the accessibility support.
 - **Zero runtime dependencies** — plain HTML/CSS/JS frontend, a Node built-in
   static server, and fetch scripts using only the Node standard library.
   Unit-tested data pipeline and server (`npm test`); the only dev dependency
@@ -59,6 +68,7 @@ e2e/smoke.test.js                  Browser smoke test of the dashboard
 data/holdings.json                 Current holdings snapshot
 data/monthly-allocations.json      Per-ticker monthly allocation history
 data/changes.json                 Log of constituent additions/removals
+data/price-history.json            Daily QQQ closing prices (fund performance)
 vercel.json                        Vercel deploy config (static + function)
 .github/workflows/ci.yml           Lints and runs the test suite on every PR
 .github/workflows/refresh.yml      The recurring data-refresh cron job
@@ -125,6 +135,8 @@ add it to the repo:
 - When self-hosted (`npm start`), the page also calls `GET /api/quotes` every
   20s; the server fetches fresh quotes (15s cache) so prices update between
   cron runs. On static hosting this call simply no-ops.
+- Quotes from the free Yahoo / FMP tiers are **delayed by up to ~15 minutes**;
+  the dashboard labels them as delayed and never as real-time.
 - True tick-level streaming would require a paid market-data feed and is out
   of scope; cron + server polling gives near-real-time without one.
 
