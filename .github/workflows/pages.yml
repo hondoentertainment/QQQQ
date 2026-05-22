@@ -30,7 +30,7 @@ jobs:
       - name: Assemble static site
         run: |
           mkdir -p _site/data
-          cp index.html styles.css app.js _site/
+          cp index.html styles.css app.js manifest.json sw.js icon.svg _site/
           cp data/*.json _site/data/
 
       - name: Configure Pages

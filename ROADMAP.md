@@ -29,7 +29,7 @@ needs an explicit, recorded decision.
 - **Informational, not advisory.** This is a data dashboard, not a trading
   tool. Nothing here is investment advice.
 
-## Current state — v1.1.0 (shipped)
+## Current state — v1.2.0 (shipped)
 
 The baseline this roadmap builds on:
 
@@ -38,11 +38,17 @@ The baseline this roadmap builds on:
 - Sector allocation (current) and **sector trends over time**.
 - Today's movers, index-change banner + history, concentration trend, fund performance.
 - Stale-data badge, `data/refresh-status.json` pipeline health in the footer.
+- **Interactive chart hovers** (SVG `<title>` tooltips on all trend charts).
+- **Offline / error banner** when JSON fails to load or the browser is offline.
+- **PWA shell** — `manifest.json` + service worker for last-good snapshot caching.
 - Shareable URL state, light/dark theme, responsive card layout, accessibility pass.
 - Data pipeline: Invesco → FMP → **SEC N-PORT** → cached/seed fallback chain.
+- **Schema validation** on write (`validateHoldingsDocument`, etc.).
 - Cron failure alerting (GitHub issue auto-open/close on fallback).
 - Schema versioning on all `data/*.json` documents.
-- Unit tests, expanded e2e (sort, filter, CSV export, charts), CI workflow.
+- [`DATA_CONTRACT.md`](DATA_CONTRACT.md) for committed JSON and `/api/quotes`.
+- Unit tests (validators, SEC mapping), expanded e2e (sort, filter, CSV, charts, visual bounds).
+- **Performance budget** CI step (`npm run check:bundle`).
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) for the `lib/` + test workflow.
 
 ## How to read the phases
@@ -62,25 +68,13 @@ Most Phase 1 items are shipped. Remaining work:
   authorizes ETF holdings, the pipeline falls back to SEC N-PORT or seed data.
 - **SEC N-PORT freshness.** N-PORT filings lag daily Invesco data; prefer Invesco
   or FMP when reachable. Monitor mapping quality when constituents change names.
-- **Schema validation step.** `schemaVersion` is stamped on write; add an explicit
-  read-time validation pass in `fetch-holdings.js` before commit.
 - **Backfill guard documentation.** Same-month `applyMonthlySnapshot` re-runs
   update weights in place — now tested; document `MAX_MONTHS` retention in
   [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-## Phase 2 — Analytics & visualization (Mostly shipped)
+## Phase 2 — Analytics & visualization (Shipped in v1.2)
 
-Shipped in v1.1:
-
-- Top movers panel, compare holdings, Herfindahl card, concentration trend.
-- Weight-history chart with selectable 6/12/24-month window.
-- Sector trends over time (top 5 sectors across monthly history).
-- Index-change history view.
-
-Remaining:
-
-- **Interactive chart hovers.** Show exact values on hover for weight/sector charts
-  (title attributes or a lightweight tooltip div — still no charting dependency).
+All planned v1.x chart work is shipped. Future ideas live in Phase 4.
 
 ## Phase 3 — UX, accessibility & performance (Mostly shipped)
 
@@ -88,12 +82,11 @@ Shipped:
 
 - Light/dark theme, shareable URL state, mobile card layout, skip link, live region.
 - Stale-data indicator, methodology panel, delayed-quote labelling.
+- Empty / error / offline states and PWA offline cache.
 
 Remaining:
 
 - **Table virtualization.** If render cost grows, virtualize the ~100-row table.
-- **Empty / error / offline states.** Explicit UI when JSON fails to load or the
-  browser is offline.
 - **Accessibility audit.** Run axe, verify contrast and focus order beyond the
   current manual pass.
 
@@ -106,8 +99,6 @@ Remaining:
 
 ## Phase 5 — Platform, distribution & alerts (Later)
 
-- **PWA / offline support.** Service worker + manifest for last-good snapshot.
-- **Documented public data contract.** Version `data/*.json` and `/api/quotes`.
 - **Embeddable widget.** Compact top-10 iframe view.
 - **Watchlist & alerts.** Local star tickers; optional notifications for index changes.
 
@@ -115,15 +106,15 @@ Remaining:
 
 Shipped:
 
-- Expanded e2e beyond smoke (sort, filter, CSV, chart panels).
+- Expanded e2e beyond smoke (sort, filter, CSV, chart panels, visual bounds).
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) and `scripts/sync-vercel-env.mjs`.
+- Performance budget CI and [`DATA_CONTRACT.md`](DATA_CONTRACT.md).
 
 Remaining:
 
-- **Visual-regression check.** Screenshot diffing in the e2e job.
-- **Performance budget.** Cap static bundle size and dashboard load time.
 - **GitHub Pages one-time setup.** Settings → Pages → GitHub Actions (workflow
   skips gracefully until configured).
+- **Committed screenshot baselines** for stricter visual regression (optional).
 
 ---
 
@@ -132,9 +123,9 @@ Remaining:
 | Horizon   | Focus                              | Phases |
 |-----------|------------------------------------|--------|
 | **Now**   | Valid FMP key, GitHub Pages setup  | 1, 6   |
-| **Next**  | Chart hovers, offline/error states | 2, 3   |
-| **Later** | SSE prices, PWA, platform APIs     | 4, 5   |
-| **Ongoing** | Pipeline validation, tests, ops  | 1, 6   |
+| **Next**  | Accessibility audit, table virt.   | 3      |
+| **Later** | SSE prices, embeddable widget      | 4, 5   |
+| **Ongoing** | Pipeline monitoring, tests, ops  | 1, 6   |
 
 ## Versioning
 

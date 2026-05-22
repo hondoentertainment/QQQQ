@@ -124,6 +124,15 @@ body {
 .chg-add { color: var(--up); }
 .chg-rem { color: var(--down); }
 
+/* ---- connectivity / load status ---- */
+.status-banner {
+  background: var(--panel); border: 1px solid var(--line);
+  border-left: 3px solid var(--amber); border-radius: var(--radius);
+  padding: 10px 16px; margin-bottom: 22px; font-size: 12.5px;
+}
+.status-banner.warn { border-left-color: var(--amber); }
+.status-banner.error { border-left-color: var(--down); }
+
 /* ---- today's movers ---- */
 .movers {
   padding: 14px 16px; display: grid; gap: 18px;

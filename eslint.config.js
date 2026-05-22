@@ -26,4 +26,10 @@ export default [
       globals: globals.browser,
     },
   },
+  {
+    files: ['sw.js'],
+    languageOptions: {
+      globals: globals.serviceworker,
+    },
+  },
 ];

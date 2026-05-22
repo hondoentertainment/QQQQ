@@ -1,0 +1,17 @@
+{
+  "name": "QQQQ Component Tracker",
+  "short_name": "QQQQ",
+  "description": "Live components and monthly allocations of QQQQ (Invesco QQQ Trust / Nasdaq-100).",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e14",
+  "theme_color": "#00d1b2",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

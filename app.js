@@ -32,6 +32,8 @@ const state = {
   changes: null,
   prices: null,
   refreshStatus: null,
+  offline: typeof navigator !== 'undefined' ? !navigator.onLine : false,
+  loadError: null,
   sort: { key: 'weight', dir: 'desc' },
   search: '',
   sector: '',
@@ -52,6 +54,9 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
   ));
+}
+function svgTip(text) {
+  return `<title>${escapeHtml(text)}</title>`;
 }
 function fmtSigned(n, d = 2, unit = '%') {
   if (!Number.isFinite(n)) return '—';
@@ -183,6 +188,33 @@ function visibleHoldings() {
 }
 
 /* ---------- rendering ---------- */
+function setStatusBanner(kind, message) {
+  const el = $('#statusBanner');
+  if (!el) return;
+  if (!message) {
+    el.hidden = true;
+    el.textContent = '';
+    el.className = 'status-banner';
+    return;
+  }
+  el.hidden = false;
+  el.className = 'status-banner' + (kind ? ` ${kind}` : '');
+  el.textContent = message;
+}
+
+function updateConnectivityBanner() {
+  if (state.loadError) {
+    setStatusBanner('error', state.loadError);
+    return;
+  }
+  if (state.offline) {
+    setStatusBanner('warn',
+      'You are offline. Showing the last loaded snapshot; live refresh is paused.');
+    return;
+  }
+  setStatusBanner('', '');
+}
+
 function renderStatus() {
   const d = state.holdings;
   const badge = $('#sourceBadge');
@@ -220,6 +252,7 @@ function renderStatus() {
         + 'updated it recently</span>'
       : '') +
     refreshHealthLine();
+  updateConnectivityBanner();
 }
 
 function refreshHealthLine() {
@@ -494,7 +527,7 @@ function concentrationChart(series) {
       stroke-linejoin="round" stroke-linecap="round"/>`;
     paths += series
       .map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(p[ln.key]).toFixed(1)}"
-        r="2.6" fill="${ln.color}"/>`)
+        r="2.6" fill="${ln.color}">${svgTip(`${ln.label}: ${p[ln.key].toFixed(2)}% (${p.month})`)}</circle>`)
       .join('');
   }
   const legend = lines
@@ -573,7 +606,7 @@ function compareChart(tickers) {
       stroke-linejoin="round" stroke-linecap="round"/>`;
     paths += pts
       .map((p) => `<circle cx="${x(p.i).toFixed(1)}" cy="${y(p.v).toFixed(1)}"
-        r="2.6" fill="${color}"/>`)
+        r="2.6" fill="${color}">${svgTip(`${s.tk}: ${p.v.toFixed(2)}% (${months[p.i]})`)}</circle>`)
       .join('');
   });
   const legend = series
@@ -750,7 +783,7 @@ function sectorTrendChart(series, sectors) {
   sectors.forEach((sec, idx) => {
     const color = COMPARE_COLORS[idx % COMPARE_COLORS.length];
     const pts = series
-      .map((p, i) => ({ v: p.totals[sec] || 0, i }))
+      .map((p, i) => ({ v: p.totals[sec] || 0, i, month: p.month }))
       .filter((p) => Number.isFinite(p.v));
     if (pts.length < 2) return;
     const d = pts
@@ -758,6 +791,10 @@ function sectorTrendChart(series, sectors) {
       .join(' ');
     paths += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2"
       stroke-linejoin="round" stroke-linecap="round"/>`;
+    paths += pts
+      .map((p) => `<circle cx="${x(p.i).toFixed(1)}" cy="${y(p.v).toFixed(1)}"
+        r="2.6" fill="${color}">${svgTip(`${sec}: ${p.v.toFixed(2)}% (${p.month})`)}</circle>`)
+      .join('');
   });
   const legend = sectors
     .map((sec, idx) => `<span class="lg">
@@ -834,15 +871,19 @@ function weightHistoryChart(series, ticker) {
       font-size="9.5" fill="var(--muted)">${p.month.slice(2)}</text>`;
   });
   const present = series.map((p, i) => ({ ...p, i })).filter((p) => p.weight != null);
+  const trend = present[present.length - 1].weight - present[0].weight;
+  const color = trend >= 0 ? 'var(--up)' : 'var(--down)';
   const d = present
     .map((p, k) => `${k ? 'L' : 'M'}${x(p.i).toFixed(1)},${y(p.weight).toFixed(1)}`)
     .join(' ');
-  const trend = present[present.length - 1].weight - present[0].weight;
-  const color = trend >= 0 ? 'var(--up)' : 'var(--down)';
+  const dots = present
+    .map((p) => `<circle cx="${x(p.i).toFixed(1)}" cy="${y(p.weight).toFixed(1)}"
+      r="3" fill="${color}">${svgTip(`${ticker}: ${p.weight.toFixed(2)}% (${p.month})`)}</circle>`)
+    .join('');
   return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
     role="img" aria-label="${ticker} index weight over the selected window">
     ${grid}<path d="${d}" fill="none" stroke="${color}" stroke-width="2.2"
-      stroke-linejoin="round" stroke-linecap="round"/>${xlab}</svg>`;
+      stroke-linejoin="round" stroke-linecap="round"/>${dots}${xlab}</svg>`;
 }
 
 function renderWeightHistory() {
@@ -894,14 +935,27 @@ function render() {
 }
 
 /* ---------- data loading ---------- */
+async function fetchJson(path, optional = false) {
+  const res = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' });
+  if (!res.ok) {
+    if (optional) return null;
+    throw new Error(`${path} returned HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
 async function loadData() {
-  const bust = '?t=' + Date.now();
+  if (state.offline && state.holdings) {
+    updateConnectivityBanner();
+    return;
+  }
+  state.loadError = null;
   const [h, m, c, p, rs] = await Promise.all([
-    fetch('data/holdings.json' + bust).then((r) => r.json()),
-    fetch('data/monthly-allocations.json' + bust).then((r) => r.json()),
-    fetch('data/changes.json' + bust).then((r) => r.json()).catch(() => ({ events: [] })),
-    fetch('data/price-history.json' + bust).then((r) => r.json()).catch(() => null),
-    fetch('data/refresh-status.json' + bust).then((r) => r.json()).catch(() => null),
+    fetchJson('data/holdings.json'),
+    fetchJson('data/monthly-allocations.json'),
+    fetchJson('data/changes.json', true).then((doc) => doc || { events: [] }),
+    fetchJson('data/price-history.json', true),
+    fetchJson('data/refresh-status.json', true),
   ]);
   if (Number.isFinite(h.schemaVersion) && h.schemaVersion > KNOWN_SCHEMA) {
     console.warn(
@@ -1248,18 +1302,44 @@ function startClock() {
   }, 1000);
 }
 
+function wireConnectivity() {
+  window.addEventListener('offline', () => {
+    state.offline = true;
+    updateConnectivityBanner();
+  });
+  window.addEventListener('online', () => {
+    state.offline = false;
+    state.loadError = null;
+    updateConnectivityBanner();
+    if (state.holdings) {
+      loadData().catch((err) => console.error(err));
+    }
+  });
+}
+
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.register('/sw.js').catch((err) => {
+    console.warn('service worker registration failed', err);
+  });
+}
+
 /* ---------- boot ---------- */
 (async function init() {
   wireEvents();
+  wireConnectivity();
+  registerServiceWorker();
   syncThemeButton();
   restoreFromUrl();
+  updateConnectivityBanner();
   try {
     await loadData();
   } catch (err) {
+    state.loadError = 'Could not load holdings data. Check your connection or run npm run refresh.';
+    updateConnectivityBanner();
     document.querySelector('.app').insertAdjacentHTML(
-      'afterbegin',
-      `<p class="empty">Could not load holdings data. Run <code>npm run refresh</code> ` +
-      `or check that <code>data/holdings.json</code> exists.</p>`
+      'beforeend',
+      `<section class="panel"><p class="empty">${escapeHtml(state.loadError)}</p></section>`
     );
     console.error(err);
     return;

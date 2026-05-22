@@ -92,4 +92,20 @@ test('dashboard renders and is interactive', async (t) => {
     await page.waitForSelector('#weightHistoryChart svg', { timeout: 5000 });
     await page.waitForSelector('#sectorTrendChart svg', { timeout: 5000 });
   });
+
+  await t.test('chart points expose hover titles', async () => {
+    const titles = await page.locator('#weightHistoryChart circle title').count();
+    assert.ok(titles > 0, 'expected weight history chart hover titles');
+    const sectorTitles = await page.locator('#sectorTrendChart circle title').count();
+    assert.ok(sectorTitles > 0, 'expected sector trend chart hover titles');
+  });
+
+  await t.test('dashboard screenshot stays within visual bounds', async () => {
+    await page.waitForSelector('.cards .card', { timeout: 5000 });
+    const cards = await page.locator('.cards .card').count();
+    assert.ok(cards >= 4, 'expected summary cards');
+    const shot = await page.screenshot({ type: 'png' });
+    assert.ok(shot.length > 40000, 'screenshot unexpectedly small');
+    assert.ok(shot.length < 350000, 'screenshot unexpectedly large');
+  });
 });

@@ -9,6 +9,10 @@ import {
   buildNameTickerMap,
   buildRefreshStatus,
   validateHoldings,
+  validateHoldingsDocument,
+  validateMonthlyDocument,
+  validateRefreshStatus,
+  lookupTickerByName,
   diffConstituents,
   monthKey,
   applyMonthlySnapshot,
@@ -249,4 +253,54 @@ test('applyPriceSnapshot prunes to the most recent maxDays entries', () => {
 test('applyPriceSnapshot ignores a non-finite close', () => {
   const history = [{ date: '2026-05-21', close: 480 }];
   assert.deepEqual(applyPriceSnapshot(history, '2026-05-22', null, 180), history);
+});
+
+test('lookupTickerByName resolves partial and token-overlap names', () => {
+  const map = buildNameTickerMap([
+    { ticker: 'MSFT', name: 'Microsoft Corp.' },
+    { ticker: 'AAPL', name: 'Apple Inc.' },
+  ]);
+  assert.equal(lookupTickerByName('Microsoft Corporation', map), 'MSFT');
+  assert.equal(lookupTickerByName('Apple Inc', map), 'AAPL');
+  assert.equal(lookupTickerByName('Totally Unknown Co', map), null);
+});
+
+test('validateHoldingsDocument accepts a well-formed snapshot', () => {
+  const doc = {
+    schemaVersion: 1,
+    fund: 'QQQ',
+    asOf: '2026-05-22T00:00:00.000Z',
+    source: 'sec-nport',
+    holdings: makeHoldings(80),
+  };
+  assert.equal(validateHoldingsDocument(doc).fund, 'QQQ');
+});
+
+test('validateHoldingsDocument rejects wrong schemaVersion', () => {
+  assert.throws(
+    () => validateHoldingsDocument({ schemaVersion: 2, fund: 'QQQ', asOf: 'x', source: 'seed', holdings: makeHoldings(10) }),
+    /schemaVersion/
+  );
+});
+
+test('validateMonthlyDocument accepts months and allocations', () => {
+  const doc = {
+    schemaVersion: 1,
+    fund: 'QQQ',
+    months: ['2026-05'],
+    allocations: { AAPL: { '2026-05': 8.1 } },
+  };
+  assert.equal(validateMonthlyDocument(doc).months.length, 1);
+});
+
+test('validateRefreshStatus requires pipeline summary fields', () => {
+  const doc = {
+    schemaVersion: 1,
+    runAt: '2026-05-22T00:00:00.000Z',
+    holdingsSource: 'sec-nport',
+    quoteSource: 'yahoo',
+    quoteSuccessRate: 0.98,
+  };
+  assert.equal(validateRefreshStatus(doc).quoteSource, 'yahoo');
+  assert.throws(() => validateRefreshStatus({ schemaVersion: 1 }), /missing run summary/);
 });

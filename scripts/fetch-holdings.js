@@ -20,6 +20,9 @@ import {
   buildNameTickerMap,
   parseSecNportHoldings,
   buildRefreshStatus,
+  validateHoldingsDocument,
+  validateMonthlyDocument,
+  validateRefreshStatus,
   SCHEMA_VERSION,
 } from '../lib/holdings.js';
 
@@ -236,6 +239,7 @@ async function main() {
     totalWeight: +holdings.reduce((s, h) => s + h.weight, 0).toFixed(2),
     holdings,
   };
+  validateHoldingsDocument(holdingsDoc);
   await writeFile(HOLDINGS_FILE, JSON.stringify(holdingsDoc, null, 2) + '\n');
   log('wrote', path.relative(ROOT, HOLDINGS_FILE));
 
@@ -244,6 +248,7 @@ async function main() {
   const updated = applyMonthlySnapshot(monthly, holdings, mk, MAX_MONTHS);
   updated.schemaVersion = SCHEMA_VERSION;
   updated.updatedAt = now.toISOString();
+  validateMonthlyDocument(updated);
   await writeFile(MONTHLY_FILE, JSON.stringify(updated, null, 2) + '\n');
   log('wrote', path.relative(ROOT, MONTHLY_FILE), `(${mk} snapshot)`);
 
@@ -275,6 +280,7 @@ async function main() {
     attempts,
     fallback: fellBack,
   });
+  validateRefreshStatus(status);
   await writeFile(REFRESH_STATUS_FILE, JSON.stringify(status, null, 2) + '\n');
   log('wrote', path.relative(ROOT, REFRESH_STATUS_FILE));
 
