@@ -350,12 +350,101 @@ function renderMovers() {
   panel.hidden = false;
 }
 
+/* ---------- fund concentration ---------- */
+// Per-month top-5 / top-10 weight concentration, derived from the same
+// monthly allocation history that drives each row's sparkline.
+function concentrationSeries() {
+  const months = state.monthly ? state.monthly.months : [];
+  const allocations = (state.monthly && state.monthly.allocations) || {};
+  return months.map((m) => {
+    const weights = [];
+    for (const rec of Object.values(allocations)) {
+      if (Number.isFinite(rec[m])) weights.push(rec[m]);
+    }
+    weights.sort((a, b) => b - a);
+    const sum = (n) => weights.slice(0, n).reduce((s, w) => s + w, 0);
+    return { month: m, count: weights.length, top5: sum(5), top10: sum(10) };
+  });
+}
+
+function concentrationChart(series) {
+  const W = 720, H = 230, padL = 40, padR = 16, padT = 16, padB = 34;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const lines = [
+    { key: 'top10', label: 'Top 10 holdings', color: 'var(--accent)' },
+    { key: 'top5', label: 'Top 5 holdings', color: 'var(--blue)' },
+  ];
+  const vals = series.flatMap((p) => [p.top5, p.top10]);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const pad = (hi - lo) * 0.25 || 1;
+  lo = Math.max(0, lo - pad);
+  hi += pad;
+  const n = series.length;
+  const x = (i) => padL + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+  const y = (v) => padT + innerH - ((v - lo) / (hi - lo || 1)) * innerH;
+
+  let grid = '';
+  const TICKS = 4;
+  for (let t = 0; t <= TICKS; t++) {
+    const v = lo + (t / TICKS) * (hi - lo);
+    const gy = y(v).toFixed(1);
+    grid += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="var(--line)"/>
+      <text x="${padL - 6}" y="${(+gy + 3).toFixed(1)}" text-anchor="end"
+        font-size="9.5" fill="var(--muted)">${v.toFixed(0)}%</text>`;
+  }
+  let xlab = '';
+  series.forEach((p, i) => {
+    if (n > 12 && i % 2 !== 0 && i !== n - 1) return;
+    xlab += `<text x="${x(i).toFixed(1)}" y="${H - 12}" text-anchor="middle"
+      font-size="9.5" fill="var(--muted)">${p.month.slice(2)}</text>`;
+  });
+  let paths = '';
+  for (const ln of lines) {
+    const d = series
+      .map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p[ln.key]).toFixed(1)}`)
+      .join(' ');
+    paths += `<path d="${d}" fill="none" stroke="${ln.color}" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round"/>`;
+    paths += series
+      .map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(p[ln.key]).toFixed(1)}"
+        r="2.6" fill="${ln.color}"/>`)
+      .join('');
+  }
+  const legend = lines
+    .map((ln) => `<span class="lg">
+      <span class="swatch" style="background:${ln.color}"></span>${ln.label}</span>`)
+    .join('');
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    role="img" aria-label="Top 5 and top 10 holding concentration by month">
+    ${grid}${paths}${xlab}</svg>
+    <div class="line-legend">${legend}</div>`;
+}
+
+function renderConcentration() {
+  const series = concentrationSeries();
+  const note = $('#concentrationNote');
+  const chart = $('#concentrationChart');
+  if (series.length < 2) {
+    note.textContent = '';
+    chart.innerHTML = '<p class="empty">Not enough monthly history yet.</p>';
+    return;
+  }
+  chart.innerHTML = concentrationChart(series);
+  const first = series[0];
+  const last = series[series.length - 1];
+  const d10 = last.top10 - first.top10;
+  note.innerHTML =
+    `Top 10 hold <strong>${last.top10.toFixed(1)}%</strong> of the fund ` +
+    `(<span class="${classOf(d10)}">${fmtSigned(d10, 1, ' pp')}</span> since ${first.month})`;
+}
+
 function render() {
   renderStatus();
   renderCards();
   renderChanges();
   renderMovers();
   renderTable();
+  renderConcentration();
   renderSectors();
 }
 
@@ -505,6 +594,25 @@ async function copyShareLink() {
   }
 }
 
+/* ---------- theme ---------- */
+// The theme is applied before first paint by an inline script in index.html;
+// these helpers only keep the toggle button and stored preference in sync.
+function syncThemeButton() {
+  const light = document.documentElement.dataset.theme === 'light';
+  const btn = $('#themeBtn');
+  btn.textContent = light ? 'Dark mode' : 'Light mode';
+  btn.setAttribute('aria-label', `Switch to ${light ? 'dark' : 'light'} mode`);
+}
+
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = next;
+  try {
+    localStorage.setItem('qqqq-theme', next);
+  } catch { /* preference just won't persist */ }
+  syncThemeButton();
+}
+
 /* ---------- events ---------- */
 function sortBy(key) {
   if (!key) return;
@@ -593,6 +701,7 @@ function wireEvents() {
   $('#refreshBtn').addEventListener('click', manualRefresh);
   $('#exportBtn').addEventListener('click', exportCsv);
   $('#shareBtn').addEventListener('click', copyShareLink);
+  $('#themeBtn').addEventListener('click', toggleTheme);
 
   $('#movers').addEventListener('click', (e) => {
     const chip = e.target.closest('.mover');
@@ -624,6 +733,7 @@ function startClock() {
 /* ---------- boot ---------- */
 (async function init() {
   wireEvents();
+  syncThemeButton();
   restoreFromUrl();
   try {
     await loadData();
