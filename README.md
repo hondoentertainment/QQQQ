@@ -121,6 +121,10 @@ One-time setup: import the repo at [vercel.com/new](https://vercel.com/new).
 For reliable prices, add an `FMP_API_KEY` environment variable in the Vercel
 project settings — without it the function falls back to Yahoo Finance.
 
+The Vercel CLI is included as a dev dependency: run `npx vercel dev` to
+preview the dashboard and the `/api/quotes` function together locally, or
+`npx vercel deploy` to deploy from the command line.
+
 ## Data sources & notes
 
 - Holdings/weights: Invesco QQQ official holdings file, or Financial Modeling
