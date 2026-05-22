@@ -6,6 +6,18 @@ const COLS = 9;
 const QUOTE_POLL_SECONDS = 20;
 const MOVERS_PER_SIDE = 5;
 
+// Up to six holdings overlay in the comparison chart, each in the next colour.
+const MAX_COMPARE = 6;
+const COMPARE_COLORS = [
+  'var(--accent)', 'var(--blue)', 'var(--up)', 'var(--amber)', '#b07cff', 'var(--down)',
+];
+
+// A snapshot older than this points to a stuck refresh pipeline. The cron is
+// idle overnight and at weekends, so the longest legitimate gap is the
+// Friday-evening-to-Monday-open window (~64 h); 72 h clears it without false
+// alarms.
+const STALE_AFTER_MS = 72 * 60 * 60 * 1000;
+
 // Sort keys accepted from the table headers and the shareable URL.
 const SORT_KEYS = new Set(
   ['rank', 'ticker', 'name', 'sector', 'weight', 'price', 'changePct', 'mom']
@@ -18,6 +30,7 @@ const state = {
   sort: { key: 'weight', dir: 'desc' },
   search: '',
   sector: '',
+  compare: [],
   open: new Set(),
   auto: true,
   countdown: REFRESH_SECONDS,
@@ -53,6 +66,13 @@ function relTime(iso) {
   if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
   if (diff < 86400) return Math.floor(diff / 3600) + ' h ago';
   return Math.floor(diff / 86400) + ' d ago';
+}
+
+// A snapshot is "stale" once it is older than the longest gap the refresh
+// cron could legitimately leave between runs (see STALE_AFTER_MS).
+function freshnessOf(asOfIso) {
+  const ageMs = Date.now() - new Date(asOfIso).getTime();
+  return { ageMs, stale: Number.isFinite(ageMs) && ageMs > STALE_AFTER_MS };
 }
 
 /* ---------- monthly series ---------- */
@@ -157,6 +177,10 @@ function renderStatus() {
   const [label, cls] = map[d.source] || ['DATA', 'cached'];
   badge.textContent = label;
   badge.className = 'src-badge ' + cls;
+
+  const fresh = freshnessOf(d.asOf);
+  $('#staleBadge').hidden = !fresh.stale;
+
   const live = state.liveQuotes === true
     ? ` <span class="live-tag">&middot; live prices ${relTime(state.livePricesAt)}</span>`
     : '';
@@ -168,6 +192,13 @@ function renderStatus() {
   $('#footerStatus').textContent = state.auto
     ? `auto-refreshing every ${REFRESH_SECONDS}s in this view.`
     : 'auto-refresh paused.';
+  $('#dataHealth').innerHTML =
+    `Data source: <strong>${escapeHtml(label)}</strong> &middot; ${d.count} holdings ` +
+    `&middot; snapshot ${relTime(d.asOf)}` +
+    (fresh.stale
+      ? ' &middot; <span class="down">may be stale &mdash; the refresh job has not '
+        + 'updated it recently</span>'
+      : '');
 }
 
 function renderCards() {
@@ -179,6 +210,11 @@ function renderCards() {
     ? priced.reduce((s, x) => s + x.changePct * x.weight, 0) /
       priced.reduce((s, x) => s + x.weight, 0)
     : null;
+  // Herfindahl-Hirschman index of the weight distribution: the sum of squared
+  // percentage weights. Its inverse (10000 / HHI) is the "effective" number
+  // of equally-weighted holdings the fund behaves like.
+  const hhi = h.reduce((s, x) => s + x.weight * x.weight, 0);
+  const effectiveN = hhi > 0 ? Math.round(10000 / hhi) : 0;
   const cards = [
     { label: 'Holdings', value: state.holdings.count, sub: `${state.holdings.totalWeight}% total weight` },
     { label: 'Top-10 concentration', value: top10.toFixed(1) + '%', sub: 'of fund weight' },
@@ -188,6 +224,11 @@ function renderCards() {
       value: wAvg == null ? '—' : fmtSigned(wAvg),
       sub: priced.length ? `${advancers}/${priced.length} advancing` : 'prices pending',
       cls: classOf(wAvg),
+    },
+    {
+      label: 'Herfindahl index',
+      value: hhi.toFixed(0),
+      sub: `concentration · like ≈${effectiveN} equal holdings`,
     },
   ];
   $('#cards').innerHTML = cards.map((c) => `
@@ -213,18 +254,18 @@ function renderTable() {
         <tr class="row ${open ? 'open' : ''}" data-tk="${h.ticker}"
           tabindex="0" role="button" aria-expanded="${open}"
           aria-label="${h.ticker}, ${escapeHtml(h.name)}, weight ${h.weight.toFixed(2)} percent">
-          <td class="num">${h.rank}</td>
-          <td class="tk"><span class="caret">▸</span>${h.ticker}</td>
-          <td class="co-name" title="${escapeHtml(h.name)}">${escapeHtml(h.name)}</td>
-          <td class="sector-tag">${escapeHtml(h.sector)}</td>
-          <td class="num weight-cell">
+          <td class="num" data-label="Rank">${h.rank}</td>
+          <td class="tk" data-label="Ticker"><span class="caret">▸</span>${h.ticker}</td>
+          <td class="co-name" data-label="Company" title="${escapeHtml(h.name)}">${escapeHtml(h.name)}</td>
+          <td class="sector-tag" data-label="Sector">${escapeHtml(h.sector)}</td>
+          <td class="num weight-cell" data-label="Weight %">
             <div class="weight-bar" style="width:${(h.weight / maxW) * 100}%"></div>
             <span>${h.weight.toFixed(2)}</span>
           </td>
-          <td class="num">${fmtPrice(h.price)}</td>
-          <td class="num ${classOf(h.changePct)}">${fmtSigned(h.changePct)}</td>
-          <td class="num ${classOf(mom)}">${fmtSigned(mom, 2, ' pp')}</td>
-          <td>${sparkline(monthSeries(h.ticker))}</td>
+          <td class="num" data-label="Price">${fmtPrice(h.price)}</td>
+          <td class="num ${classOf(h.changePct)}" data-label="Day %">${fmtSigned(h.changePct)}</td>
+          <td class="num ${classOf(mom)}" data-label="MoM Δ">${fmtSigned(mom, 2, ' pp')}</td>
+          <td data-label="6-month allocation">${sparkline(monthSeries(h.ticker))}</td>
         </tr>`;
       return main + (open ? detailRow(h) : '');
     }).join('');
@@ -438,6 +479,113 @@ function renderConcentration() {
     `(<span class="${classOf(d10)}">${fmtSigned(d10, 1, ' pp')}</span> since ${first.month})`;
 }
 
+/* ---------- compare holdings ---------- */
+// Overlay the monthly allocation history of several holdings on one chart,
+// reusing the same hand-drawn multi-line SVG style as the concentration trend.
+function compareChart(tickers) {
+  const months = state.monthly ? state.monthly.months : [];
+  if (months.length < 2) return '<p class="empty">Not enough monthly history yet.</p>';
+  const series = tickers.map((tk) => ({ tk, vals: monthSeries(tk) }));
+  const present = series.flatMap((s) => s.vals).filter((v) => v != null);
+  if (!present.length) {
+    return '<p class="empty">No allocation history for the selected holdings.</p>';
+  }
+  const W = 720, H = 250, padL = 42, padR = 16, padT = 16, padB = 34;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  let lo = Math.min(...present), hi = Math.max(...present);
+  const pad = (hi - lo) * 0.25 || hi * 0.1 || 1;
+  lo = Math.max(0, lo - pad);
+  hi += pad;
+  const n = months.length;
+  const x = (i) => padL + (i / (n - 1)) * innerW;
+  const y = (v) => padT + innerH - ((v - lo) / (hi - lo || 1)) * innerH;
+
+  let grid = '';
+  const TICKS = 4;
+  for (let t = 0; t <= TICKS; t++) {
+    const v = lo + (t / TICKS) * (hi - lo);
+    const gy = y(v).toFixed(1);
+    grid += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="var(--line)"/>
+      <text x="${padL - 6}" y="${(+gy + 3).toFixed(1)}" text-anchor="end"
+        font-size="9.5" fill="var(--muted)">${v.toFixed(1)}%</text>`;
+  }
+  let xlab = '';
+  months.forEach((m, i) => {
+    if (n > 12 && i % 2 !== 0 && i !== n - 1) return;
+    xlab += `<text x="${x(i).toFixed(1)}" y="${H - 12}" text-anchor="middle"
+      font-size="9.5" fill="var(--muted)">${m.slice(2)}</text>`;
+  });
+  let paths = '';
+  series.forEach((s, idx) => {
+    const color = COMPARE_COLORS[idx % COMPARE_COLORS.length];
+    const pts = s.vals.map((v, i) => ({ v, i })).filter((p) => p.v != null);
+    if (!pts.length) return;
+    const d = pts
+      .map((p, k) => `${k ? 'L' : 'M'}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`)
+      .join(' ');
+    paths += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round"/>`;
+    paths += pts
+      .map((p) => `<circle cx="${x(p.i).toFixed(1)}" cy="${y(p.v).toFixed(1)}"
+        r="2.6" fill="${color}"/>`)
+      .join('');
+  });
+  const legend = series
+    .map((s, idx) => `<span class="lg">
+      <span class="swatch" style="background:${COMPARE_COLORS[idx % COMPARE_COLORS.length]}"></span>
+      ${escapeHtml(s.tk)}</span>`)
+    .join('');
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    role="img" aria-label="Monthly allocation comparison for the selected holdings">
+    ${grid}${paths}${xlab}</svg>
+    <div class="line-legend">${legend}</div>`;
+}
+
+function renderCompare() {
+  $('#compareChips').innerHTML = state.compare
+    .map((tk, i) => `<button class="cmp-chip" type="button" data-tk="${tk}"
+        aria-label="Remove ${tk} from comparison">
+        <span class="cmp-dot" style="background:${COMPARE_COLORS[i % COMPARE_COLORS.length]}"></span>
+        ${escapeHtml(tk)}<span class="cmp-x" aria-hidden="true">&times;</span>
+      </button>`)
+    .join('');
+  $('#compareChart').innerHTML = state.compare.length
+    ? compareChart(state.compare)
+    : '<p class="empty">Pick holdings above to overlay their monthly allocation history.</p>';
+}
+
+/* ---------- index change history ---------- */
+// A browsable timeline of every constituent addition / removal recorded in
+// data/changes.json — the full history behind the latest-change banner.
+function renderChangeHistory() {
+  const el = $('#changeHistory');
+  const events = (state.changes && Array.isArray(state.changes.events)
+    ? state.changes.events
+    : []
+  ).filter((ev) => ev && ((ev.added && ev.added.length) || (ev.removed && ev.removed.length)));
+  if (!events.length) {
+    el.innerHTML = '<p class="empty">No index additions or removals recorded yet. They ' +
+      'appear here once the refresh job detects a constituent change.</p>';
+    return;
+  }
+  const tag = (x, cls, sign) =>
+    `<span class="chg-tag ${cls}" title="${escapeHtml(x.name || x.ticker)}">` +
+    `${sign} ${escapeHtml(x.ticker)}</span>`;
+  el.innerHTML = events
+    .map((ev) => {
+      const when = new Date(ev.date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric',
+      });
+      const added = (ev.added || []).map((x) => tag(x, 'add', '▲')).join('');
+      const removed = (ev.removed || []).map((x) => tag(x, 'rem', '▼')).join('');
+      return `<div class="chg-event">
+        <div class="chg-when">${escapeHtml(when)}</div>
+        <div class="chg-tags">${added}${removed}</div>
+      </div>`;
+    })
+    .join('');
+}
+
 function render() {
   renderStatus();
   renderCards();
@@ -445,7 +593,9 @@ function render() {
   renderMovers();
   renderTable();
   renderConcentration();
+  renderCompare();
   renderSectors();
+  renderChangeHistory();
 }
 
 /* ---------- data loading ---------- */
@@ -457,7 +607,7 @@ async function loadData() {
     fetch('data/changes.json' + bust).then((r) => r.json()).catch(() => ({ events: [] })),
   ]);
   h.holdings.forEach((row, i) => { row.rank = i + 1; });
-  // populate sector filter once
+  // populate the sector filter and compare picker once
   if (!state.holdings) {
     const sectors = [...new Set(h.holdings.map((x) => x.sector))].sort();
     const sel = $('#sectorFilter');
@@ -465,6 +615,12 @@ async function loadData() {
       const o = document.createElement('option');
       o.value = o.textContent = s;
       sel.appendChild(o);
+    });
+    const cmpSel = $('#compareAdd');
+    h.holdings.map((x) => x.ticker).sort().forEach((tk) => {
+      const o = document.createElement('option');
+      o.value = o.textContent = tk;
+      cmpSel.appendChild(o);
     });
   }
   state.holdings = h;
@@ -530,6 +686,7 @@ function syncUrl() {
   if (state.search.trim()) p.set('q', state.search.trim());
   if (state.sector) p.set('sector', state.sector);
   if (state.open.size) p.set('open', [...state.open].join(','));
+  if (state.compare.length) p.set('cmp', state.compare.join(','));
   const qs = p.toString();
   history.replaceState(null, '', qs ? '?' + qs : location.pathname);
 }
@@ -548,6 +705,8 @@ function restoreFromUrl() {
   state.sector = p.get('sector') || '';
   const open = p.get('open');
   if (open) open.split(',').forEach((t) => t && state.open.add(t));
+  const cmp = p.get('cmp');
+  if (cmp) state.compare = cmp.split(',').filter(Boolean).slice(0, MAX_COMPARE);
 }
 
 // Reflect restored state into the controls once the data (and so the sector
@@ -557,7 +716,11 @@ function syncControlsFromState() {
   const sel = $('#sectorFilter');
   sel.value = state.sector;
   state.sector = sel.value;
+  // Drop any compared tickers from the URL that aren't real holdings.
+  const valid = new Set(state.holdings.holdings.map((h) => h.ticker));
+  state.compare = state.compare.filter((t) => valid.has(t));
   renderTable();
+  renderCompare();
   syncUrl();
 }
 
@@ -706,6 +869,23 @@ function wireEvents() {
   $('#movers').addEventListener('click', (e) => {
     const chip = e.target.closest('.mover');
     if (chip) focusHolding(chip.dataset.tk);
+  });
+
+  $('#compareAdd').addEventListener('change', (e) => {
+    const tk = e.target.value;
+    e.target.value = '';
+    if (tk && !state.compare.includes(tk) && state.compare.length < MAX_COMPARE) {
+      state.compare.push(tk);
+      renderCompare();
+      syncUrl();
+    }
+  });
+  $('#compareChips').addEventListener('click', (e) => {
+    const chip = e.target.closest('.cmp-chip');
+    if (!chip) return;
+    state.compare = state.compare.filter((t) => t !== chip.dataset.tk);
+    renderCompare();
+    syncUrl();
   });
 
   // Press "/" anywhere outside a field to jump to the holdings filter.

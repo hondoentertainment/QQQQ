@@ -16,19 +16,27 @@ that keeps the data fresh.
 - **Monthly allocation history** — every holding has a 6-month allocation
   sparkline; click a row for a full bar chart and month-by-month deltas.
 - **Index change tracking** — additions/removals between refreshes are
-  recorded and surfaced in a banner.
+  recorded and surfaced in a banner, with the full timeline in an **Index
+  change history** panel.
 - **Today's movers** — the biggest daily gainers and losers at a glance; click
   one to jump straight to its row.
+- **Compare holdings** — overlay the monthly allocation history of several
+  holdings on a single chart.
 - **Sector allocation** breakdown of the whole fund.
 - **Fund concentration trend** — top-5 and top-10 weight charted across the
-  monthly history, showing how concentrated the fund has become over time.
+  monthly history, plus a Herfindahl-index headline card, showing how
+  concentrated the fund has become over time.
 - **Near real-time** — the view auto-refreshes; when self-hosted it also polls
   live prices every 20s via the server.
-- **Shareable views** — the active filter, sort, and expanded rows are encoded
-  in the URL; **Copy link** shares the exact view you're looking at.
+- **Stale-data indicator** — a header badge and a footer health line flag when
+  the committed snapshot has not been refreshed recently.
+- **Shareable views** — the active filter, sort, expanded rows, and compared
+  holdings are encoded in the URL; **Copy link** shares the exact view.
 - **CSV export** of the current (filtered/sorted) holdings with monthly history.
 - **Light & dark themes** — a header toggle that remembers your choice and
   falls back to the OS colour-scheme preference.
+- **Responsive** — the holdings table collapses to a card layout on phones,
+  with no horizontal scrolling.
 - **Keyboard accessible** — sortable headers and expandable rows work without a
   mouse, with `aria-sort` / `aria-expanded` state; press `/` to jump to the
   filter box.
@@ -93,7 +101,9 @@ Schedule: every 30 minutes during US market hours, plus a post-close snapshot.
 Trigger it manually any time from the **Actions** tab ("Run workflow").
 
 If a data source is temporarily unreachable, the script falls back to the
-last good data so the job stays green and the site keeps working.
+last good data so the job stays green and the site keeps working. When that
+happens the workflow opens (and later auto-closes) a GitHub issue, so a
+silently stale dashboard gets noticed.
 
 ### Recommended: add an `FMP_API_KEY` secret
 

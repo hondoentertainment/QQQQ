@@ -9,6 +9,7 @@ import {
   diffConstituents,
   monthKey,
   applyMonthlySnapshot,
+  isFallbackSource,
   MIN_HOLDINGS,
 } from '../lib/holdings.js';
 
@@ -133,4 +134,12 @@ test('applyMonthlySnapshot prunes history beyond maxMonths', () => {
   const out = applyMonthlySnapshot(monthly, [{ ticker: 'AAPL', weight: 4 }], '2026-04', 2);
   assert.deepEqual(out.months, ['2026-03', '2026-04']);
   assert.deepEqual(Object.keys(out.allocations.AAPL).sort(), ['2026-03', '2026-04']);
+});
+
+test('isFallbackSource flags cached and seed sources but not live ones', () => {
+  assert.equal(isFallbackSource('invesco'), false);
+  assert.equal(isFallbackSource('fmp'), false);
+  assert.equal(isFallbackSource('invesco-cached'), true);
+  assert.equal(isFallbackSource('fmp-cached'), true);
+  assert.equal(isFallbackSource('seed'), true);
 });
