@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-05-22T21:39:56.162Z",
+  "asOf": "2026-05-25T14:00:42.324Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -18,7 +18,7 @@
       "marketCap": 2688000000000,
       "pe": 20.7,
       "yearHigh": 236.54,
-      "yearLow": 129.16
+      "yearLow": 132.92
     },
     {
       "ticker": "AAPL",
@@ -30,7 +30,7 @@
       "marketCap": 2268000000000,
       "pe": 22.03,
       "yearHigh": 311.4,
-      "yearLow": 193.46
+      "yearLow": 195.07
     },
     {
       "ticker": "MSFT",
@@ -66,7 +66,7 @@
       "marketCap": 1456000000000,
       "pe": 14.85,
       "yearHigh": 442.36,
-      "yearLow": 226.18
+      "yearLow": 231.13
     },
     {
       "ticker": "META",
@@ -185,8 +185,8 @@
       "changePct": 4.45,
       "marketCap": 364000000000,
       "pe": 38.88,
-      "yearHigh": 481.37,
-      "yearLow": 107.67
+      "yearHigh": 481.41,
+      "yearLow": 108.62
     },
     {
       "ticker": "INTU",
@@ -342,7 +342,7 @@
       "marketCap": 252000000000,
       "pe": 17.31,
       "yearHigh": 818.67,
-      "yearLow": 90.93
+      "yearLow": 92.22
     },
     {
       "ticker": "GILD",
@@ -486,7 +486,7 @@
       "marketCap": 168000000000,
       "pe": 19.98,
       "yearHigh": 435.72,
-      "yearLow": 206
+      "yearLow": 210.8
     },
     {
       "ticker": "MSTR",
@@ -606,7 +606,7 @@
       "marketCap": 112000000000,
       "pe": 46.62,
       "yearHigh": 139.41,
-      "yearLow": 92.59
+      "yearLow": 92.57
     },
     {
       "ticker": "CSX",
@@ -618,7 +618,7 @@
       "marketCap": 112000000000,
       "pe": 34.11,
       "yearHigh": 46.74,
-      "yearLow": 30.17
+      "yearLow": 30.85
     },
     {
       "ticker": "ABNB",
@@ -665,7 +665,7 @@
       "changePct": 2.04,
       "marketCap": 112000000000,
       "pe": 16.8,
-      "yearHigh": 316.79,
+      "yearHigh": 316.81,
       "yearLow": 183
     },
     {
@@ -797,7 +797,7 @@
       "changePct": 2.27,
       "marketCap": 84000000000,
       "pe": 41.15,
-      "yearHigh": 58.07,
+      "yearHigh": 54.35,
       "yearLow": 32.2
     },
     {
@@ -990,7 +990,7 @@
       "marketCap": 56000000000,
       "pe": 19.24,
       "yearHigh": 769.98,
-      "yearLow": 496.61
+      "yearLow": 504.56
     },
     {
       "ticker": "BKR",
@@ -1002,7 +1002,7 @@
       "marketCap": 56000000000,
       "pe": 13.12,
       "yearHigh": 70.41,
-      "yearLow": 36.03
+      "yearLow": 36.36
     },
     {
       "ticker": "KHC",
@@ -1110,7 +1110,7 @@
       "marketCap": 56000000000,
       "pe": 28.31,
       "yearHigh": 119.1,
-      "yearLow": 40.62
+      "yearLow": 41.49
     },
     {
       "ticker": "CSGP",
@@ -1134,7 +1134,7 @@
       "marketCap": 56000000000,
       "pe": 23.99,
       "yearHigh": 30,
-      "yearLow": 8.84
+      "yearLow": 9.11
     },
     {
       "ticker": "ZS",
