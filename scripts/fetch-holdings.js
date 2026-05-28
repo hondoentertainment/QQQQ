@@ -2,7 +2,8 @@
 // Refreshes data/holdings.json, data/monthly-allocations.json and data/changes.json.
 //
 // Holdings + weights: Invesco official QQQ holdings file, falling back to
-// Financial Modeling Prep when FMP_API_KEY is set, then to the last good data.
+// Financial Modeling Prep (when FMP_API_KEY is set) then the key-free
+// Slickcharts Nasdaq-100 page, and finally to the last good data.
 // Prices: see lib/quotes.js. All sources are best-effort and validated, so a
 // flaky or malformed source can't corrupt the committed data or break the job.
 import { readFile, writeFile, appendFile } from 'node:fs/promises';
@@ -12,6 +13,7 @@ import { fetchQuotes } from '../lib/quotes.js';
 import {
   parseInvescoCsv,
   parseFmpHoldings,
+  parseSlickchartsHtml,
   validateHoldings,
   diffConstituents,
   monthKey,
@@ -64,7 +66,23 @@ async function fetchFmpHoldings(apiKey) {
   return validateHoldings(parseFmpHoldings(await res.json()), 'FMP');
 }
 
-const LIVE_SOURCES = new Set(['invesco', 'fmp', 'invesco-cached', 'fmp-cached']);
+async function fetchSlickchartsHoldings() {
+  const url = 'https://www.slickcharts.com/nasdaq100';
+  const res = await fetch(url, {
+    headers: { 'User-Agent': UA, Accept: 'text/html,*/*' },
+  });
+  if (!res.ok) throw new Error('Slickcharts HTTP ' + res.status);
+  return validateHoldings(parseSlickchartsHtml(await res.text()), 'Slickcharts');
+}
+
+const LIVE_SOURCES = new Set([
+  'invesco',
+  'fmp',
+  'slickcharts',
+  'invesco-cached',
+  'fmp-cached',
+  'slickcharts-cached',
+]);
 
 async function main() {
   const now = new Date();
@@ -94,6 +112,17 @@ async function main() {
     }
   } else if (!holdings) {
     log('FMP_API_KEY not set — skipping FMP fallback');
+  }
+
+  if (!holdings) {
+    try {
+      log('trying Slickcharts…');
+      holdings = await fetchSlickchartsHoldings();
+      source = 'slickcharts';
+      log(`got ${holdings.length} holdings from Slickcharts`);
+    } catch (err) {
+      log('Slickcharts fetch failed:', err.message);
+    }
   }
 
   if (!holdings) {
@@ -143,7 +172,7 @@ async function main() {
   holdings.sort((a, b) => b.weight - a.weight);
 
   // Record constituent additions / removals between live snapshots.
-  if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) && (source === 'invesco' || source === 'fmp')) {
+  if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) && !isFallbackSource(source)) {
     const { added, removed } = diffConstituents(prev.holdings, holdings);
     if (added.length || removed.length) {
       const changes = (await readJson(CHANGES_FILE)) || { events: [] };

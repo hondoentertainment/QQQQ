@@ -5,6 +5,7 @@ import {
   parseCsv,
   parseInvescoCsv,
   parseFmpHoldings,
+  parseSlickchartsHtml,
   validateHoldings,
   diffConstituents,
   monthKey,
@@ -65,6 +66,41 @@ test('parseFmpHoldings maps the etf-holder shape', () => {
   ]);
   assert.equal(holdings.length, 2);
   assert.equal(holdings[0].ticker, 'AAPL');
+});
+
+test('parseSlickchartsHtml extracts holdings from the Nasdaq-100 table', () => {
+  const html =
+    '<html><body><table>' +
+    '<thead><tr><th>#</th><th>Company</th><th>Symbol</th><th>Weight</th><th>Price</th></tr></thead>' +
+    '<tbody>' +
+    '<tr><td>1</td><td><a href="/symbol/AAPL">Apple Inc</a></td>' +
+    '<td><a href="/symbol/AAPL">AAPL</a></td><td>8.50%</td><td>$200.00</td></tr>' +
+    '<tr><td>2</td><td>Microsoft Corp</td><td>MSFT</td><td>7.90%</td><td>$400.00</td></tr>' +
+    '</tbody></table></body></html>';
+  const holdings = parseSlickchartsHtml(html);
+  assert.equal(holdings.length, 2);
+  assert.equal(holdings[0].ticker, 'AAPL');
+  assert.equal(holdings[0].name, 'Apple Inc');
+  assert.equal(holdings[0].weight, 8.5);
+  assert.equal(holdings[1].ticker, 'MSFT');
+});
+
+test('parseSlickchartsHtml decodes entities and skips weightless rows', () => {
+  const html =
+    '<table><tr><th>Company</th><th>Symbol</th><th>Portfolio%</th></tr>' +
+    '<tr><td>AT&amp;T Inc</td><td>T</td><td>1.20%</td></tr>' +
+    '<tr><td>Header repeat</td><td>SYM</td><td>n/a</td></tr></table>';
+  const holdings = parseSlickchartsHtml(html);
+  assert.equal(holdings.length, 1);
+  assert.equal(holdings[0].name, 'AT&T Inc');
+  assert.equal(holdings[0].weight, 1.2);
+});
+
+test('parseSlickchartsHtml throws when the table or columns are missing', () => {
+  assert.throws(() => parseSlickchartsHtml('<html><body>no table</body></html>'));
+  assert.throws(() =>
+    parseSlickchartsHtml('<table><tr><th>Foo</th><th>Bar</th></tr><tr><td>1</td><td>2</td></tr></table>')
+  );
 });
 
 test('validateHoldings accepts a well-formed snapshot', () => {
@@ -140,8 +176,10 @@ test('applyMonthlySnapshot prunes history beyond maxMonths', () => {
 test('isFallbackSource flags cached and seed sources but not live ones', () => {
   assert.equal(isFallbackSource('invesco'), false);
   assert.equal(isFallbackSource('fmp'), false);
+  assert.equal(isFallbackSource('slickcharts'), false);
   assert.equal(isFallbackSource('invesco-cached'), true);
   assert.equal(isFallbackSource('fmp-cached'), true);
+  assert.equal(isFallbackSource('slickcharts-cached'), true);
   assert.equal(isFallbackSource('seed'), true);
 });
 
