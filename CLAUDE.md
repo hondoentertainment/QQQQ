@@ -32,6 +32,8 @@ scripts/fetch-holdings.js          Cron entrypoint: fetch -> validate -> write d
 data/holdings.json                 Current holdings snapshot
 data/monthly-allocations.json      Per-ticker monthly allocation history (24-month cap)
 data/changes.json                  Log of constituent additions/removals (50-event cap)
+data/price-history.json            Daily QQQ closing price (180-day cap)
+data/refresh-status.json           Last refresh run summary (source, quote success, health)
 test/*.test.js                     Unit/integration tests (node:test)
 e2e/smoke.test.js                  Playwright browser smoke test
 .github/workflows/                 ci.yml (lint+test), refresh.yml (cron), pages.yml (deploy)
@@ -110,6 +112,14 @@ v2.0 per `ROADMAP.md`).
   (`MAX_MONTHS`); `applyMonthlySnapshot` in `lib/holdings.js` owns this.
 - **`changes.json`** — `{ events: [{ date, added: [...], removed: [...] }] }`,
   newest first, capped at 50 events.
+- **`price-history.json`** — `{ fund, history: [{ date: "YYYY-MM-DD", close }],
+  updatedAt }`. One QQQ close per refresh day, capped at 180 days
+  (`MAX_PRICE_DAYS`); `applyPriceSnapshot` in `lib/holdings.js` owns this.
+- **`refresh-status.json`** — `{ asOf, source, quoteSource, holdingsCount,
+  pricedCount, quoteSuccess, fellBack, health, ok, error }`. A per-run pipeline
+  summary written by `scripts/fetch-holdings.js`; `health` is one of `ok`,
+  `degraded`, `stale`, `failed`. Built by `buildRefreshStatus` in
+  `lib/holdings.js` and surfaced in the dashboard footer.
 
 The committed files ship a **sample dataset** (`source: "seed"`) so the
 dashboard works before the first real cron run.

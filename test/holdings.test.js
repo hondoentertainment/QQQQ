@@ -11,6 +11,7 @@ import {
   applyMonthlySnapshot,
   applyPriceSnapshot,
   isFallbackSource,
+  buildRefreshStatus,
   MIN_HOLDINGS,
 } from '../lib/holdings.js';
 
@@ -177,4 +178,56 @@ test('applyPriceSnapshot prunes to the most recent maxDays entries', () => {
 test('applyPriceSnapshot ignores a non-finite close', () => {
   const history = [{ date: '2026-05-21', close: 480 }];
   assert.deepEqual(applyPriceSnapshot(history, '2026-05-22', null, 180), history);
+});
+
+test('buildRefreshStatus grades a healthy live run as ok', () => {
+  const s = buildRefreshStatus({
+    asOf: '2026-05-22T20:00:00Z',
+    source: 'invesco',
+    quoteSource: 'fmp',
+    holdingsCount: 100,
+    pricedCount: 98,
+  });
+  assert.equal(s.health, 'ok');
+  assert.equal(s.fellBack, false);
+  assert.equal(s.quoteSuccess, 0.98);
+  assert.equal(s.schemaVersion, 1);
+  assert.equal(s.source, 'invesco');
+});
+
+test('buildRefreshStatus grades a live run with few quotes as degraded', () => {
+  const s = buildRefreshStatus({
+    source: 'fmp', holdingsCount: 100, pricedCount: 50,
+  });
+  assert.equal(s.health, 'degraded');
+  assert.equal(s.fellBack, false);
+  assert.equal(s.quoteSuccess, 0.5);
+});
+
+test('buildRefreshStatus grades a fallback source as stale even when fully priced', () => {
+  const s = buildRefreshStatus({
+    source: 'invesco-cached', holdingsCount: 100, pricedCount: 100,
+  });
+  assert.equal(s.health, 'stale');
+  assert.equal(s.fellBack, true);
+  assert.equal(s.quoteSuccess, 1);
+});
+
+test('buildRefreshStatus grades seed data as stale', () => {
+  assert.equal(buildRefreshStatus({ source: 'seed', holdingsCount: 98 }).health, 'stale');
+});
+
+test('buildRefreshStatus reports failed when the run did not succeed', () => {
+  const s = buildRefreshStatus({ source: null, ok: false, error: new Error('boom') });
+  assert.equal(s.health, 'failed');
+  assert.equal(s.ok, false);
+  assert.equal(s.error, 'Error: boom');
+});
+
+test('buildRefreshStatus clamps pricedCount and avoids divide-by-zero', () => {
+  assert.equal(buildRefreshStatus({ source: 'fmp', holdingsCount: 0 }).quoteSuccess, 0);
+  // pricedCount above holdingsCount can't exceed a 100% success rate.
+  const s = buildRefreshStatus({ source: 'fmp', holdingsCount: 100, pricedCount: 150 });
+  assert.equal(s.pricedCount, 100);
+  assert.equal(s.quoteSuccess, 1);
 });

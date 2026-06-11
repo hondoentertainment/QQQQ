@@ -17,7 +17,7 @@ import {
   monthKey,
   applyMonthlySnapshot,
   applyPriceSnapshot,
-  isFallbackSource,
+  buildRefreshStatus,
   SCHEMA_VERSION,
 } from '../lib/holdings.js';
 
@@ -26,6 +26,7 @@ const HOLDINGS_FILE = path.join(ROOT, 'data', 'holdings.json');
 const MONTHLY_FILE = path.join(ROOT, 'data', 'monthly-allocations.json');
 const CHANGES_FILE = path.join(ROOT, 'data', 'changes.json');
 const PRICE_HISTORY_FILE = path.join(ROOT, 'data', 'price-history.json');
+const REFRESH_STATUS_FILE = path.join(ROOT, 'data', 'refresh-status.json');
 const MAX_MONTHS = 24;
 const MAX_CHANGE_EVENTS = 50;
 const MAX_PRICE_DAYS = 180;
@@ -197,12 +198,28 @@ async function main() {
     log('no QQQ quote — skipping price-history update');
   }
 
+  // Record a structured summary of this run so the dashboard can show pipeline
+  // health (source, quote success rate, fallbacks hit) instead of just a
+  // timestamp, and so a stuck pipeline is observable at a glance.
+  const status = buildRefreshStatus({
+    asOf: now.toISOString(),
+    source,
+    quoteSource,
+    holdingsCount: holdings.length,
+    pricedCount: priced,
+  });
+  await writeFile(REFRESH_STATUS_FILE, JSON.stringify(status, null, 2) + '\n');
+  log('wrote', path.relative(ROOT, REFRESH_STATUS_FILE), `(health: ${status.health})`);
+
   // When running in GitHub Actions, expose whether this run could only serve
   // fallback (cached / seed) data so the refresh workflow can alert on a
   // silently stale dashboard. A no-op outside Actions.
-  const fellBack = isFallbackSource(source);
+  const fellBack = status.fellBack;
   if (process.env.GITHUB_OUTPUT) {
-    await appendFile(process.env.GITHUB_OUTPUT, `source=${source}\nfallback=${fellBack}\n`);
+    await appendFile(
+      process.env.GITHUB_OUTPUT,
+      `source=${source}\nfallback=${fellBack}\nhealth=${status.health}\n`
+    );
   }
   if (fellBack) log(`WARNING: no live source reached — serving fallback data (source: ${source})`);
   log('done.');

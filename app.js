@@ -21,6 +21,15 @@ const STALE_AFTER_MS = 72 * 60 * 60 * 1000;
 // Highest data-document schemaVersion this build understands.
 const KNOWN_SCHEMA = 1;
 
+// Human-readable copy for each refresh-pipeline health grade emitted by
+// buildRefreshStatus() in lib/holdings.js, surfaced in the footer health line.
+const HEALTH_TEXT = {
+  ok: 'pipeline healthy',
+  degraded: 'live holdings, but some quotes are missing',
+  stale: 'serving cached or sample data — no live source reached',
+  failed: 'the last refresh failed',
+};
+
 // Sort keys accepted from the table headers and the shareable URL.
 const SORT_KEYS = new Set(
   ['rank', 'ticker', 'name', 'sector', 'weight', 'price', 'changePct', 'mom']
@@ -31,6 +40,7 @@ const state = {
   monthly: null,
   changes: null,
   prices: null,
+  status: null,
   sort: { key: 'weight', dir: 'desc' },
   search: '',
   sector: '',
@@ -209,13 +219,38 @@ function renderStatus() {
   $('#footerStatus').textContent = state.auto
     ? `auto-refreshing every ${REFRESH_SECONDS}s in this view.`
     : 'auto-refresh paused.';
+  renderDataHealth(label, fresh);
+}
+
+// Footer "pipeline health" line. Prefers the structured run summary from
+// data/refresh-status.json (source, quote success rate, health grade) when the
+// refresh job has written one, and degrades to the holdings snapshot's own
+// freshness when it hasn't (e.g. a static build before the first cron run).
+function renderDataHealth(label, fresh) {
+  const d = state.holdings;
+  const st = state.status;
+  // A stale snapshot always outranks a rosier recorded grade: even an "ok" run
+  // is stale once the dashboard has gone too long without a newer one.
+  const grade = fresh.stale ? 'stale' : (st && HEALTH_TEXT[st.health] ? st.health : 'ok');
+
+  const parts = [
+    `Data source: <strong>${escapeHtml(label)}</strong>`,
+    `${d.count} holdings`,
+  ];
+  if (st && Number.isFinite(st.quoteSuccess)) {
+    parts.push(`${Math.round(st.quoteSuccess * 100)}% of quotes priced`);
+  }
+  parts.push(`snapshot ${relTime(d.asOf)}`);
+
+  const note = fresh.stale
+    ? 'may be stale — the refresh job has not updated it recently'
+    : HEALTH_TEXT[grade];
+  const noteCls = grade === 'ok' ? 'health-note' : 'health-note ' + grade;
+
   $('#dataHealth').innerHTML =
-    `Data source: <strong>${escapeHtml(label)}</strong> &middot; ${d.count} holdings ` +
-    `&middot; snapshot ${relTime(d.asOf)}` +
-    (fresh.stale
-      ? ' &middot; <span class="down">may be stale &mdash; the refresh job has not '
-        + 'updated it recently</span>'
-      : '');
+    `<span class="health-dot health-${grade}" aria-hidden="true"></span>` +
+    parts.join(' &middot; ') +
+    ` &middot; <span class="${noteCls}">${escapeHtml(note)}</span>`;
 }
 
 function renderCards() {
@@ -700,11 +735,12 @@ function render() {
 /* ---------- data loading ---------- */
 async function loadData() {
   const bust = '?t=' + Date.now();
-  const [h, m, c, p] = await Promise.all([
+  const [h, m, c, p, s] = await Promise.all([
     fetch('data/holdings.json' + bust).then((r) => r.json()),
     fetch('data/monthly-allocations.json' + bust).then((r) => r.json()),
     fetch('data/changes.json' + bust).then((r) => r.json()).catch(() => ({ events: [] })),
     fetch('data/price-history.json' + bust).then((r) => r.json()).catch(() => null),
+    fetch('data/refresh-status.json' + bust).then((r) => r.json()).catch(() => null),
   ]);
   if (Number.isFinite(h.schemaVersion) && h.schemaVersion > KNOWN_SCHEMA) {
     console.warn(
@@ -733,6 +769,7 @@ async function loadData() {
   state.monthly = m;
   state.changes = c;
   state.prices = p;
+  state.status = s;
   render();
 }
 

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-05-28T21:53:31.761Z",
+  "source": "seed",
+  "quoteSource": "seed",
+  "holdingsCount": 98,
+  "pricedCount": 98,
+  "quoteSuccess": 1,
+  "fellBack": true,
+  "health": "stale",
+  "ok": true,
+  "error": null
+}
