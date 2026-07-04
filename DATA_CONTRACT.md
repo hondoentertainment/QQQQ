@@ -14,7 +14,7 @@ Current fund snapshot: weights, sectors, and last-known prices.
 | `name` | string | yes | Display name |
 | `legacyTicker` | string | no | `"QQQQ"` |
 | `asOf` | string (ISO) | yes | Snapshot timestamp |
-| `source` | string | yes | `invesco`, `fmp`, `sec-nport`, `*-cached`, or `seed` |
+| `source` | string | yes | `invesco`, `fmp`, `slickcharts`, `sec-nport`, `*-cached`, or `seed` |
 | `count` | number | yes | Number of holdings |
 | `totalWeight` | number | yes | Sum of weights (~100) |
 | `holdings` | array | yes | Sorted by weight descending |

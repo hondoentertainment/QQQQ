@@ -11,6 +11,7 @@ import { fetchQuotes } from '../lib/quotes.js';
 import {
   parseInvescoCsv,
   parseFmpHoldings,
+  parseSlickchartsHtml,
   validateHoldings,
   diffConstituents,
   monthKey,
@@ -125,7 +126,19 @@ async function fetchSecHoldings(nameToTicker) {
   return { holdings: validateHoldings(holdings, 'SEC N-PORT'), unmapped };
 }
 
-const LIVE_SOURCES = new Set(['invesco', 'fmp', 'sec-nport', 'invesco-cached', 'fmp-cached']);
+async function fetchSlickchartsHoldings() {
+  const url = 'https://www.slickcharts.com/nasdaq100';
+  const res = await fetch(url, {
+    headers: { 'User-Agent': UA, Accept: 'text/html,*/*' },
+  });
+  if (!res.ok) throw new Error('Slickcharts HTTP ' + res.status);
+  return validateHoldings(parseSlickchartsHtml(await res.text()), 'Slickcharts');
+}
+
+const LIVE_SOURCES = new Set([
+  'invesco', 'fmp', 'slickcharts', 'sec-nport',
+  'invesco-cached', 'fmp-cached', 'slickcharts-cached',
+]);
 
 async function main() {
   const now = new Date();
@@ -162,6 +175,20 @@ async function main() {
   } else if (!holdings && !fmpKey) {
     attempts.push({ source: 'fmp', ok: false, error: 'FMP_API_KEY not set' });
     log('FMP_API_KEY not set — skipping FMP fallback');
+  }
+
+  // Key-free and updated daily, so it slots ahead of the quarterly SEC filing.
+  if (!holdings) {
+    try {
+      log('trying Slickcharts…');
+      holdings = await fetchSlickchartsHoldings();
+      source = 'slickcharts';
+      attempts.push({ source: 'slickcharts', ok: true, count: holdings.length });
+      log(`got ${holdings.length} holdings from Slickcharts`);
+    } catch (err) {
+      attempts.push({ source: 'slickcharts', ok: false, error: err.message });
+      log('Slickcharts fetch failed:', err.message);
+    }
   }
 
   if (!holdings && prev?.holdings?.length) {
