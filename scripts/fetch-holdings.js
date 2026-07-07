@@ -253,7 +253,8 @@ async function main() {
   holdings.sort((a, b) => b.weight - a.weight);
 
   if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) &&
-      (source === 'invesco' || source === 'fmp' || source === 'sec-nport')) {
+      (source === 'invesco' || source === 'fmp'
+        || source === 'slickcharts' || source === 'sec-nport')) {
     const { added, removed } = diffConstituents(prev.holdings, holdings);
     if (added.length || removed.length) {
       const changes = (await readJson(CHANGES_FILE)) || { events: [] };
