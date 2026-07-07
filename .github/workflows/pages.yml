@@ -2,7 +2,14 @@ name: Deploy to GitHub Pages
 
 # Publishes the static dashboard to GitHub Pages. Runs on every push to main
 # (including the data commits made by refresh.yml) so the live site stays
-# current. Requires Settings -> Pages -> Source = "GitHub Actions".
+# current.
+#
+# One-time setup: enable Pages under Settings -> Pages -> Source = "GitHub
+# Actions". Until that is done, `configure-pages` cannot create the Pages site
+# (the token can't enable it), so the deploy is skipped. Because this workflow
+# also runs on every ~30-minute data-refresh commit, a skipped deploy must NOT
+# fail the job (that would spam red on main); instead the "Report status" step
+# emits a loud warning so a skipped deploy is never mistaken for a real one.
 on:
   push:
     branches: [main]
@@ -51,3 +58,25 @@ jobs:
         if: steps.pages.outcome == 'success'
         id: deploy
         uses: actions/deploy-pages@v4
+
+      # Make the outcome unambiguous: a real deploy prints its URL; a skipped
+      # one (Pages not enabled) prints a warning instead of a silent green.
+      - name: Report status
+        if: always()
+        run: |
+          if [ "${{ steps.pages.outcome }}" = "success" ] && [ -n "${{ steps.deploy.outputs.page_url }}" ]; then
+            echo "### ✅ Deployed to GitHub Pages" >> "$GITHUB_STEP_SUMMARY"
+            echo "${{ steps.deploy.outputs.page_url }}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning title=GitHub Pages not deployed::Pages is not enabled for this repo, so the deploy was skipped. Enable it under Settings → Pages → Source: \"GitHub Actions\" (and set Settings → Actions → General → Workflow permissions to \"Read and write\"). The next push to main will then publish."
+            {
+              echo "### ⏭️ GitHub Pages deploy skipped"
+              echo ""
+              echo "Pages is **not enabled** for this repository, so \`configure-pages\` could not create the site and the deploy was skipped."
+              echo ""
+              echo "**To enable (one-time):** Settings → Pages → Source: **GitHub Actions**."
+              echo "If it still fails, set Settings → Actions → General → Workflow permissions to **Read and write**."
+              echo ""
+              echo "_Production is also served by Vercel; this only affects the GitHub Pages mirror._"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
