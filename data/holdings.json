@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-07T21:24:56.245Z",
+  "asOf": "2026-08-10T13:27:43.805Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -30,7 +30,7 @@
       "marketCap": 2268000000000,
       "pe": 22.03,
       "yearHigh": 344.57,
-      "yearLow": 219.25
+      "yearLow": 223.78
     },
     {
       "ticker": "MSFT",
@@ -197,7 +197,7 @@
       "changePct": -0.82,
       "marketCap": 336000000000,
       "pe": 28.13,
-      "yearHigh": 762.48,
+      "yearHigh": 750.55,
       "yearLow": 252.84
     },
     {
@@ -210,7 +210,7 @@
       "marketCap": 336000000000,
       "pe": 46.67,
       "yearHigh": 745.61,
-      "yearLow": 336.67
+      "yearLow": 332.19
     },
     {
       "ticker": "PEP",
@@ -257,7 +257,7 @@
       "changePct": 0.76,
       "marketCap": 308000000000,
       "pe": 40.57,
-      "yearHigh": 411.6,
+      "yearHigh": 418.4,
       "yearLow": 269.77
     },
     {
@@ -342,7 +342,7 @@
       "marketCap": 252000000000,
       "pe": 17.31,
       "yearHigh": 1255,
-      "yearLow": 111.67
+      "yearLow": 113.46
     },
     {
       "ticker": "GILD",
@@ -365,7 +365,7 @@
       "changePct": 0.33,
       "marketCap": 224000000000,
       "pe": 14.89,
-      "yearHigh": 370.5,
+      "yearHigh": 376.98,
       "yearLow": 139.57
     },
     {
@@ -437,7 +437,7 @@
       "changePct": 2.17,
       "marketCap": 196000000000,
       "pe": 20.38,
-      "yearHigh": 217.5,
+      "yearHigh": 219.35,
       "yearLow": 85.68
     },
     {
@@ -462,7 +462,7 @@
       "marketCap": 168000000000,
       "pe": 26.07,
       "yearHigh": 142.35,
-      "yearLow": 19.61
+      "yearLow": 20.44
     },
     {
       "ticker": "MELI",
@@ -486,7 +486,7 @@
       "marketCap": 168000000000,
       "pe": 19.98,
       "yearHigh": 445.91,
-      "yearLow": 221.15
+      "yearLow": 223.44
     },
     {
       "ticker": "MSTR",
@@ -629,7 +629,7 @@
       "changePct": 16.77,
       "marketCap": 112000000000,
       "pe": 29.38,
-      "yearHigh": 178.45,
+      "yearHigh": 178.48,
       "yearLow": 110.81
     },
     {
@@ -653,8 +653,8 @@
       "changePct": -2.74,
       "marketCap": 112000000000,
       "pe": 36.81,
-      "yearHigh": 170.35,
-      "yearLow": 72.83
+      "yearHigh": 172.09,
+      "yearLow": 73.55
     },
     {
       "ticker": "NXPI",
@@ -750,7 +750,7 @@
       "marketCap": 84000000000,
       "pe": 38.34,
       "yearHigh": 1999.96,
-      "yearLow": 710.45
+      "yearLow": 716.2
     },
     {
       "ticker": "TTD",
@@ -761,7 +761,7 @@
       "changePct": -27.22,
       "marketCap": 84000000000,
       "pe": 34.49,
-      "yearHigh": 57,
+      "yearHigh": 56.77,
       "yearLow": 12.83
     },
     {
@@ -770,7 +770,7 @@
       "sector": "Consumer Staples",
       "weight": 0.3,
       "price": 90.36,
-      "changePct": -4.34,
+      "changePct": -4.04,
       "marketCap": 84000000000,
       "pe": 40.27,
       "yearHigh": 100.34,
@@ -809,7 +809,7 @@
       "changePct": 1.5,
       "marketCap": 84000000000,
       "pe": 36.87,
-      "yearHigh": 141.89,
+      "yearHigh": 141.59,
       "yearLow": 85.45
     },
     {
@@ -845,7 +845,7 @@
       "changePct": 0.82,
       "marketCap": 84000000000,
       "pe": 42.06,
-      "yearHigh": 226.75,
+      "yearHigh": 226.67,
       "yearLow": 161.16
     },
     {
@@ -881,7 +881,7 @@
       "changePct": -17.39,
       "marketCap": 84000000000,
       "pe": 29.15,
-      "yearHigh": 278.76,
+      "yearHigh": 292.72,
       "yearLow": 98.01
     },
     {
@@ -917,7 +917,7 @@
       "changePct": -6.31,
       "marketCap": 84000000000,
       "pe": 28.87,
-      "yearHigh": 878.62,
+      "yearHigh": 844.15,
       "yearLow": 339.01
     },
     {
@@ -953,8 +953,8 @@
       "changePct": 0,
       "marketCap": 56000000000,
       "pe": 31.3,
-      "yearHigh": 209.98,
-      "yearLow": 163.25
+      "yearHigh": 210.2,
+      "yearLow": 164.5
     },
     {
       "ticker": "CTSH",
@@ -1061,7 +1061,7 @@
       "changePct": 2.53,
       "marketCap": 56000000000,
       "pe": 24.47,
-      "yearHigh": 87.63,
+      "yearHigh": 87.85,
       "yearLow": 54.11
     },
     {
@@ -1121,7 +1121,7 @@
       "changePct": 0.1,
       "marketCap": 56000000000,
       "pe": 35.87,
-      "yearHigh": 96.27,
+      "yearHigh": 94.95,
       "yearLow": 25.89
     },
     {
@@ -1182,7 +1182,7 @@
       "marketCap": 28000000000,
       "pe": 18.95,
       "yearHigh": 219.72,
-      "yearLow": 127
+      "yearLow": 127.71
     }
   ]
 }
