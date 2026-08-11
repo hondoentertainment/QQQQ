@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-10T21:27:06.687Z",
+  "asOf": "2026-08-11T13:26:57.038Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -197,7 +197,7 @@
       "changePct": 3.89,
       "marketCap": 336000000000,
       "pe": 28.13,
-      "yearHigh": 750.55,
+      "yearHigh": 721.54,
       "yearLow": 252.84
     },
     {
@@ -414,7 +414,7 @@
       "marketCap": 196000000000,
       "pe": 37.04,
       "yearHigh": 546.17,
-      "yearLow": 362.5
+      "yearLow": 374.17
     },
     {
       "ticker": "KLAC",
@@ -462,7 +462,7 @@
       "marketCap": 168000000000,
       "pe": 26.07,
       "yearHigh": 142.35,
-      "yearLow": 20.44
+      "yearLow": 20.76
     },
     {
       "ticker": "MELI",
@@ -486,7 +486,7 @@
       "marketCap": 168000000000,
       "pe": 19.98,
       "yearHigh": 445.91,
-      "yearLow": 223.44
+      "yearLow": 223.47
     },
     {
       "ticker": "MSTR",
@@ -497,7 +497,7 @@
       "changePct": 0.5,
       "marketCap": 168000000000,
       "pe": 21.39,
-      "yearHigh": 414.36,
+      "yearHigh": 401.67,
       "yearLow": 81.81
     },
     {
@@ -714,7 +714,7 @@
       "marketCap": 112000000000,
       "pe": 14.51,
       "yearHigh": 410.98,
-      "yearLow": 256.49
+      "yearLow": 256.76
     },
     {
       "ticker": "DASH",
@@ -761,7 +761,7 @@
       "changePct": -24.22,
       "marketCap": 84000000000,
       "pe": 34.49,
-      "yearHigh": 56.77,
+      "yearHigh": 56.39,
       "yearLow": 12.83
     },
     {
@@ -770,11 +770,11 @@
       "sector": "Consumer Staples",
       "weight": 0.3,
       "price": 91.43,
-      "changePct": 1.18,
+      "changePct": 94.2,
       "marketCap": 84000000000,
       "pe": 40.27,
-      "yearHigh": 100.34,
-      "yearLow": 60.97
+      "yearHigh": 92.85,
+      "yearLow": 30.48
     },
     {
       "ticker": "AEP",
@@ -809,7 +809,7 @@
       "changePct": 0.87,
       "marketCap": 84000000000,
       "pe": 36.87,
-      "yearHigh": 141.59,
+      "yearHigh": 141.19,
       "yearLow": 85.45
     },
     {
@@ -845,7 +845,7 @@
       "changePct": 0.28,
       "marketCap": 84000000000,
       "pe": 42.06,
-      "yearHigh": 226.67,
+      "yearHigh": 225.85,
       "yearLow": 161.16
     },
     {
@@ -917,7 +917,7 @@
       "changePct": 14.14,
       "marketCap": 84000000000,
       "pe": 28.87,
-      "yearHigh": 844.15,
+      "yearHigh": 824.66,
       "yearLow": 339.01
     },
     {
@@ -1061,7 +1061,7 @@
       "changePct": 5.58,
       "marketCap": 56000000000,
       "pe": 24.47,
-      "yearHigh": 88.17,
+      "yearHigh": 88.18,
       "yearLow": 54.11
     },
     {
@@ -1121,7 +1121,7 @@
       "changePct": 6.42,
       "marketCap": 56000000000,
       "pe": 35.87,
-      "yearHigh": 94.95,
+      "yearHigh": 92.99,
       "yearLow": 25.89
     },
     {
@@ -1134,7 +1134,7 @@
       "marketCap": 56000000000,
       "pe": 23.99,
       "yearHigh": 30,
-      "yearLow": 10.76
+      "yearLow": 10.79
     },
     {
       "ticker": "ZS",
@@ -1170,7 +1170,7 @@
       "marketCap": 28000000000,
       "pe": 22.29,
       "yearHigh": 92.55,
-      "yearLow": 31.51
+      "yearLow": 31.59
     },
     {
       "ticker": "BIIB",
@@ -1182,7 +1182,7 @@
       "marketCap": 28000000000,
       "pe": 18.95,
       "yearHigh": 219.72,
-      "yearLow": 127.71
+      "yearLow": 128.25
     }
   ]
 }
