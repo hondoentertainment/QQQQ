@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-12T20:12:03.950Z",
+  "asOf": "2026-08-12T20:44:02.336Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -365,7 +365,7 @@
       "changePct": 0.51,
       "marketCap": 224000000000,
       "pe": 14.89,
-      "yearHigh": 389.25,
+      "yearHigh": 389.22,
       "yearLow": 139.57
     },
     {
@@ -733,8 +733,8 @@
       "name": "AstraZeneca plc ADR",
       "sector": "Health Care",
       "weight": 0.3,
-      "price": 158.47,
-      "changePct": -2.12,
+      "price": 158.5,
+      "changePct": -2.11,
       "marketCap": 84000000000,
       "pe": 26.25,
       "yearHigh": 212.71,
