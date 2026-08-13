@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-12T21:28:42.668Z",
+  "asOf": "2026-08-13T13:28:22.579Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -462,7 +462,7 @@
       "marketCap": 168000000000,
       "pe": 26.07,
       "yearHigh": 142.35,
-      "yearLow": 21.36
+      "yearLow": 21.9
     },
     {
       "ticker": "MELI",
@@ -497,7 +497,7 @@
       "changePct": -2.57,
       "marketCap": 168000000000,
       "pe": 21.39,
-      "yearHigh": 399.44,
+      "yearHigh": 381,
       "yearLow": 81.81
     },
     {
@@ -557,7 +557,7 @@
       "changePct": 0.16,
       "marketCap": 140000000000,
       "pe": 20.21,
-      "yearHigh": 628.89,
+      "yearHigh": 626.24,
       "yearLow": 366
     },
     {
@@ -1002,7 +1002,7 @@
       "marketCap": 56000000000,
       "pe": 13.12,
       "yearHigh": 70.41,
-      "yearLow": 41.96
+      "yearLow": 42.21
     },
     {
       "ticker": "KHC",
@@ -1182,7 +1182,7 @@
       "marketCap": 28000000000,
       "pe": 18.95,
       "yearHigh": 219.72,
-      "yearLow": 129.4
+      "yearLow": 131.52
     }
   ]
 }
