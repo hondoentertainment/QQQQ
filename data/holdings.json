@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-13T21:28:57.473Z",
+  "asOf": "2026-08-14T13:26:32.828Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -365,7 +365,7 @@
       "changePct": 3.18,
       "marketCap": 224000000000,
       "pe": 14.89,
-      "yearHigh": 398.87,
+      "yearHigh": 398.88,
       "yearLow": 139.57
     },
     {
@@ -462,7 +462,7 @@
       "marketCap": 168000000000,
       "pe": 26.07,
       "yearHigh": 142.35,
-      "yearLow": 21.9
+      "yearLow": 22.78
     },
     {
       "ticker": "MELI",
@@ -497,7 +497,7 @@
       "changePct": 1.05,
       "marketCap": 168000000000,
       "pe": 21.39,
-      "yearHigh": 381,
+      "yearHigh": 372.62,
       "yearLow": 81.81
     },
     {
@@ -845,7 +845,7 @@
       "changePct": -2.23,
       "marketCap": 84000000000,
       "pe": 42.06,
-      "yearHigh": 225.85,
+      "yearHigh": 221.36,
       "yearLow": 161.16
     },
     {
@@ -1002,7 +1002,7 @@
       "marketCap": 56000000000,
       "pe": 13.12,
       "yearHigh": 70.41,
-      "yearLow": 42.21
+      "yearLow": 42.3
     },
     {
       "ticker": "KHC",
@@ -1034,7 +1034,7 @@
       "sector": "Health Care",
       "weight": 0.2,
       "price": 73.79,
-      "changePct": 1.43,
+      "changePct": 2.09,
       "marketCap": 56000000000,
       "pe": 39.6,
       "yearHigh": 89.77,
@@ -1046,7 +1046,7 @@
       "sector": "Technology",
       "weight": 0.2,
       "price": 142.05,
-      "changePct": 4.93,
+      "changePct": 3.94,
       "marketCap": 56000000000,
       "pe": 44.81,
       "yearHigh": 171.55,
