@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Refreshes data/holdings.json, data/monthly-allocations.json and data/changes.json.
 //
-// Holdings + weights: Invesco official QQQ holdings file, falling back to
-// Financial Modeling Prep when FMP_API_KEY is set, then to the last good data.
+// Holdings + weights: Invesco official QQQ holdings file, then Slickcharts
+// (key-free live Nasdaq-100 table), then FMP when FMP_API_KEY is set, then last good data.
 // Prices: see lib/quotes.js. All sources are best-effort and validated, so a
 // flaky or malformed source can't corrupt the committed data or break the job.
 import { readFile, writeFile, appendFile } from 'node:fs/promises';
@@ -12,6 +12,7 @@ import { fetchQuotes } from '../lib/quotes.js';
 import {
   parseInvescoCsv,
   parseFmpHoldings,
+  parseSlickchartsHtml,
   validateHoldings,
   diffConstituents,
   monthKey,
@@ -56,6 +57,16 @@ async function fetchInvescoHoldings() {
   return validateHoldings(parseInvescoCsv(await res.text()), 'Invesco');
 }
 
+
+async function fetchSlickchartsHoldings() {
+  const url = 'https://www.slickcharts.com/nasdaq100';
+  const res = await fetch(url, {
+    headers: { 'User-Agent': UA, Accept: 'text/html,application/xhtml+xml' },
+  });
+  if (!res.ok) throw new Error('Slickcharts HTTP ' + res.status);
+  return validateHoldings(parseSlickchartsHtml(await res.text()), 'Slickcharts');
+}
+
 async function fetchFmpHoldings(apiKey) {
   const url =
     `https://financialmodelingprep.com/api/v3/etf-holder/QQQ?apikey=${encodeURIComponent(apiKey)}`;
@@ -64,7 +75,7 @@ async function fetchFmpHoldings(apiKey) {
   return validateHoldings(parseFmpHoldings(await res.json()), 'FMP');
 }
 
-const LIVE_SOURCES = new Set(['invesco', 'fmp', 'invesco-cached', 'fmp-cached']);
+const LIVE_SOURCES = new Set(['invesco', 'fmp', 'slickcharts', 'invesco-cached', 'fmp-cached', 'slickcharts-cached']);
 
 async function main() {
   const now = new Date();
@@ -81,6 +92,17 @@ async function main() {
     log(`got ${holdings.length} holdings from Invesco`);
   } catch (err) {
     log('Invesco fetch failed:', err.message);
+  }
+
+  if (!holdings) {
+    try {
+      log('trying Slickcharts Nasdaq-100…');
+      holdings = await fetchSlickchartsHoldings();
+      source = 'slickcharts';
+      log(`got ${holdings.length} holdings from Slickcharts`);
+    } catch (err) {
+      log('Slickcharts fetch failed:', err.message);
+    }
   }
 
   if (!holdings && fmpKey) {
@@ -143,7 +165,7 @@ async function main() {
   holdings.sort((a, b) => b.weight - a.weight);
 
   // Record constituent additions / removals between live snapshots.
-  if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) && (source === 'invesco' || source === 'fmp')) {
+  if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) && (source === 'invesco' || source === 'fmp' || source === 'slickcharts')) {
     const { added, removed } = diffConstituents(prev.holdings, holdings);
     if (added.length || removed.length) {
       const changes = (await readJson(CHANGES_FILE)) || { events: [] };

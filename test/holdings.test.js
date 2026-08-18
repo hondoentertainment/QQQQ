@@ -5,6 +5,7 @@ import {
   parseCsv,
   parseInvescoCsv,
   parseFmpHoldings,
+  parseSlickchartsHtml,
   validateHoldings,
   diffConstituents,
   monthKey,
@@ -65,6 +66,25 @@ test('parseFmpHoldings maps the etf-holder shape', () => {
   ]);
   assert.equal(holdings.length, 2);
   assert.equal(holdings[0].ticker, 'AAPL');
+});
+
+
+test('parseSlickchartsHtml extracts ticker, name and weight', () => {
+  const html =
+    '<table><tr><th>Company</th><th>Symbol</th><th>Weight</th></tr>' +
+    '<tr><td>Apple Inc</td><td>AAPL</td><td>12.85%</td></tr>' +
+    '<tr><td>Microsoft Corp</td><td>MSFT</td><td>11.20%</td></tr></table>';
+  const holdings = parseSlickchartsHtml(html);
+  assert.equal(holdings.length, 2);
+  assert.equal(holdings[0].ticker, 'AAPL');
+  assert.equal(holdings[0].name, 'Apple Inc');
+  assert.equal(holdings[0].weight, 12.85);
+  assert.equal(holdings[1].ticker, 'MSFT');
+});
+
+test('parseSlickchartsHtml throws on empty or unmatched HTML', () => {
+  assert.throws(() => parseSlickchartsHtml(''), /no table/);
+  assert.throws(() => parseSlickchartsHtml('<html></html>'), /no table/);
 });
 
 test('validateHoldings accepts a well-formed snapshot', () => {
@@ -140,7 +160,9 @@ test('applyMonthlySnapshot prunes history beyond maxMonths', () => {
 test('isFallbackSource flags cached and seed sources but not live ones', () => {
   assert.equal(isFallbackSource('invesco'), false);
   assert.equal(isFallbackSource('fmp'), false);
+  assert.equal(isFallbackSource('slickcharts'), false);
   assert.equal(isFallbackSource('invesco-cached'), true);
+  assert.equal(isFallbackSource('slickcharts-cached'), true);
   assert.equal(isFallbackSource('fmp-cached'), true);
   assert.equal(isFallbackSource('seed'), true);
 });
