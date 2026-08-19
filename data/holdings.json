@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-18T21:22:34.931Z",
+  "asOf": "2026-08-19T13:16:44.819Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -197,7 +197,7 @@
       "changePct": 1.37,
       "marketCap": 336000000000,
       "pe": 28.13,
-      "yearHigh": 719.1,
+      "yearHigh": 705.1,
       "yearLow": 252.84
     },
     {
@@ -557,7 +557,7 @@
       "changePct": -4.05,
       "marketCap": 140000000000,
       "pe": 20.21,
-      "yearHigh": 624.82,
+      "yearHigh": 615.79,
       "yearLow": 366
     },
     {
@@ -1002,7 +1002,7 @@
       "marketCap": 56000000000,
       "pe": 13.12,
       "yearHigh": 70.41,
-      "yearLow": 42.56
+      "yearLow": 42.68
     },
     {
       "ticker": "KHC",
