@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-20T21:23:03.071Z",
+  "asOf": "2026-08-21T13:17:22.893Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -30,7 +30,7 @@
       "marketCap": 2268000000000,
       "pe": 22.03,
       "yearHigh": 344.57,
-      "yearLow": 223.78
+      "yearLow": 224.69
     },
     {
       "ticker": "MSFT",
@@ -66,7 +66,7 @@
       "marketCap": 1456000000000,
       "pe": 14.85,
       "yearHigh": 495,
-      "yearLow": 286.17
+      "yearLow": 287.17
     },
     {
       "ticker": "META",
@@ -114,7 +114,7 @@
       "marketCap": 728000000000,
       "pe": 33.76,
       "yearHigh": 408.61,
-      "yearLow": 199.43
+      "yearLow": 201.3
     },
     {
       "ticker": "COST",
@@ -138,7 +138,7 @@
       "marketCap": 700000000000,
       "pe": 15.73,
       "yearHigh": 404.47,
-      "yearLow": 200.4
+      "yearLow": 202.13
     },
     {
       "ticker": "PLTR",
@@ -389,7 +389,7 @@
       "changePct": 3.68,
       "marketCap": 224000000000,
       "pe": 14.61,
-      "yearHigh": 308.99,
+      "yearHigh": 308.9,
       "yearLow": 188.16
     },
     {
@@ -462,7 +462,7 @@
       "marketCap": 168000000000,
       "pe": 26.07,
       "yearHigh": 142.35,
-      "yearLow": 22.78
+      "yearLow": 23.65
     },
     {
       "ticker": "MELI",
@@ -701,7 +701,7 @@
       "changePct": 4.13,
       "marketCap": 112000000000,
       "pe": 21.56,
-      "yearHigh": 540.34,
+      "yearHigh": 538.21,
       "yearLow": 305.96
     },
     {
@@ -1002,7 +1002,7 @@
       "marketCap": 56000000000,
       "pe": 13.12,
       "yearHigh": 70.41,
-      "yearLow": 42.75
+      "yearLow": 43.61
     },
     {
       "ticker": "KHC",
