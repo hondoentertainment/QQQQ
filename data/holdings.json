@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-21T21:22:34.797Z",
+  "asOf": "2026-08-24T13:18:51.791Z",
   "source": "seed",
   "count": 98,
   "totalWeight": 100,
@@ -114,7 +114,7 @@
       "marketCap": 728000000000,
       "pe": 33.76,
       "yearHigh": 408.61,
-      "yearLow": 201.3
+      "yearLow": 205.28
     },
     {
       "ticker": "COST",
@@ -138,7 +138,7 @@
       "marketCap": 700000000000,
       "pe": 15.73,
       "yearHigh": 404.47,
-      "yearLow": 202.13
+      "yearLow": 205.95
     },
     {
       "ticker": "PLTR",
@@ -173,7 +173,7 @@
       "changePct": 0.37,
       "marketCap": 364000000000,
       "pe": 32.62,
-      "yearHigh": 261.25,
+      "yearHigh": 258.66,
       "yearLow": 165.66
     },
     {
@@ -210,7 +210,7 @@
       "marketCap": 336000000000,
       "pe": 46.67,
       "yearHigh": 745.61,
-      "yearLow": 299
+      "yearLow": 298
     },
     {
       "ticker": "PEP",
@@ -281,7 +281,7 @@
       "changePct": -1.59,
       "marketCap": 308000000000,
       "pe": 41.68,
-      "yearHigh": 231.8,
+      "yearHigh": 230.98,
       "yearLow": 150.14
     },
     {
@@ -389,7 +389,7 @@
       "changePct": 1.3,
       "marketCap": 224000000000,
       "pe": 14.61,
-      "yearHigh": 308.9,
+      "yearHigh": 307.8,
       "yearLow": 188.16
     },
     {
@@ -413,7 +413,7 @@
       "changePct": -0.73,
       "marketCap": 196000000000,
       "pe": 37.04,
-      "yearHigh": 555.31,
+      "yearHigh": 555.32,
       "yearLow": 374.17
     },
     {
@@ -462,7 +462,7 @@
       "marketCap": 168000000000,
       "pe": 26.07,
       "yearHigh": 142.35,
-      "yearLow": 23.65
+      "yearLow": 23.68
     },
     {
       "ticker": "MELI",
@@ -545,7 +545,7 @@
       "changePct": -0.81,
       "marketCap": 140000000000,
       "pe": 37.21,
-      "yearHigh": 846.88,
+      "yearHigh": 847,
       "yearLow": 541
     },
     {
@@ -701,7 +701,7 @@
       "changePct": 1.1,
       "marketCap": 112000000000,
       "pe": 21.56,
-      "yearHigh": 538.21,
+      "yearHigh": 536.57,
       "yearLow": 305.96
     },
     {
@@ -809,7 +809,7 @@
       "changePct": 1.61,
       "marketCap": 84000000000,
       "pe": 36.87,
-      "yearHigh": 141.19,
+      "yearHigh": 140.56,
       "yearLow": 85.45
     },
     {
@@ -833,7 +833,7 @@
       "changePct": 3.16,
       "marketCap": 84000000000,
       "pe": 22.06,
-      "yearHigh": 35.59,
+      "yearHigh": 33.82,
       "yearLow": 24.88
     },
     {
@@ -929,7 +929,7 @@
       "changePct": 0.56,
       "marketCap": 56000000000,
       "pe": 32.64,
-      "yearHigh": 274.78,
+      "yearHigh": 273.83,
       "yearLow": 155.94
     },
     {
@@ -1002,7 +1002,7 @@
       "marketCap": 56000000000,
       "pe": 13.12,
       "yearHigh": 70.41,
-      "yearLow": 43.61
+      "yearLow": 43.92
     },
     {
       "ticker": "KHC",
@@ -1013,7 +1013,7 @@
       "changePct": -0.39,
       "marketCap": 56000000000,
       "pe": 19.28,
-      "yearHigh": 28.1,
+      "yearHigh": 28.09,
       "yearLow": 21.04
     },
     {
