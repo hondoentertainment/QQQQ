@@ -1,11 +1,12 @@
 name: Deploy to GitHub Pages
 
-# Publishes the static dashboard to GitHub Pages. Runs on every push to main
-# (including the data commits made by refresh.yml) so the live site stays
+# Publishes the static dashboard to GitHub Pages. Runs on every push to the
+# branch the refresh cron actually commits to (repo default is currently
+# `claude/qqqq-component-tracker-O4OBc`, plus `main`) so the live site stays
 # current. Requires Settings -> Pages -> Source = "GitHub Actions".
 on:
   push:
-    branches: [main]
+    branches: [main, claude/qqqq-component-tracker-O4OBc]
   workflow_dispatch: {}
 
 permissions:

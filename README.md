@@ -99,8 +99,10 @@ npm run test:e2e               # browser smoke test (needs `npx playwright insta
 Data is refreshed by **`.github/workflows/refresh.yml`**, a scheduled GitHub
 Actions workflow. It runs `scripts/fetch-holdings.js`, which:
 
-1. Fetches QQQ holdings (ticker, name, sector, index weight) — from Invesco,
-   falling back to Financial Modeling Prep, then to the last good data.
+1. Fetches QQQ holdings (ticker, name, sector, index weight) — from Invesco
+   (current DNG API, then the legacy CSV), then Slickcharts, then Financial
+   Modeling Prep if `FMP_API_KEY` is set, then the latest SEC N-PORT filing,
+   then the last good data. Weights are never invented from market cap.
 2. Fetches a live quote for each component (FMP if a key is set, else Yahoo).
 3. Writes `data/holdings.json`, appends the current month's weights to
    `data/monthly-allocations.json`, and logs any constituent changes to
@@ -109,6 +111,12 @@ Actions workflow. It runs `scripts/fetch-holdings.js`, which:
 
 Schedule: every 30 minutes during US market hours, plus a post-close snapshot.
 Trigger it manually any time from the **Actions** tab ("Run workflow").
+
+GitHub only runs scheduled workflows from the **repository default branch**.
+That default is currently `claude/qqqq-component-tracker-O4OBc`, not `main`,
+so cron refreshes (and their data commits) land there. Switching the default
+to `main` is a repo-settings change this codebase cannot make; until then,
+keep refresh fixes on the default branch so the cron actually sees them.
 
 If a data source is temporarily unreachable, the script falls back to the
 last good data so the job stays green and the site keeps working. When that
@@ -167,8 +175,10 @@ dev-only and never shipped to the app; see [`SECURITY.md`](SECURITY.md).
 
 ## Data sources & notes
 
-- Holdings/weights: Invesco QQQ official holdings file, or Financial Modeling
-  Prep when `FMP_API_KEY` is set.
+- Holdings/weights: Invesco QQQ (DNG JSON or holdings CSV), Slickcharts
+  Nasdaq-100 table, Financial Modeling Prep when `FMP_API_KEY` is set, or the
+  latest SEC N-PORT filing. Last-good / seed is used only when every live
+  source fails.
 - Prices: Financial Modeling Prep (with key) or Yahoo Finance.
 - The committed `data/*.json` ships with a **sample dataset** (`source: "seed"`)
   so the dashboard works immediately; the first successful cron run replaces it

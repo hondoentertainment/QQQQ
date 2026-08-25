@@ -1,24 +1,30 @@
 #!/usr/bin/env node
 // Refreshes data/holdings.json, data/monthly-allocations.json and data/changes.json.
 //
-// Holdings + weights: Invesco official QQQ holdings file, then Slickcharts
-// (key-free live Nasdaq-100 table), then FMP when FMP_API_KEY is set, then last good data.
-// Prices: see lib/quotes.js. All sources are best-effort and validated, so a
-// flaky or malformed source can't corrupt the committed data or break the job.
+// Holdings + weights (live, never fabricated):
+//   Invesco DNG JSON → Invesco legacy CSV → Slickcharts → FMP (if keyed) →
+//   SEC N-PORT filing → last good / seed.
+// Nasdaq's list-type API is used only to resolve SEC names to tickers.
+// Prices: see lib/quotes.js.
 import { readFile, writeFile, appendFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fetchQuotes } from '../lib/quotes.js';
 import {
   parseInvescoCsv,
+  parseInvescoDngJson,
   parseFmpHoldings,
   parseSlickchartsHtml,
+  parseSecNportHoldings,
+  parseNasdaqConstituents,
   validateHoldings,
   diffConstituents,
   monthKey,
   applyMonthlySnapshot,
   applyPriceSnapshot,
   isFallbackSource,
+  buildNameTickerMap,
+  normalizeCompanyName,
   SCHEMA_VERSION,
 } from '../lib/holdings.js';
 
@@ -27,14 +33,18 @@ const HOLDINGS_FILE = path.join(ROOT, 'data', 'holdings.json');
 const MONTHLY_FILE = path.join(ROOT, 'data', 'monthly-allocations.json');
 const CHANGES_FILE = path.join(ROOT, 'data', 'changes.json');
 const PRICE_HISTORY_FILE = path.join(ROOT, 'data', 'price-history.json');
+const NAME_OVERRIDES_FILE = path.join(ROOT, 'data', 'name-overrides.json');
 const MAX_MONTHS = 24;
 const MAX_CHANGE_EVENTS = 50;
 const MAX_PRICE_DAYS = 180;
+const SEC_CIK = '1067839';
 // Per-component fundamentals carried over from the quote source onto holdings.
 const FUNDAMENTAL_FIELDS = ['marketCap', 'pe', 'yearHigh', 'yearLow'];
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-  '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+  '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+const SEC_UA = 'QQQQ-Tracker (https://github.com/hondoentertainment/QQQQ)';
+const INVESCO_REFERER = 'https://www.invesco.com/qqq-etf/en/about.html';
 
 const log = (...a) => console.log('[refresh]', ...a);
 
@@ -46,17 +56,70 @@ async function readJson(file) {
   }
 }
 
-async function fetchInvescoHoldings() {
-  const url =
-    'https://www.invesco.com/us/financial-products/etfs/holdings/main/holdings/0' +
-    '?audienceType=Investor&action=download&ticker=QQQ';
-  const res = await fetch(url, {
-    headers: { 'User-Agent': UA, Accept: 'text/csv,application/csv,*/*' },
-  });
-  if (!res.ok) throw new Error('Invesco HTTP ' + res.status);
-  return validateHoldings(parseInvescoCsv(await res.text()), 'Invesco');
+async function fetchJsonOrText(url, headers) {
+  const res = await fetch(url, { headers });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const ctype = (res.headers.get('content-type') || '').toLowerCase();
+  if (ctype.includes('json')) return { kind: 'json', body: await res.json() };
+  const text = await res.text();
+  const trimmed = text.trimStart();
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    try { return { kind: 'json', body: JSON.parse(text) }; } catch { /* fall through */ }
+  }
+  return { kind: 'text', body: text };
 }
 
+async function fetchInvescoHoldings() {
+  const headers = {
+    'User-Agent': UA,
+    Accept: 'application/json,text/csv,text/plain,*/*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    Referer: INVESCO_REFERER,
+    Origin: 'https://www.invesco.com',
+  };
+  const attempts = [
+    {
+      label: 'DNG',
+      url: 'https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ'
+        + '/holdings/fund?idType=ticker&interval=monthly&productType=ETF',
+      parse: (got) => {
+        if (got.kind !== 'json') throw new Error('DNG response is not JSON');
+        return parseInvescoDngJson(got.body);
+      },
+    },
+    {
+      label: 'DNG-CUSIP',
+      url: 'https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/46090E103'
+        + '/holdings/fund?idType=cusip&productType=ETF',
+      parse: (got) => {
+        if (got.kind !== 'json') throw new Error('DNG response is not JSON');
+        return parseInvescoDngJson(got.body);
+      },
+    },
+    {
+      label: 'CSV',
+      url: 'https://www.invesco.com/us/financial-products/etfs/holdings/main/holdings/0'
+        + '?audienceType=Investor&action=download&ticker=QQQ',
+      parse: (got) => {
+        if (got.kind === 'json') return parseInvescoDngJson(got.body);
+        if (String(got.body).trimStart().startsWith('<')) {
+          throw new Error('CSV endpoint returned HTML');
+        }
+        return parseInvescoCsv(got.body);
+      },
+    },
+  ];
+  const errors = [];
+  for (const attempt of attempts) {
+    try {
+      const got = await fetchJsonOrText(attempt.url, headers);
+      return validateHoldings(attempt.parse(got), 'Invesco');
+    } catch (err) {
+      errors.push(`${attempt.label}: ${err.message}`);
+    }
+  }
+  throw new Error(errors.join('; '));
+}
 
 async function fetchSlickchartsHoldings() {
   const url = 'https://www.slickcharts.com/nasdaq100';
@@ -75,7 +138,58 @@ async function fetchFmpHoldings(apiKey) {
   return validateHoldings(parseFmpHoldings(await res.json()), 'FMP');
 }
 
-const LIVE_SOURCES = new Set(['invesco', 'fmp', 'slickcharts', 'invesco-cached', 'fmp-cached', 'slickcharts-cached']);
+async function fetchNasdaqNameMap() {
+  const url = 'https://api.nasdaq.com/api/quote/list-type/nasdaq100';
+  const res = await fetch(url, {
+    headers: {
+      'User-Agent': UA,
+      Accept: 'application/json',
+      Origin: 'https://www.nasdaq.com',
+      Referer: 'https://www.nasdaq.com/',
+    },
+  });
+  if (!res.ok) throw new Error('Nasdaq HTTP ' + res.status);
+  return parseNasdaqConstituents(await res.json());
+}
+
+async function fetchSecHoldings(nameToTicker) {
+  const headers = { 'User-Agent': SEC_UA, Accept: 'application/json' };
+  const subRes = await fetch(
+    `https://data.sec.gov/submissions/CIK000${SEC_CIK}.json`,
+    { headers }
+  );
+  if (!subRes.ok) throw new Error('SEC submissions HTTP ' + subRes.status);
+  const sub = await subRes.json();
+  const recent = sub.filings?.recent;
+  if (!recent?.form?.length) throw new Error('SEC submissions has no filings');
+
+  let adsh = null;
+  let docPath = 'primary_doc.xml';
+  for (let i = 0; i < recent.form.length; i++) {
+    if (recent.form[i] === 'NPORT-P') {
+      adsh = recent.accessionNumber[i].replace(/-/g, '');
+      const primary = recent.primaryDocument[i] || 'primary_doc.xml';
+      docPath = primary.includes('/') ? primary.split('/').pop() : primary;
+      break;
+    }
+  }
+  if (!adsh) throw new Error('SEC N-PORT filing not found');
+
+  const xmlUrl = `https://www.sec.gov/Archives/edgar/data/${SEC_CIK}/${adsh}/${docPath}`;
+  const xmlRes = await fetch(xmlUrl, { headers: { 'User-Agent': SEC_UA } });
+  if (!xmlRes.ok) throw new Error('SEC N-PORT HTTP ' + xmlRes.status);
+  const { holdings, unmapped } = parseSecNportHoldings(await xmlRes.text(), nameToTicker);
+  if (unmapped.length) {
+    log(`SEC N-PORT: ${unmapped.length} names could not be mapped`);
+    unmapped.slice(0, 5).forEach((u) => log(`  unmapped: ${u.name} (${u.weight}%)`));
+  }
+  return { holdings: validateHoldings(holdings, 'SEC N-PORT'), unmapped };
+}
+
+const LIVE_SOURCES = new Set([
+  'invesco', 'fmp', 'slickcharts', 'sec-nport',
+  'invesco-cached', 'fmp-cached', 'slickcharts-cached', 'sec-nport-cached',
+]);
 
 async function main() {
   const now = new Date();
@@ -116,6 +230,29 @@ async function main() {
     }
   } else if (!holdings) {
     log('FMP_API_KEY not set — skipping FMP fallback');
+  }
+
+  if (!holdings) {
+    try {
+      log('trying SEC N-PORT filing…');
+      const overrides = (await readJson(NAME_OVERRIDES_FILE)) || {};
+      const nameMap = buildNameTickerMap(prev?.holdings || [], overrides);
+      try {
+        const nasdaq = await fetchNasdaqNameMap();
+        for (const row of nasdaq) {
+          nameMap.set(normalizeCompanyName(row.name), row.ticker);
+        }
+        log(`merged ${nasdaq.length} Nasdaq names into the ticker map`);
+      } catch (err) {
+        log('Nasdaq name map unavailable:', err.message);
+      }
+      const sec = await fetchSecHoldings(nameMap);
+      holdings = sec.holdings;
+      source = 'sec-nport';
+      log(`got ${holdings.length} holdings from SEC N-PORT`);
+    } catch (err) {
+      log('SEC N-PORT fetch failed:', err.message);
+    }
   }
 
   if (!holdings) {
@@ -165,7 +302,9 @@ async function main() {
   holdings.sort((a, b) => b.weight - a.weight);
 
   // Record constituent additions / removals between live snapshots.
-  if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) && (source === 'invesco' || source === 'fmp' || source === 'slickcharts')) {
+  const liveNow = source === 'invesco' || source === 'fmp'
+    || source === 'slickcharts' || source === 'sec-nport';
+  if (prev?.holdings?.length && LIVE_SOURCES.has(prev.source) && liveNow) {
     const { added, removed } = diffConstituents(prev.holdings, holdings);
     if (added.length || removed.length) {
       const changes = (await readJson(CHANGES_FILE)) || { events: [] };

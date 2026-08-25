@@ -132,9 +132,11 @@
       <div class="methodology">
         <dl>
           <dt>Data sources</dt>
-          <dd>Holdings and index weights come from the official Invesco QQQ
-            holdings file, or Financial Modeling Prep as a fallback. Quotes come
-            from Financial Modeling Prep or Yahoo Finance.</dd>
+          <dd>Holdings and index weights come from Invesco&rsquo;s QQQ file
+            (current product-page API, then the legacy CSV), Slickcharts, Financial
+            Modeling Prep, or the latest SEC N-PORT filing. Quotes come from
+            Financial Modeling Prep or Yahoo Finance. Weights are never derived
+            from market cap.</dd>
           <dt>Update cadence</dt>
           <dd>A scheduled job refreshes the data every 30 minutes during US
             market hours, plus a post-close snapshot. This page re-reads the
@@ -169,7 +171,8 @@
       <p class="data-health" id="dataHealth">&mdash;</p>
       <p>
         &ldquo;QQQQ&rdquo; is the legacy ticker for the Invesco QQQ Trust (now <strong>QQQ</strong>),
-        which tracks the Nasdaq-100. Holdings sourced from Invesco; prices from Yahoo Finance,
+        which tracks the Nasdaq-100. Holdings sourced from Invesco, Slickcharts,
+        or SEC filings; prices from Yahoo Finance,
         delayed up to 15 minutes. Data refreshes via a scheduled job &mdash;
         <span id="footerStatus">&mdash;</span>
       </p>

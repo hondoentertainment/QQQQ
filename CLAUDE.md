@@ -52,7 +52,8 @@ These shape every change. Breaking one needs an explicit, recorded decision
   progressive enhancement — `app.js` silently no-ops when those endpoints are
   absent. Never make core rendering depend on a server.
 - **Committed data is the source of truth.** Every data source is best-effort.
-  The fetch script falls back Invesco -> FMP -> last-good-data so the cron job
+  The fetch script falls back Invesco -> Slickcharts -> FMP -> SEC N-PORT ->
+  last-good-data so the cron job
   stays green and the site keeps working off the last snapshot. Preserve this.
 - **No build step / no framework.** Plain HTML/CSS/JS, no bundler, ES modules
   (`"type": "module"`).
@@ -103,8 +104,8 @@ v2.0 per `ROADMAP.md`).
 
 - **`holdings.json`** — `{ fund, name, legacyTicker, asOf, source, count,
   totalWeight, holdings: [{ ticker, name, sector, weight, price, changePct }] }`.
-  `source` is one of `invesco`, `fmp`, `invesco-cached`, `fmp-cached`, `seed`;
-  `app.js` maps these to status badges.
+  `source` is one of `invesco`, `fmp`, `slickcharts`, `sec-nport`, their
+  `*-cached` variants, or `seed`; `app.js` maps these to status badges.
 - **`monthly-allocations.json`** — `{ fund, months: [...], allocations:
   { TICKER: { "YYYY-MM": weight } }, updatedAt }`. History capped at 24 months
   (`MAX_MONTHS`); `applyMonthlySnapshot` in `lib/holdings.js` owns this.
