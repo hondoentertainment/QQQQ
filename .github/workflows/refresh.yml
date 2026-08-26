@@ -70,7 +70,7 @@ jobs:
               `/actions/runs/${context.runId}`;
             const body = [
               `The scheduled refresh could not reach a live holdings source `,
-              `(Invesco / FMP) and fell back to \`${source}\` data.`,
+              `(Invesco / Slickcharts / FMP / SEC) and fell back to \`${source}\` data.`,
               ``,
               `The dashboard is still online but its holdings may be stale. `,
               `A later run that reaches a live source will close this automatically.`,

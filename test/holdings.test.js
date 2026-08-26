@@ -4,8 +4,14 @@ import assert from 'node:assert/strict';
 import {
   parseCsv,
   parseInvescoCsv,
+  parseInvescoDngJson,
   parseFmpHoldings,
   parseSlickchartsHtml,
+  parseSecNportHoldings,
+  parseNasdaqConstituents,
+  normalizeCompanyName,
+  buildNameTickerMap,
+  lookupTickerByName,
   validateHoldings,
   diffConstituents,
   monthKey,
@@ -87,6 +93,110 @@ test('parseSlickchartsHtml throws on empty or unmatched HTML', () => {
   assert.throws(() => parseSlickchartsHtml('<html></html>'), /no table/);
 });
 
+test('parseInvescoCsv rejects an HTML body (retired download URL)', () => {
+  assert.throws(() => parseInvescoCsv('<!DOCTYPE html><html><body>nope</body></html>'), /HTML/);
+});
+
+test('parseInvescoDngJson reads the live DNG wrapper (cusip + holdings)', () => {
+  const holdings = parseInvescoDngJson({
+    cusip: 'QQQ',
+    effectiveDate: '2026-08-24',
+    totalNumberOfHoldings: 3,
+    holdings: [
+      { ticker: 'AAPL', issuerName: 'Apple Inc', percentageOfTotalNetAssets: 8.5 },
+      { ticker: 'MSFT', issuerName: 'Microsoft Corp', percentageOfTotalNetAssets: 7.9 },
+      { ticker: 'USD', issuerName: 'Cash', percentageOfTotalNetAssets: 0.1 },
+    ],
+  });
+  assert.equal(holdings.length, 2);
+  assert.equal(holdings[0].ticker, 'AAPL');
+  assert.equal(holdings[0].weight, 8.5);
+  assert.equal(holdings[1].name, 'Microsoft Corp');
+});
+
+test('parseInvescoDngJson unwraps a nested data payload', () => {
+  const holdings = parseInvescoDngJson({
+    data: { items: [{ symbol: 'NVDA', name: 'NVIDIA', weight: 9.6 }] },
+  });
+  assert.equal(holdings[0].ticker, 'NVDA');
+  assert.equal(holdings[0].weight, 9.6);
+});
+
+test('parseInvescoDngJson throws when no holding rows exist', () => {
+  assert.throws(() => parseInvescoDngJson({ ok: true }), /no holdings/);
+});
+
+test('normalizeCompanyName strips suffixes used by Nasdaq and SEC', () => {
+  assert.equal(normalizeCompanyName('Apple Inc.'), 'apple');
+  assert.equal(normalizeCompanyName('Alphabet Inc. Class A Common Stock'), 'alphabet class a');
+  assert.equal(normalizeCompanyName('Walmart Inc. Common Stock'), 'walmart');
+});
+
+test('lookupTickerByName prefers exact then class-qualified titles', () => {
+  const map = buildNameTickerMap(
+    [{ ticker: 'AAPL', name: 'Apple Inc' }],
+    { 'alphabet inc class a': 'GOOGL', 'alphabet inc class c': 'GOOG' }
+  );
+  assert.equal(lookupTickerByName('Apple Inc.', map), 'AAPL');
+  assert.equal(lookupTickerByName('Alphabet Inc., Class A', map), 'GOOGL');
+  assert.equal(lookupTickerByName('Alphabet Inc., Class C', map), 'GOOG');
+});
+
+test('parseNasdaqConstituents extracts ticker/name and ignores market cap', () => {
+  const rows = parseNasdaqConstituents({
+    data: { data: { rows: [
+      { symbol: 'AAPL', companyName: 'Apple Inc. Common Stock', marketCap: '4,000,000' },
+      { symbol: 'MSFT', companyName: 'Microsoft Corporation Common Stock' },
+    ] } },
+  });
+  assert.deepEqual(rows, [
+    { ticker: 'AAPL', name: 'Apple Inc. Common Stock' },
+    { ticker: 'MSFT', name: 'Microsoft Corporation Common Stock' },
+  ]);
+});
+
+test('parseSecNportHoldings maps names via title (class A/C) and reports unmapped', () => {
+  const xml =
+    '<edgarSubmission>' +
+    '<invstOrSec><name>Apple Inc.</name><title>Apple Inc.</title>' +
+    '<pctVal>8.1</pctVal><assetCat>EC</assetCat></invstOrSec>' +
+    '<invstOrSec><name>Alphabet Inc.</name><title>Alphabet Inc., Class A</title>' +
+    '<pctVal>3.4</pctVal><assetCat>EC</assetCat></invstOrSec>' +
+    '<invstOrSec><name>Alphabet Inc.</name><title>Alphabet Inc., Class C</title>' +
+    '<pctVal>3.2</pctVal><assetCat>EC</assetCat></invstOrSec>' +
+    '<invstOrSec><name>Cash Collateral</name><title>Cash</title>' +
+    '<pctVal>0.4</pctVal><assetCat>STIV</assetCat></invstOrSec>' +
+    '<invstOrSec><name>Unknown NewCo</name><title>Unknown NewCo</title>' +
+    '<pctVal>0.2</pctVal><assetCat>EC</assetCat></invstOrSec>' +
+    '</edgarSubmission>';
+  // Pad with enough mapped names so MIN_HOLDINGS is reachable after we test
+  // the mapper on a realistic short snippet by stubbing via extra blocks.
+  const extras = Array.from({ length: 80 }, (_, i) => (
+    `<invstOrSec><name>Company ${i}</name><title>Company ${i}</title>` +
+    `<pctVal>1.0</pctVal><assetCat>EC</assetCat></invstOrSec>`
+  )).join('');
+  const map = buildNameTickerMap(
+    [
+      { ticker: 'AAPL', name: 'Apple Inc' },
+      ...Array.from({ length: 80 }, (_, i) => ({ ticker: 'T' + i, name: 'Company ' + i })),
+    ],
+    { 'alphabet inc class a': 'GOOGL', 'alphabet inc class c': 'GOOG' }
+  );
+  const { holdings, unmapped } = parseSecNportHoldings(xml + extras, map);
+  assert.equal(holdings.find((h) => h.ticker === 'AAPL').weight, 8.1);
+  assert.equal(holdings.find((h) => h.ticker === 'GOOGL').weight, 3.4);
+  assert.equal(holdings.find((h) => h.ticker === 'GOOG').weight, 3.2);
+  assert.ok(unmapped.some((u) => /Unknown NewCo/.test(u.name)));
+  assert.ok(!holdings.some((h) => h.ticker === 'CASH'));
+});
+
+test('parseSecNportHoldings throws when too few names map to tickers', () => {
+  const xml =
+    '<invstOrSec><name>Only One</name><title>Only One</title>' +
+    '<pctVal>50</pctVal><assetCat>EC</assetCat></invstOrSec>';
+  assert.throws(() => parseSecNportHoldings(xml, new Map()), /mapped only/);
+});
+
 test('validateHoldings accepts a well-formed snapshot', () => {
   const h = makeHoldings(100);
   assert.equal(validateHoldings(h), h);
@@ -161,9 +271,11 @@ test('isFallbackSource flags cached and seed sources but not live ones', () => {
   assert.equal(isFallbackSource('invesco'), false);
   assert.equal(isFallbackSource('fmp'), false);
   assert.equal(isFallbackSource('slickcharts'), false);
+  assert.equal(isFallbackSource('sec-nport'), false);
   assert.equal(isFallbackSource('invesco-cached'), true);
   assert.equal(isFallbackSource('slickcharts-cached'), true);
   assert.equal(isFallbackSource('fmp-cached'), true);
+  assert.equal(isFallbackSource('sec-nport-cached'), true);
   assert.equal(isFallbackSource('seed'), true);
 });
 

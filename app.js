@@ -187,8 +187,12 @@ function renderStatus() {
   const map = {
     invesco: ['LIVE · INVESCO', ''],
     fmp: ['LIVE · FMP', ''],
+    slickcharts: ['LIVE · SLICKCHARTS', ''],
+    'sec-nport': ['LIVE · SEC N-PORT', ''],
     'invesco-cached': ['CACHED', 'cached'],
     'fmp-cached': ['CACHED', 'cached'],
+    'slickcharts-cached': ['CACHED', 'cached'],
+    'sec-nport-cached': ['CACHED', 'cached'],
     seed: ['SAMPLE DATA', 'seed'],
   };
   const [label, cls] = map[d.source] || ['DATA', 'cached'];
