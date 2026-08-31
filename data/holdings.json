@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-08-31T20:03:10.972Z",
+  "asOf": "2026-08-31T20:32:10.558Z",
   "source": "invesco",
   "count": 104,
   "totalWeight": 100.01,
@@ -13,8 +13,8 @@
       "name": "NVIDIA Corp",
       "sector": "Technology",
       "weight": 8.395,
-      "price": 220.5,
-      "changePct": -3.28,
+      "price": 220.78,
+      "changePct": -3.16,
       "yearHigh": 236.54,
       "yearLow": 164.07
     },
@@ -265,7 +265,7 @@
       "weight": 0.979,
       "price": 231,
       "changePct": 1.33,
-      "yearHigh": 233.88,
+      "yearHigh": 233.85,
       "yearLow": 85.68
     },
     {
