@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "events": [
     {
+      "date": "2026-09-01T13:03:10.549Z",
+      "added": [],
+      "removed": [
+        {
+          "ticker": "FUTPLGCSH",
+          "name": "CASH COLLATERAL"
+        }
+      ]
+    },
+    {
       "date": "2026-08-31T13:03:09.562Z",
       "added": [
         {
