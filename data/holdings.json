@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-09-01T20:32:42.431Z",
+  "asOf": "2026-09-01T21:21:36.979Z",
   "source": "invesco",
   "count": 103,
   "totalWeight": 100.01,
@@ -144,7 +144,7 @@
       "sector": "Telecommunications",
       "weight": 1.916,
       "price": 109.74,
-      "changePct": -0.17,
+      "changePct": -0.68,
       "yearHigh": 130.37,
       "yearLow": 66.13
     },
@@ -654,7 +654,7 @@
       "sector": "Telecommunications",
       "weight": 0.313,
       "price": 868.95,
-      "changePct": -5.01,
+      "changePct": -2.91,
       "yearHigh": 1085.68,
       "yearLow": 125
     },
@@ -734,7 +734,7 @@
       "sector": "Energy",
       "weight": 0.248,
       "price": 203.16,
-      "changePct": 1.34,
+      "changePct": 2.78,
       "yearHigh": 216.9,
       "yearLow": 134.3
     },
@@ -823,10 +823,8 @@
       "name": "Axon Enterprise Inc",
       "sector": "Industrials",
       "weight": 0.201,
-      "price": 518.3,
-      "changePct": -8.52,
-      "yearHigh": 792.16,
-      "yearLow": 339.01
+      "price": null,
+      "changePct": null
     },
     {
       "ticker": "PAYX",
@@ -874,7 +872,7 @@
       "sector": "Health Care",
       "weight": 0.193,
       "price": 545.16,
-      "changePct": -1.77,
+      "changePct": -2.07,
       "yearHigh": 769.98,
       "yearLow": 518.55
     },
@@ -1004,7 +1002,7 @@
       "sector": "Health Care",
       "weight": 0.141,
       "price": 246.11,
-      "changePct": 3.8,
+      "changePct": 2.25,
       "yearHigh": 495.55,
       "yearLow": 197.81
     },
