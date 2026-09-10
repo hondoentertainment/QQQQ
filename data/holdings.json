@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-09-09T21:20:12.614Z",
+  "asOf": "2026-09-10T13:02:49.423Z",
   "source": "invesco",
   "count": 103,
   "totalWeight": 100,
@@ -26,7 +26,7 @@
       "price": 315.34,
       "changePct": -1.45,
       "yearHigh": 344.57,
-      "yearLow": 225.95
+      "yearLow": 226.65
     },
     {
       "ticker": "MSFT",
@@ -46,7 +46,7 @@
       "price": 1027.77,
       "changePct": 1.1,
       "yearHigh": 1255,
-      "yearLow": 138.34
+      "yearLow": 147.61
     },
     {
       "ticker": "AMZN",
@@ -70,7 +70,7 @@
     },
     {
       "ticker": "GOOGL",
-      "name": "Alphabet Inc",
+      "name": "Alphabet Inc Class A",
       "sector": "Technology",
       "weight": 3.136,
       "price": 330.65,
@@ -90,7 +90,7 @@
     },
     {
       "ticker": "GOOG",
-      "name": "Alphabet Inc",
+      "name": "Alphabet Inc Class C",
       "sector": "Technology",
       "weight": 2.912,
       "price": 328.38,
@@ -166,7 +166,7 @@
       "price": 315.84,
       "changePct": 2.66,
       "yearHigh": 438.5,
-      "yearLow": 104.61
+      "yearLow": 108.29
     },
     {
       "ticker": "PLTR",
@@ -186,7 +186,7 @@
       "price": 468.85,
       "changePct": 3.11,
       "yearHigh": 739.67,
-      "yearLow": 162.55
+      "yearLow": 164
     },
     {
       "ticker": "NFLX",
@@ -195,7 +195,7 @@
       "weight": 1.419,
       "price": 76.03,
       "changePct": -2.84,
-      "yearHigh": 126.7,
+      "yearHigh": 125.34,
       "yearLow": 65.08
     },
     {
@@ -226,7 +226,7 @@
       "price": 1764.17,
       "changePct": 1.39,
       "yearHigh": 2354.39,
-      "yearLow": 72.03
+      "yearLow": 81.38
     },
     {
       "ticker": "KLAC",
@@ -236,7 +236,7 @@
       "price": 182.91,
       "changePct": -1.45,
       "yearHigh": 307.37,
-      "yearLow": 91.49
+      "yearLow": 93.75
     },
     {
       "ticker": "TXN",
@@ -286,7 +286,7 @@
       "price": 885.92,
       "changePct": 4.31,
       "yearHigh": 1145,
-      "yearLow": 189.9
+      "yearLow": 192.99
     },
     {
       "ticker": "TMUS",
@@ -356,7 +356,7 @@
       "price": 482.28,
       "changePct": 3.17,
       "yearHigh": 799.87,
-      "yearLow": 93.92
+      "yearLow": 94.41
     },
     {
       "ticker": "SHOP",
@@ -376,7 +376,7 @@
       "price": 1729.52,
       "changePct": 0.85,
       "yearHigh": 1999.96,
-      "yearLow": 791.02
+      "yearLow": 798.51
     },
     {
       "ticker": "BKNG",
@@ -506,7 +506,7 @@
       "price": 48.37,
       "changePct": -2.1,
       "yearHigh": 53.6,
-      "yearLow": 31.8
+      "yearLow": 31.96
     },
     {
       "ticker": "INTU",
@@ -536,7 +536,7 @@
       "price": 42.84,
       "changePct": -2.24,
       "yearHigh": 50.17,
-      "yearLow": 31.25
+      "yearLow": 31.35
     },
     {
       "ticker": "REGN",
@@ -646,7 +646,7 @@
       "price": 27.91,
       "changePct": -1.2,
       "yearHigh": 30,
-      "yearLow": 12
+      "yearLow": 12.57
     },
     {
       "ticker": "DDOG",
@@ -896,7 +896,7 @@
       "price": 515.15,
       "changePct": -3.78,
       "yearHigh": 769.98,
-      "yearLow": 511.25
+      "yearLow": 511.16
     },
     {
       "ticker": "AXON",
@@ -965,7 +965,7 @@
       "weight": 0.166,
       "price": 96.98,
       "changePct": -8.23,
-      "yearHigh": 174.45,
+      "yearHigh": 174.34,
       "yearLow": 76.28
     },
     {
