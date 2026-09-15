@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-09-14T21:20:20.549Z",
+  "asOf": "2026-09-15T13:03:11.594Z",
   "source": "invesco",
   "count": 103,
   "totalWeight": 100,
@@ -26,7 +26,7 @@
       "price": 333.08,
       "changePct": 1.99,
       "yearHigh": 344.57,
-      "yearLow": 235.03
+      "yearLow": 236.32
     },
     {
       "ticker": "MSFT",
@@ -136,7 +136,7 @@
       "price": 97.19,
       "changePct": -3.12,
       "yearHigh": 142.35,
-      "yearLow": 24.22
+      "yearLow": 24.45
     },
     {
       "ticker": "CSCO",
@@ -146,7 +146,7 @@
       "price": 110.06,
       "changePct": 2.44,
       "yearHigh": 130.37,
-      "yearLow": 66.35
+      "yearLow": 66.38
     },
     {
       "ticker": "COST",
@@ -176,7 +176,7 @@
       "price": 273.49,
       "changePct": -8.23,
       "yearHigh": 438.5,
-      "yearLow": 117.03
+      "yearLow": 118.67
     },
     {
       "ticker": "AMAT",
@@ -186,7 +186,7 @@
       "price": 424.21,
       "changePct": -6.56,
       "yearHigh": 739.67,
-      "yearLow": 168.53
+      "yearLow": 171.58
     },
     {
       "ticker": "NFLX",
@@ -236,7 +236,7 @@
       "price": 1551.99,
       "changePct": -8.31,
       "yearHigh": 2354.39,
-      "yearLow": 85.12
+      "yearLow": 89.56
     },
     {
       "ticker": "KLAC",
@@ -246,7 +246,7 @@
       "price": 169.09,
       "changePct": -4.57,
       "yearHigh": 307.37,
-      "yearLow": 96.7
+      "yearLow": 97.51
     },
     {
       "ticker": "LIN",
@@ -276,7 +276,7 @@
       "price": 218.82,
       "changePct": -3.59,
       "yearHigh": 329.88,
-      "yearLow": 66.33
+      "yearLow": 67.36
     },
     {
       "ticker": "AMGN",
@@ -295,7 +295,7 @@
       "weight": 0.87,
       "price": 182.9,
       "changePct": 3.24,
-      "yearHigh": 244.24,
+      "yearHigh": 242.37,
       "yearLow": 165.66
     },
     {
@@ -326,7 +326,7 @@
       "price": 805.55,
       "changePct": -6.58,
       "yearHigh": 1145,
-      "yearLow": 199.65
+      "yearLow": 206.26
     },
     {
       "ticker": "ADI",
@@ -366,7 +366,7 @@
       "price": 1575.15,
       "changePct": -6.65,
       "yearHigh": 1999.96,
-      "yearLow": 833.92
+      "yearLow": 861.18
     },
     {
       "ticker": "WDC",
@@ -445,7 +445,7 @@
       "weight": 0.476,
       "price": 276.63,
       "changePct": 3.48,
-      "yearHigh": 294.93,
+      "yearHigh": 294.46,
       "yearLow": 188.16
     },
     {
@@ -496,7 +496,7 @@
       "price": 48.91,
       "changePct": -0.27,
       "yearHigh": 53.6,
-      "yearLow": 32.18
+      "yearLow": 32.41
     },
     {
       "ticker": "CMCSA",
@@ -696,7 +696,7 @@
       "price": 1143.24,
       "changePct": -3.61,
       "yearHigh": 1714.09,
-      "yearLow": 831
+      "yearLow": 833.18
     },
     {
       "ticker": "NXPI",
@@ -716,7 +716,7 @@
       "price": 329.2,
       "changePct": -11.07,
       "yearHigh": 487.91,
-      "yearLow": 110.91
+      "yearLow": 112.81
     },
     {
       "ticker": "BKR",
@@ -736,7 +736,7 @@
       "price": 205.72,
       "changePct": 0.16,
       "yearHigh": 216.9,
-      "yearLow": 134.3
+      "yearLow": 135.59
     },
     {
       "ticker": "FAST",
@@ -865,7 +865,7 @@
       "weight": 0.183,
       "price": 118.51,
       "changePct": 2.89,
-      "yearHigh": 135.78,
+      "yearHigh": 134.14,
       "yearLow": 85.45
     },
     {
@@ -965,7 +965,7 @@
       "weight": 0.164,
       "price": 105.81,
       "changePct": 10.56,
-      "yearHigh": 173.39,
+      "yearHigh": 171.65,
       "yearLow": 76.28
     },
     {
@@ -1011,8 +1011,8 @@
       "name": "Kraft Heinz Co/The",
       "sector": "Consumer Staples",
       "weight": 0.131,
-      "price": 24.27,
-      "changePct": -0.49,
+      "price": 24.6,
+      "changePct": 0.86,
       "yearHigh": 28.09,
       "yearLow": 21.04
     },
@@ -1033,7 +1033,7 @@
       "weight": 0.122,
       "price": 31.73,
       "changePct": 3.19,
-      "yearHigh": 48.77,
+      "yearHigh": 47.63,
       "yearLow": 26.81
     }
   ]
