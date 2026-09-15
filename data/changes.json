@@ -2,6 +2,25 @@
   "schemaVersion": 1,
   "events": [
     {
+      "date": "2026-09-15T16:03:13.598Z",
+      "added": [
+        {
+          "ticker": "NQZ6",
+          "name": "CME E-Mini NASDAQ 100 Index Future"
+        }
+      ],
+      "removed": [
+        {
+          "ticker": "NQU6",
+          "name": "CME E-Mini NASDAQ 100 Index Future"
+        },
+        {
+          "ticker": "KHC",
+          "name": "Kraft Heinz Co/The"
+        }
+      ]
+    },
+    {
       "date": "2026-09-01T13:03:10.549Z",
       "added": [],
       "removed": [
