@@ -3,7 +3,7 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-09-24T20:35:17.037Z",
+  "asOf": "2026-09-24T21:22:48.431Z",
   "source": "invesco",
   "count": 102,
   "totalWeight": 99.93,
@@ -90,7 +90,7 @@
     },
     {
       "ticker": "GOOGL",
-      "name": "Alphabet Inc",
+      "name": "Alphabet Inc Class A",
       "sector": "Technology",
       "weight": 2.997,
       "price": 342.36,
@@ -100,7 +100,7 @@
     },
     {
       "ticker": "GOOG",
-      "name": "Alphabet Inc",
+      "name": "Alphabet Inc Class C",
       "sector": "Technology",
       "weight": 2.799,
       "price": 339.01,
