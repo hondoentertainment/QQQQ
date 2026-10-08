@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "events": [
     {
+      "date": "2026-10-08T13:08:53.197Z",
+      "added": [],
+      "removed": [
+        {
+          "ticker": "WBD",
+          "name": "Warner Bros Discovery Inc"
+        }
+      ]
+    },
+    {
       "date": "2026-09-15T16:03:13.598Z",
       "added": [
         {
