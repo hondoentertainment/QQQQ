@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "events": [
     {
+      "date": "2026-10-12T13:24:28.603Z",
+      "added": [
+        {
+          "ticker": "MRNA",
+          "name": "Moderna Inc"
+        }
+      ],
+      "removed": []
+    },
+    {
       "date": "2026-10-08T13:08:53.197Z",
       "added": [],
       "removed": [
