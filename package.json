@@ -30,7 +30,8 @@
       "minimatch": "10.2.6"
     },
     "@vercel/node": {
-      "path-to-regexp": "6.3.0"
+      "path-to-regexp": "6.3.0",
+      "undici": "6.29.1"
     },
     "@vercel/remix-builder": {
       "path-to-regexp": "6.3.0"
