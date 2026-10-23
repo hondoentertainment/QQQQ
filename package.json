@@ -43,6 +43,9 @@
     },
     "@vercel/hono": {
       "path-to-regexp": "8.4.2"
+    },
+    "undici": {
+      "@fastify/busboy": "3.2.4"
     }
   }
 }
