@@ -43,6 +43,9 @@
     },
     "@vercel/hono": {
       "path-to-regexp": "8.4.2"
+    },
+    "get-uri": {
+      "basic-ftp": "6.2.3"
     }
   }
 }
