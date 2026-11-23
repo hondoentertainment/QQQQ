@@ -3,8 +3,8 @@
   "fund": "QQQ",
   "name": "Invesco QQQ Trust (Nasdaq-100 Index)",
   "legacyTicker": "QQQQ",
-  "asOf": "2026-11-20T21:16:36.726Z",
-  "source": "invesco",
+  "asOf": "2026-11-23T13:02:17.384Z",
+  "source": "invesco-cached",
   "count": 102,
   "totalWeight": 99.99,
   "holdings": [
@@ -66,7 +66,7 @@
       "price": 594.51,
       "changePct": -15.7,
       "yearHigh": 1255,
-      "yearLow": 192.59
+      "yearLow": 212.36
     },
     {
       "ticker": "TSLA",
@@ -136,7 +136,7 @@
       "price": 264,
       "changePct": -5.44,
       "yearHigh": 404.47,
-      "yearLow": 262.28
+      "yearLow": 262.27
     },
     {
       "ticker": "COST",
@@ -186,7 +186,7 @@
       "price": 51.28,
       "changePct": -6.2,
       "yearHigh": 142.35,
-      "yearLow": 32.89
+      "yearLow": 34.68
     },
     {
       "ticker": "AMAT",
@@ -196,7 +196,7 @@
       "price": 302.63,
       "changePct": -14.1,
       "yearHigh": 739.67,
-      "yearLow": 215.5
+      "yearLow": 222.86
     },
     {
       "ticker": "TXN",
@@ -206,7 +206,7 @@
       "price": 263.75,
       "changePct": -9.81,
       "yearHigh": 334.03,
-      "yearLow": 153.41
+      "yearLow": 158.69
     },
     {
       "ticker": "LRCX",
@@ -216,7 +216,7 @@
       "price": 183.27,
       "changePct": -13.42,
       "yearHigh": 438.5,
-      "yearLow": 135.5
+      "yearLow": 144.43
     },
     {
       "ticker": "CRWD",
@@ -286,7 +286,7 @@
       "price": 126.87,
       "changePct": -12.43,
       "yearHigh": 307.37,
-      "yearLow": 107.2
+      "yearLow": 110.3
     },
     {
       "ticker": "ADI",
@@ -296,7 +296,7 @@
       "price": 345.92,
       "changePct": -9.44,
       "yearHigh": 445.91,
-      "yearLow": 225
+      "yearLow": 229.29
     },
     {
       "ticker": "TMUS",
@@ -356,7 +356,7 @@
       "price": 1266.22,
       "changePct": -9.25,
       "yearHigh": 1999.96,
-      "yearLow": 946.11
+      "yearLow": 973.74
     },
     {
       "ticker": "MRVL",
@@ -396,7 +396,7 @@
       "price": 457.01,
       "changePct": -11.42,
       "yearHigh": 1145,
-      "yearLow": 228.61
+      "yearLow": 242.91
     },
     {
       "ticker": "APP",
@@ -426,7 +426,7 @@
       "price": 79.24,
       "changePct": -18.33,
       "yearHigh": 294.3,
-      "yearLow": 22.88
+      "yearLow": 23.46
     },
     {
       "ticker": "MAR",
@@ -446,7 +446,7 @@
       "price": 261.11,
       "changePct": -9.4,
       "yearHigh": 799.87,
-      "yearLow": 132.43
+      "yearLow": 142.55
     },
     {
       "ticker": "FTNT",
@@ -476,7 +476,7 @@
       "price": 49.1,
       "changePct": -4.34,
       "yearHigh": 53.6,
-      "yearLow": 33.74
+      "yearLow": 33.97
     },
     {
       "ticker": "CEG",
@@ -535,7 +535,7 @@
       "weight": 0.407,
       "price": 270.44,
       "changePct": -13.66,
-      "yearHigh": 682.27,
+      "yearHigh": 681.2,
       "yearLow": 252.84
     },
     {
@@ -576,7 +576,7 @@
       "price": 195,
       "changePct": -0.91,
       "yearHigh": 280.8,
-      "yearLow": 22.28
+      "yearLow": 23.55
     },
     {
       "ticker": "ARM",
@@ -606,7 +606,7 @@
       "price": 170.36,
       "changePct": -5.47,
       "yearHigh": 197.87,
-      "yearLow": 111.84
+      "yearLow": 113.38
     },
     {
       "ticker": "ROST",
@@ -616,7 +616,7 @@
       "price": 213.46,
       "changePct": -6.23,
       "yearHigh": 257,
-      "yearLow": 163.51
+      "yearLow": 172.92
     },
     {
       "ticker": "HON",
@@ -666,7 +666,7 @@
       "price": 1142.05,
       "changePct": -12.88,
       "yearHigh": 1714.09,
-      "yearLow": 833.18
+      "yearLow": 864.45
     },
     {
       "ticker": "NXPI",
@@ -676,7 +676,7 @@
       "price": 235.15,
       "changePct": -6.86,
       "yearHigh": 339.95,
-      "yearLow": 183.2
+      "yearLow": 184.68
     },
     {
       "ticker": "FAST",
@@ -686,7 +686,7 @@
       "price": 50.61,
       "changePct": -6.21,
       "yearHigh": 56.27,
-      "yearLow": 38.97
+      "yearLow": 39.38
     },
     {
       "ticker": "PDD",
@@ -716,7 +716,7 @@
       "price": 102.2,
       "changePct": -1.55,
       "yearHigh": 139.24,
-      "yearLow": 98.08
+      "yearLow": 100.07
     },
     {
       "ticker": "IDXX",
@@ -796,7 +796,7 @@
       "price": 460.54,
       "changePct": -16.43,
       "yearHigh": 1143,
-      "yearLow": 233.72
+      "yearLow": 266
     },
     {
       "ticker": "EXC",
@@ -906,7 +906,7 @@
       "price": 168.09,
       "changePct": -4.01,
       "yearHigh": 252.03,
-      "yearLow": 126.84
+      "yearLow": 131.75
     },
     {
       "ticker": "TER",
@@ -916,7 +916,7 @@
       "price": 204.78,
       "changePct": -12.94,
       "yearHigh": 487.91,
-      "yearLow": 151.52
+      "yearLow": 159.5
     },
     {
       "ticker": "WDAY",
@@ -936,7 +936,7 @@
       "price": 55.44,
       "changePct": -7.09,
       "yearHigh": 105.91,
-      "yearLow": 48.52
+      "yearLow": 49.8
     },
     {
       "ticker": "MSTR",
@@ -956,7 +956,7 @@
       "price": 45.42,
       "changePct": -14.41,
       "yearHigh": 151,
-      "yearLow": 37.57
+      "yearLow": 39.3
     },
     {
       "ticker": "DXCM",
